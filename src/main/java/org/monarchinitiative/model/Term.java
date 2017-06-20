@@ -9,6 +9,12 @@ import java.util.stream.Collectors;
 
 /**
  * This class represents a single HPO term. Text-mining analysis produces a collection of such terms.
+ * Each Term contains:
+ * <ul>
+ * <li>HPO id</li>
+ * <li>preferred HPO label</li>
+ * <li>Set of synonyms for preferred label</li>
+ * </ul>
  * <p>
  * Created by Daniel Danis on 6/19/17.
  */
