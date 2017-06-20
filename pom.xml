@@ -79,6 +79,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/distribution-resources</outputDirectory>
+                            <resources></resources>
                         </configuration>
                     </execution>
                 </executions>
