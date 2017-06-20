@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.controllers.ConfigureController">
+    <children>
+        <Label prefHeight="30.0" text="Enter analyzed text here:" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <font>
+                <Font name="System Bold" size="15.0" />
+            </font>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </Label>
+        <TextArea fx:id="contentTextArea" layoutX="14.0" layoutY="29.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </TextArea>
+        <Label layoutX="10.0" layoutY="361.0" prefHeight="30.0" text="Enter PMID:" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+            <padding>
+                <Insets bottom="5.0" right="5.0" top="5.0" />
+            </padding>
+        </Label>
+        <TextField fx:id="pmidTextField" layoutX="215.0" layoutY="363.0" prefHeight="30.0" prefWidth="120.0" promptText="e.g. 28209495" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="95.0" />
+        <Button fx:id="analyzeButton" defaultButton="true" layoutX="16.0" layoutY="344.0" maxHeight="30.0" maxWidth="100.0" mnemonicParsing="false" onAction="#analyzeButtonClicked" prefHeight="30.0" prefWidth="100.0" text="Analyze!" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </Button>
+      <Button fx:id="cancelButton" disable="true" layoutX="386.0" layoutY="361.0" maxHeight="30.0" maxWidth="100.0" mnemonicParsing="false" onAction="#cancelButtonClicked" prefHeight="30.0" prefWidth="100.0" text="Cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="120.0" />
+    </children>
+</AnchorPane>
