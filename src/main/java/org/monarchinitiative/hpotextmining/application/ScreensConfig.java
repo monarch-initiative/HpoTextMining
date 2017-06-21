@@ -1,4 +1,4 @@
-package org.monarchinitiative.application;
+package org.monarchinitiative.hpotextmining.application;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -6,8 +6,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
-import org.monarchinitiative.controllers.ConfigureController;
-import org.monarchinitiative.controllers.PresentController;
+import org.monarchinitiative.hpotextmining.controllers.ConfigureController;
+import org.monarchinitiative.hpotextmining.controllers.PresentController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

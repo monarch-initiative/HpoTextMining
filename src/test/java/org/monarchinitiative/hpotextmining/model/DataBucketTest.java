@@ -1,9 +1,9 @@
-package org.monarchinitiative.model;
+package org.monarchinitiative.hpotextmining.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.monarchinitiative.application.ApplicationConfigTest;
+import org.monarchinitiative.hpotextmining.application.ApplicationConfigTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

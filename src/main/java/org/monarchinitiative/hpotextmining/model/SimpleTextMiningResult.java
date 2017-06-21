@@ -1,4 +1,4 @@
-package org.monarchinitiative.model;
+package org.monarchinitiative.hpotextmining.model;
 
 import com.google.common.collect.ImmutableSet;
 

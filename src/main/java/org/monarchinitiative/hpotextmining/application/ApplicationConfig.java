@@ -1,8 +1,8 @@
-package org.monarchinitiative.application;
+package org.monarchinitiative.hpotextmining.application;
 
 import javafx.concurrent.Task;
-import org.monarchinitiative.io.AskServer;
-import org.monarchinitiative.model.DataBucket;
+import org.monarchinitiative.hpotextmining.io.AskServer;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;

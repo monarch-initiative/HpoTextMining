@@ -1,4 +1,4 @@
-package org.monarchinitiative.io;
+package org.monarchinitiative.hpotextmining.io;
 
 import javafx.concurrent.Task;
 

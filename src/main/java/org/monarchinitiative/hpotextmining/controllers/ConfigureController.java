@@ -1,5 +1,6 @@
-package org.monarchinitiative.controllers;
+package org.monarchinitiative.hpotextmining.controllers;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -8,11 +9,11 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.monarchinitiative.application.DialogController;
-import org.monarchinitiative.application.FXMLDialog;
-import org.monarchinitiative.application.ScreensConfig;
-import org.monarchinitiative.io.AskServer;
-import org.monarchinitiative.model.DataBucket;
+import org.monarchinitiative.hpotextmining.application.DialogController;
+import org.monarchinitiative.hpotextmining.application.FXMLDialog;
+import org.monarchinitiative.hpotextmining.application.ScreensConfig;
+import org.monarchinitiative.hpotextmining.io.AskServer;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
@@ -66,7 +67,7 @@ public class ConfigureController implements DialogController {
     void analyzeButtonClicked() {
 
         task.setOnCancelled(e -> {
-            dialog.hide();
+            dialog.close();
             dataBucket.setCancelled(true);
             });
 
@@ -74,14 +75,14 @@ public class ConfigureController implements DialogController {
             ScreensConfig.Alerts.showErrorDialog("Error", null, "Sorry, text-mining analysis failed.");
             dataBucket.setCancelled(true);
             dataBucket.clear();
-            dialog.close();
+            Platform.runLater(() -> dialog.close()); // enforce closing the dialog on JavaFX application thread
         });
 
         task.setOnSucceeded(e -> {
             dataBucket.setPMID(getPMID());
             dataBucket.setMinedText(formatUserInput());
             dataBucket.setJsonResult(task.getValue());
-            dialog.close();
+            Platform.runLater(() -> dialog.close()); // enforce closing the dialog on JavaFX application thread
         });
 
         task.setQuery(formatUserInput());

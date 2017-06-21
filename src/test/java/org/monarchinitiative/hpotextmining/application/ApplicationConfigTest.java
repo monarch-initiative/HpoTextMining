@@ -1,15 +1,11 @@
-package org.monarchinitiative.application;
+package org.monarchinitiative.hpotextmining.application;
 
-import org.monarchinitiative.TextMiningAnalysis;
-import org.monarchinitiative.io.AskServer;
-import org.monarchinitiative.model.DataBucket;
+import org.monarchinitiative.hpotextmining.TextMiningAnalysis;
+import org.monarchinitiative.hpotextmining.io.AskServer;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import java.io.File;
 import java.io.FileInputStream;

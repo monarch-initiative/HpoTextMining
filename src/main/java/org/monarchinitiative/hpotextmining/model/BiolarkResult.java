@@ -1,4 +1,4 @@
-package org.monarchinitiative.model;
+package org.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package org.monarchinitiative.application;
+package org.monarchinitiative.hpotextmining.application;
 
 import javafx.fxml.Initializable;
 import javafx.stage.Stage;

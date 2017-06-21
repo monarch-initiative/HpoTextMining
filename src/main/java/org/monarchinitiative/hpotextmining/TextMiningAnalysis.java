@@ -1,18 +1,18 @@
-package org.monarchinitiative;
+package org.monarchinitiative.hpotextmining;
 
 import javafx.stage.Stage;
-import org.monarchinitiative.application.ApplicationConfig;
-import org.monarchinitiative.application.ScreensConfig;
-import org.monarchinitiative.model.DataBucket;
-import org.monarchinitiative.model.SimpleTextMiningResult;
-import org.monarchinitiative.model.TextMiningResult;
+import org.monarchinitiative.hpotextmining.application.ApplicationConfig;
+import org.monarchinitiative.hpotextmining.application.ScreensConfig;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
+import org.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
+import org.monarchinitiative.hpotextmining.model.TextMiningResult;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Optional;
 
 /**
- * Driver class for Text-mining analysis. See {@link Example} for information how to plug the analysis into existing
+ * Driver class for Text-mining analysis. See {@link Main} for information how to plug the analysis into existing
  * Java FX program.
  * Created by Daniel Danis on 6/19/17.
  */

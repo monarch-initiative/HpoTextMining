@@ -1,8 +1,8 @@
-package org.monarchinitiative.model;
+package org.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import org.monarchinitiative.application.ScreensConfig;
+import org.monarchinitiative.hpotextmining.application.ScreensConfig;
 
 import java.io.IOException;
 import java.util.HashSet;

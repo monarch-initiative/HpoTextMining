@@ -1,16 +1,17 @@
-package org.monarchinitiative.controllers;
+package org.monarchinitiative.hpotextmining.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.monarchinitiative.application.DialogController;
-import org.monarchinitiative.application.FXMLDialog;
-import org.monarchinitiative.model.BiolarkResult;
-import org.monarchinitiative.model.DataBucket;
-import org.monarchinitiative.model.Term;
+import org.monarchinitiative.hpotextmining.application.DialogController;
+import org.monarchinitiative.hpotextmining.application.FXMLDialog;
+import org.monarchinitiative.hpotextmining.model.BiolarkResult;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
+import org.monarchinitiative.hpotextmining.model.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
@@ -85,7 +86,7 @@ public class PresentController implements DialogController {
     void doneButtonClicked() {
         dataBucket.addApprovedYesTerms(getApprovedYesTerms());
         dataBucket.addApprovedNotTerms(getApprovedNotTerms());
-        dialog.close();
+        Platform.runLater(() -> dialog.close()); // enforce closing the dialog on JavaFX application thread
     }
 
     /**

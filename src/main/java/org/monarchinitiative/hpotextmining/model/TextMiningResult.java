@@ -1,4 +1,4 @@
-package org.monarchinitiative.model;
+package org.monarchinitiative.hpotextmining.model;
 
 import java.util.Set;
 

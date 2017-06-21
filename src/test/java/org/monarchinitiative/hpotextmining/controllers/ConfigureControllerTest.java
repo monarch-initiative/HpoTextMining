@@ -1,4 +1,4 @@
-package org.monarchinitiative.controllers;
+package org.monarchinitiative.hpotextmining.controllers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.monarchinitiative.application.ApplicationConfigTest;
+import org.monarchinitiative.hpotextmining.application.ApplicationConfigTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,7 +40,7 @@ public class ConfigureControllerTest extends ApplicationTest {
 
     @Test
     public void text_input() throws Exception {
-        String expected = "Hey girls, I'm your neighbor!";
+        String expected = "Hey ya!";
         clickOn("#contentTextArea").write(expected);
         assertEquals(expected, controller.getContentText());
         Button analyze = (Button) scene.getRoot().lookup("#analyzeButton");
@@ -49,7 +49,7 @@ public class ConfigureControllerTest extends ApplicationTest {
 
     @Test
     public void pmid_input() throws Exception {
-        String expected = "123456";
+        String expected = "42";
         clickOn("#pmidTextField").write(expected);
         assertEquals(expected, controller.getPMID());
         Button analyzeButton = (Button) scene.getRoot().lookup("#analyzeButton");
@@ -58,8 +58,8 @@ public class ConfigureControllerTest extends ApplicationTest {
 
     @Test
     public void disabled_buttons() throws Exception {
-        String content = "Hey girls, I'm your neighbor!";
-        String pmid = "123456";
+        String content = "Hey ya!";
+        String pmid = "42";
         clickOn("#contentTextArea").write(content);
         clickOn("#pmidTextField").write(pmid);
         Button analyzeButton = (Button) scene.getRoot().lookup("#analyzeButton");

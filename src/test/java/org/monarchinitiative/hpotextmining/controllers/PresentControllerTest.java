@@ -1,4 +1,4 @@
-package org.monarchinitiative.controllers;
+package org.monarchinitiative.hpotextmining.controllers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -8,9 +8,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.monarchinitiative.application.ApplicationConfigTest;
-import org.monarchinitiative.model.DataBucket;
-import org.monarchinitiative.model.Term;
+import org.monarchinitiative.hpotextmining.application.ApplicationConfigTest;
+import org.monarchinitiative.hpotextmining.model.DataBucket;
+import org.monarchinitiative.hpotextmining.model.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
