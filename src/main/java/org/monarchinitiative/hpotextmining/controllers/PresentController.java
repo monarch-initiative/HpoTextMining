@@ -57,12 +57,13 @@ public class PresentController implements DialogController {
 
     /**
      * Html template for highlighting the text based on which a HPO term has been identified. Contains two placeholders.
+     * The initial space is intentional (prevents lack of space between words with series of hits).
      * <ol>
      * <li>Text based on which a HPO term has been identified</li>
      * <li>Tooltip text</li>
      * </ol>
      */
-    private static final String HIGHLIGHTED_TEMPLATE = "<b><span class=\"tooltip\" style=\"color:red\">%s" +
+    private static final String HIGHLIGHTED_TEMPLATE = " <b><span class=\"tooltip\" style=\"color:red\">%s" +
             "<span class=\"tooltiptext\">%s</span></span></b>";
 
     /**
@@ -182,16 +183,20 @@ public class PresentController implements DialogController {
 
         int offset = 0;
         for (BiolarkResult result : results) {
-            htmlBuilder.append(minedText.substring(offset, result.getStart())); // unhighlighted text
-            htmlBuilder.append(
-                    // highlighted text
+            int start = result.getStart() < offset ? offset : result.getStart();
+            // htmlBuilder.append(minedText.substring(offset, result.getStart())); // unhighlighted text
+            htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
+            start = Math.max(offset+1, result.getStart());
+            StringBuilder append = htmlBuilder.append(
+            // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            minedText.substring(result.getStart(), result.getEnd()),
-
+                            minedText.substring(start, result.getEnd()),
+                            //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
                             String.format(TOOLTIP_TEMPLATE,
                                     result.getTerm().getId(), result.getTerm().getLabel()))
             );
+
             offset = result.getEnd();
         }
 
