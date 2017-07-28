@@ -1,5 +1,7 @@
 package org.monarchinitiative.hpotextmining.controllers;
 
+import com.genestalker.springscreen.core.DialogController;
+import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -7,8 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.monarchinitiative.hpotextmining.application.DialogController;
-import org.monarchinitiative.hpotextmining.application.FXMLDialog;
 import org.monarchinitiative.hpotextmining.model.BiolarkResult;
 import org.monarchinitiative.hpotextmining.model.DataBucket;
 import org.monarchinitiative.hpotextmining.model.Term;

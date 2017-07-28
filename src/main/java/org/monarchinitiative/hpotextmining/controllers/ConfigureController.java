@@ -1,5 +1,7 @@
 package org.monarchinitiative.hpotextmining.controllers;
 
+import com.genestalker.springscreen.core.DialogController;
+import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -9,8 +11,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.monarchinitiative.hpotextmining.application.DialogController;
-import org.monarchinitiative.hpotextmining.application.FXMLDialog;
 import org.monarchinitiative.hpotextmining.application.ScreensConfig;
 import org.monarchinitiative.hpotextmining.io.AskServer;
 import org.monarchinitiative.hpotextmining.model.DataBucket;
@@ -21,9 +21,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Controller for the first Scene presented to curator where the text to be mined for HPO terms is submitted along
- * with PMID of the publication.
- * Created by Daniel Danis on 6/19/17.
+ * Controller for the first Scene presented to curator where the text to be mined for HPO terms is submitted along with
+ * PMID of the publication. Created by Daniel Danis on 6/19/17.
  */
 public class ConfigureController implements DialogController {
 
@@ -69,7 +68,7 @@ public class ConfigureController implements DialogController {
         task.setOnCancelled(e -> {
             dialog.close();
             dataBucket.setCancelled(true);
-            });
+        });
 
         task.setOnFailed(e -> {
             ScreensConfig.Alerts.showErrorDialog("Error", null, "Sorry, text-mining analysis failed.");
@@ -128,8 +127,8 @@ public class ConfigureController implements DialogController {
 
 
     /**
-     * @inheritDocs
      * @param dialog The {@link FXMLDialog} instance which represents an independent window.
+     * @inheritDocs
      */
     @Override
     public void setDialog(FXMLDialog dialog) {

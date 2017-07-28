@@ -1,5 +1,6 @@
 package org.monarchinitiative.hpotextmining.application;
 
+import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -16,9 +17,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Configuration of {@link FXMLDialog}s used in text-mining application.
- * IMPORTANT - dialogs and controllers must have lazy instantiation.
- * Created by Daniel Danis on 6/19/17.
+ * Configuration of {@link FXMLDialog}s used in text-mining application. IMPORTANT - dialogs and controllers must have
+ * lazy instantiation. Created by Daniel Danis on 6/19/17.
  */
 @Configuration
 public class ScreensConfig {
@@ -64,16 +64,10 @@ public class ScreensConfig {
 
     /**
      * Class full of utility methods which can be used to show {@link Alert} windows from various reasons. Following
-     * properties can be specified when creating pop-up alert owner:
-     * <ul>
-     * <li>title of the newly created owner</li>
-     * <li>header that is placed in a body of the owner</li>
-     * <li>text that forms a content of the owner</li>
-     * </ul>
-     * Please keep these texts short because the area of pop-ups is small. Set content to null if you want the particular
-     * to stay empty.
-     * <p>
-     * Inspiration gathered mainly from <a href="http://code.makery.ch/blog/javafx-dialogs-official/">here</a>.
+     * properties can be specified when creating pop-up alert owner: <ul> <li>title of the newly created owner</li>
+     * <li>header that is placed in a body of the owner</li> <li>text that forms a content of the owner</li> </ul>
+     * Please keep these texts short because the area of pop-ups is small. Set content to null if you want the
+     * particular to stay empty. <p> Inspiration gathered mainly from <a href="http://code.makery.ch/blog/javafx-dialogs-official/">here</a>.
      * </p>
      */
     public static class Alerts {
