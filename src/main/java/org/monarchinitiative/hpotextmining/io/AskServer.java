@@ -9,8 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Task to be used to query server URL to asynchronously retrieve results of text-mining in JSON format.
- * Created by Daniel Danis on 6/20/17.
+ * Task to be used to query server URL to asynchronously retrieve results of text-mining in JSON format. Created by
+ * Daniel Danis on 6/20/17.
  */
 public class AskServer extends Task<String> {
 

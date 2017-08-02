@@ -24,6 +24,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>HP.obo</exclude>
+                </excludes>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -109,14 +112,6 @@
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -137,19 +132,17 @@
             <version>0.0.1</version>
         </dependency>
 
-
-        <!-- LOGGING LIBRARIES -->
+        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-core -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>de.ontologizer</groupId>
+            <artifactId>ontologizerlib-core</artifactId>
+            <version>0.1</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-io -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.fasterxml.version}</version>
+            <groupId>de.ontologizer</groupId>
+            <artifactId>ontologizerlib-io</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
@@ -159,53 +152,67 @@
             <version>${jackson.fasterxml.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${jackson.fasterxml.version}</version>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.12</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
+        <!-- LOGGING LIBRARIES -->
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.18</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.8.2</version>
         </dependency>
         <!-- END OF LOGGING LIBRARIES -->
 
 
         <!-- LIBRARIES FOR TESTING -->
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.loadui/testFx -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-            <type>test-jar</type>
+            <groupId>org.loadui</groupId>
+            <artifactId>testFx</artifactId>
+            <version>3.1.2</version>
             <scope>test</scope>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
-            <version>4.0.5-alpha</version>
+            <version>4.0.6-alpha</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
-            <version>4.0.5-alpha</version>
+            <version>4.0.6-alpha</version>
             <scope>test</scope>
         </dependency>
 
-
+        <!-- https://mvnrepository.com/artifact/org.testfx/openjfx-monocle -->
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>openjfx-monocle</artifactId>
+            <version>1.8.0_20</version>
+        </dependency>
+        <!-- END OF TESTING LIBRARIES -->
     </dependencies>
 
 </project>

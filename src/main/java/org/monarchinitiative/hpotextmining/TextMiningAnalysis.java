@@ -1,26 +1,37 @@
 package org.monarchinitiative.hpotextmining;
 
 import javafx.stage.Stage;
-import org.monarchinitiative.hpotextmining.application.ApplicationConfig;
-import org.monarchinitiative.hpotextmining.application.ScreensConfig;
-import org.monarchinitiative.hpotextmining.model.DataBucket;
-import org.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
+import org.monarchinitiative.hpotextmining.application.HPOAnalysisConfig;
+import org.monarchinitiative.hpotextmining.application.HPOAnalysisController;
+import org.monarchinitiative.hpotextmining.application.HPOAnalysisScreenConfig;
+import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
+import org.monarchinitiative.hpotextmining.model.SingleTextMiningResult;
 import org.monarchinitiative.hpotextmining.model.TextMiningResult;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.io.File;
 import java.util.Optional;
+import java.util.Set;
 
 /**
- * Driver class for Text-mining analysis. See {@link Main} for information how to plug the analysis into existing
- * Java FX program.
- * Created by Daniel Danis on 6/19/17.
+ * Driver class for Text-mining analysis. See {@link Main} for information how to plug the analysis into existing Java
+ * FX program. Created by Daniel Danis on 6/19/17.
  */
 public class TextMiningAnalysis {
 
-//    private static final Logger log = LogManager.getLogger();
-
     private static final String DIALOG_TITLE = "Text-mining analysis";
+
+    private final String hpoPath, pmid, serverUrl;
+
+    private final Set<PhenotypeTerm> knownTerms;
+
+    public TextMiningAnalysis(String hpoPath, String pmid, Set<PhenotypeTerm> knownTerms, String serverUrl) {
+        this.knownTerms = knownTerms;
+        this.pmid = pmid;
+        this.hpoPath = hpoPath;
+        this.serverUrl = serverUrl;
+    }
 
     /**
      * Run the text-mining analysis (and have fun).
@@ -28,29 +39,26 @@ public class TextMiningAnalysis {
      * @param stage instance of {@link Stage} to be used as owner window for text-mining analysis pop-up windows.
      * @return Optional of {@link TextMiningResult}.
      */
-    public static Optional<TextMiningResult> run(Stage stage) {
-
-        ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-        ctx.registerShutdownHook();
-
-        final ScreensConfig screensConfig = ctx.getBean(ScreensConfig.class);
-        screensConfig.setOwner(stage);
+    public Optional<TextMiningResult> run(Stage stage) {
         stage.setTitle(DIALOG_TITLE);
 
-        final DataBucket bucket = ctx.getBean(DataBucket.class);
-
-        // show window where the curator provides data for text-mining analysis.
-        screensConfig.configureDialog().showAndWait();
-        if (bucket.isCancelled()) {
+        File hpoPath = new File(this.hpoPath);
+        if (!(hpoPath.exists() && hpoPath.isFile())) {
             return Optional.empty();
         }
-        // show window where the curator selects the correctly identified HPO terms.
-        screensConfig.presentDialog().showAndWait();
-        if (bucket.isCancelled()) {
-            return Optional.empty();
-        }
+        System.setProperty("hp.obo.path", hpoPath.getAbsolutePath());
+        System.setProperty("text.mining.url", serverUrl);
+        ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(HPOAnalysisConfig.class);
+        ctx.registerShutdownHook();
 
-        return Optional.of(new SimpleTextMiningResult(bucket.getPMID(), bucket.getApprovedYesTerms(), bucket.getApprovedNotTerms()));
+        final HPOAnalysisScreenConfig analysisConfig = ctx.getBean(HPOAnalysisScreenConfig.class);
+        final HPOAnalysisController controller = ctx.getBean(HPOAnalysisController.class);
+
+        controller.addPhenotypeTerms(knownTerms);
+        controller.setPmid(pmid);
+
+        analysisConfig.hpoAnalysisDialog().showAndWait();
+        SingleTextMiningResult result = new SingleTextMiningResult(controller.getPmid(), controller.getPhenotypeTerms());
+        return Optional.of(result);
     }
-
 }
