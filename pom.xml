@@ -151,6 +151,13 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.fasterxml.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.fasterxml.version}</version>
+        </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->
         <dependency>
