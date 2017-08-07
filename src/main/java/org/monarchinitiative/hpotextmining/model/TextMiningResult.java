@@ -16,17 +16,10 @@ public interface TextMiningResult {
     String getPMID();
 
     /**
-     * Get set of curator-approved <em>YES</em> HPO terms. These terms <b>were</b> observed/present in patient.
+     * Get set of curator-approved <em>YES</em> and <em>NOT</em> HPO terms.
      *
      * @return set of {@link PhenotypeTerm} objects.
      */
-    Set<PhenotypeTerm> getYesTerms();
-
-    /**
-     * Get set of curator-approved <em>"NOT"</em> HPO terms. These terms <b>were not</b> observed/present in patient.
-     *
-     * @return set of {@link PhenotypeTerm} objects.
-     */
-    Set<PhenotypeTerm> getNotTerms();
+    Set<PhenotypeTerm> getPhenotypeTerms();
 
 }

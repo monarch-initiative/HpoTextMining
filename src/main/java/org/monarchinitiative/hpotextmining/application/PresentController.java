@@ -14,12 +14,13 @@ import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.hpotextmining.model.BiolarkResult;
+import org.monarchinitiative.hpotextmining.model.HTMSignal;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -65,16 +66,15 @@ public class PresentController implements Initializable {
      */
     private static final String TOOLTIP_TEMPLATE = "%s\n%s";
 
-    private HPOAnalysisScreenConfig screenConfig;
-
-    @Autowired
-    private Ontology ontology;
+    private final Ontology ontology;
 
     /**
      * The GUI element responsible for presentation of analyzed text with highlighted regions.
      */
     @FXML
     private WebView webView;
+
+    private Consumer<HTMSignal> signal;
 
     /**
      * Box on the right side of the screen where "YES" Terms will be added.
@@ -103,8 +103,8 @@ public class PresentController implements Initializable {
      */
     private Set<BiolarkResult> results = new HashSet<>();
 
-    public PresentController(HPOAnalysisScreenConfig screenConfig) {
-        this.screenConfig = screenConfig;
+    public PresentController(Ontology ontology) {
+        this.ontology = ontology;
     }
 
     /**
@@ -130,6 +130,10 @@ public class PresentController implements Initializable {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
         return mapper.readValue(jsonResponse, javaType);
+    }
+
+    void setSignal(Consumer<HTMSignal> signal) {
+        this.signal = signal;
     }
 
     /**
@@ -179,9 +183,7 @@ public class PresentController implements Initializable {
      */
     @FXML
     void addTermsButtonAction() {
-        screenConfig.hpoAnalysisController().addPhenotypeTerms(getApprovedTerms());
-        screenConfig.hpoAnalysisController().getTextMiningStackPane().getChildren().clear();
-        screenConfig.hpoAnalysisController().getTextMiningStackPane().getChildren().add(screenConfig.configureDialog());
+        signal.accept(HTMSignal.DONE);
     }
 
     /**

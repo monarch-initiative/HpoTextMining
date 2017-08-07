@@ -1,65 +1,61 @@
 package org.monarchinitiative.hpotextmining.application;
 
-import javafx.fxml.FXMLLoader;
+import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.testfx.framework.junit.ApplicationTest;
+import org.loadui.testfx.GuiTest;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests of {@link ConfigureController}. Created by Daniel Danis on 6/20/17.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = HPOTermsAnalysisConfigTest.class)
-public class ConfigureControllerTest extends ApplicationTest {
+public class ConfigureControllerTest extends GuiTest {
 
-    @Autowired
     private ConfigureController controller;
 
-    @Autowired
-    private Parent configureDialog;
-
+    /**
+     * Test the method that extracts inserted text from the TextField. If pmid is blank the analyze button is disabled.
+     */
     @Test
     public void text_input() throws Exception {
         String expected = "Hey ya";
-        clickOn("#contentTextArea").write(expected);
+        click("#contentTextArea").type(expected);
         assertEquals(expected, controller.getText());
-        Button analyze = lookup("#analyzeButton").query();
+        Button analyze = find("#analyzeButton");
         assertTrue(analyze.isDisabled());
     }
 
-//    @Test
-//    @Ignore
-//    public void pmid_input() throws Exception {
-//        String expected = "42";
-//        click("#pmidTextField").type(expected);
-//        Button analyzeButton = find("#analyzeButton");
-//        assertTrue(analyzeButton.isDisabled());
-//    }
+    /**
+     * Test getting inserted PMID. If text field is blank, the analyze button is disabled.
+     */
+    @Test
+    public void pmid_input() throws Exception {
+        String expected = "12";
+        click("#pmidTextField").type(expected);
+        assertEquals(expected, controller.getPmid());
+        Button analyzeButton = find("#analyzeButton");
+        assertTrue(analyzeButton.isDisabled());
+    }
 
+    /**
+     * Test that only after entering both PMID and analyzed text the analysis is enabled.
+     */
     @Test
     public void disabled_buttons() throws Exception {
+        Button analyzeButton = find("#analyzeButton");
         String content = "Hey ya";
-        String pmid = "42";
-        clickOn("#contentTextArea").write(content);
-        clickOn("#pmidTextField").write(pmid);
-        Button analyzeButton = lookup("#analyzeButton").query();
+        String pmid = "12";
+        click("#contentTextArea").type(content);
+        assertTrue(analyzeButton.isDisabled());
+        click("#pmidTextField").type(pmid);
         assertFalse(analyzeButton.isDisabled());
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConfigureView.fxml"));
-        loader.setControllerFactory(param -> controller);
-        stage.setScene(new Scene(loader.load()));
-        stage.show();
+    protected Parent getRootNode() {
+        controller = new ConfigureController(null, "");
+        return FXMLDialog.loadParent(controller, getClass().getResource("/fxml/ConfigureView.fxml"));
     }
 }

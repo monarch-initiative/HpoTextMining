@@ -1,25 +1,23 @@
 package org.monarchinitiative.hpotextmining.application;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.hpotextmining.io.AskServer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.monarchinitiative.hpotextmining.model.HTMSignal;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 /**
  * Controller for the first Scene presented to curator where the text to be mined for HPO terms is submitted along with
@@ -29,13 +27,13 @@ public class ConfigureController implements Initializable {
 
     private static final Logger log = LogManager.getLogger();
 
-    private HPOAnalysisScreenConfig screenConfig;
+    private final URL textMiningServer;
 
-    @Autowired
-    private ExecutorService executorService;
+    private Consumer<HTMSignal> signal;
 
-    @Autowired
-    private Environment env;
+    private StringProperty pmid = new SimpleStringProperty(this, "pmid");
+
+    private String jsonResponse;
 
     /**
      * User will paste query text here.
@@ -54,8 +52,25 @@ public class ConfigureController implements Initializable {
 
     private AskServer task;
 
-    public ConfigureController(HPOAnalysisScreenConfig screenConfig) {
-        this.screenConfig = screenConfig;
+    public ConfigureController(URL textMiningServer, String pmid) {
+        this.textMiningServer = textMiningServer;
+        this.pmid.set((pmid == null) ? "" : pmid);
+    }
+
+    public void setSignal(Consumer<HTMSignal> signal) {
+        this.signal = signal;
+    }
+
+    String getJsonResponse() {
+        return jsonResponse;
+    }
+
+    String getText() {
+        return formatUserInput();
+    }
+
+    String getPmid() {
+        return pmid.get();
     }
 
     /**
@@ -63,24 +78,30 @@ public class ConfigureController implements Initializable {
      */
     @FXML
     void analyzeButtonClicked() {
-        try {
-            task = new AskServer(new URL(env.getProperty("text.mining.url")));
-        } catch (MalformedURLException e) {
-            log.warn(e);
-            e.printStackTrace();
-            return;
-        }
+
+        task = new AskServer(textMiningServer);
+
         task.setQuery(formatUserInput());
 
-        task.setOnSucceeded(e -> Platform.runLater(() -> {
-            screenConfig.presentController().setResults(task.getValue(), formatUserInput());
-            ObservableList<Node> children = screenConfig.hpoAnalysisController().getTextMiningStackPane().getChildren();
-            children.clear();
-            children.add(screenConfig.presentDialog());
-        }));
+        task.setOnSucceeded(e -> {
+            try {
+                jsonResponse = task.get();
+            } catch (InterruptedException | ExecutionException ex) {
+                log.warn(ex.getMessage());
+                signal.accept(HTMSignal.FAILED);
+            }
+            signal.accept(HTMSignal.DONE); // results are ready
+        });
 
-        task.setOnFailed(e -> log.warn("Text mining analysis failed. " + e.getSource().getMessage()));
-        executorService.submit(task);
+        task.setOnFailed(e -> {
+            log.warn("Text mining analysis failed. " + e.getSource().getMessage());
+            signal.accept(HTMSignal.FAILED);
+        });
+
+        task.setOnCancelled(e -> signal.accept(HTMSignal.CANCELLED));
+        Thread askThread = new Thread(task, "AskThread");
+        askThread.setDaemon(true);
+        askThread.start();
     }
 
     /**
@@ -110,11 +131,7 @@ public class ConfigureController implements Initializable {
         pmidTextField.textProperty().addListener(((observable, oldValue, newValue) ->
                 pmidTextField.setText(newValue.trim())));
 
-        pmidTextField.textProperty().bindBidirectional(screenConfig.hpoAnalysisController().pmidProperty());
-    }
-
-    String getText() {
-        return contentTextArea.getText();
+        pmidTextField.textProperty().bindBidirectional(pmid);
     }
 
 }

@@ -1,7 +1,6 @@
 package org.monarchinitiative.hpotextmining.model;
 
 import com.google.common.collect.ImmutableSet;
-import ontologizer.ontology.Term;
 
 import java.util.Set;
 
@@ -12,21 +11,17 @@ public class SimpleTextMiningResult implements TextMiningResult {
 
     private final String pmid;
 
-    private final ImmutableSet<PhenotypeTerm> yesTerms;
-
-    private final ImmutableSet<PhenotypeTerm> notTerms;
+    private final ImmutableSet<PhenotypeTerm> phenotypeTerms;
 
     /**
      * Create instance with given values.
      *
-     * @param pmid     string with PMID of publication
-     * @param yesTerms set of <em>YES</em> terms approved by the curator.
-     * @param notTerms set of <em>NOT</em> terms approved by the curator.
+     * @param pmid           string with PMID of publication
+     * @param phenotypeTerms set of {@link PhenotypeTerm} objects representing terms approved by the curator.
      */
-    public SimpleTextMiningResult(String pmid, Set<PhenotypeTerm> yesTerms, Set<PhenotypeTerm> notTerms) {
+    public SimpleTextMiningResult(String pmid, Set<PhenotypeTerm> phenotypeTerms) {
         this.pmid = pmid;
-        this.yesTerms = ImmutableSet.copyOf(yesTerms);
-        this.notTerms = ImmutableSet.copyOf(notTerms);
+        this.phenotypeTerms = ImmutableSet.copyOf(phenotypeTerms);
     }
 
     /**
@@ -38,27 +33,20 @@ public class SimpleTextMiningResult implements TextMiningResult {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @return
      */
     @Override
-    public Set<PhenotypeTerm> getYesTerms() {
-        return yesTerms;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    public Set<PhenotypeTerm> getNotTerms() {
-        return notTerms;
+    public Set<PhenotypeTerm> getPhenotypeTerms() {
+        return phenotypeTerms;
     }
 
     @Override
     public String toString() {
         return "SimpleTextMiningResult{" +
                 "pmid='" + pmid + '\'' +
-                ", yesTerms=" + yesTerms +
-                ", notTerms=" + notTerms +
+                ", phenotypeTerms=" + phenotypeTerms +
                 '}';
     }
 }

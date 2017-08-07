@@ -6,16 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermContainer;
+import org.junit.*;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit.ApplicationRule;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,19 +24,54 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = HPOTermsAnalysisConfigTest.class)
-public class HPOAnalysisControllerTest extends ApplicationTest {
 
-    private static String WIDOWS_PEAK_DEFINITION = "Frontal hairline with bilateral arcs to a low point in the " +
-            "midline of the forehead.";
+public class HPOAnalysisControllerTest {
 
-    @Autowired
+
+    private static Ontology ontology;
+
     private HPOAnalysisController controller;
 
+    @Rule
+    public ApplicationRule robot = new ApplicationRule(stage -> {
+        // simulate the terms that were in the model and that should be displayed in the HPOAnalysis View.
+        String WIDOWS_PEAK_DEFINITION = "Frontal hairline with bilateral arcs to a low point in the " +
+                "midline of the forehead.";
+        controller = new HPOAnalysisController(ontology, null, "12345",
+                new HashSet<>(Arrays.asList(
+                        new PhenotypeTerm("HP:0000349", "Widow's peak", WIDOWS_PEAK_DEFINITION, "6y", "Nonprogressive",
+                                "Mild", "Chronic", "Generalized", "Bilateral", true),
+                        new PhenotypeTerm("HP:0000391", "Thickened helices", "Increased thickness of the helix of the ear" +
+                                ".", "10y", "Nonprogressive", "Chronic", "Generalized", "Generalized", "Bilateral",
+                                false))));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HPOAnalysisView.fxml"));
+        loader.setControllerFactory(param -> controller);
+        try {
+            stage.setScene(new Scene(loader.load()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        stage.show();
+    });
+
+    /**
+     * Prepare Ontology.
+     */
+    @BeforeClass
+    public static void setUpBefore() throws Exception {
+        String hpoPath = "target/test-classes/HP.obo";
+        OBOParser parser = new OBOParser(new OBOParserFileInput(hpoPath),
+                OBOParser.PARSE_DEFINITIONS);
+        String result = parser.doParse();
+        TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
+                .getDate());
+        ontology = Ontology.create(termContainer);
+    }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+//        ontology = null;
         System.gc();
     }
 
@@ -59,47 +91,56 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
         return Files.readAllLines(Paths.get(url.toURI())).stream().collect(Collectors.joining("\n"));
     }
 
+    @Before
+    public void setUp() throws Exception {
 
-    /**
-     * This is sort of a @Before method that is run before each Test case.
-     *
-     * @param stage
-     * @throws Exception
-     */
-    @Override
-    public void start(Stage stage) throws Exception {
-        // simulate the terms that were in the model and that should be displayed in the HPOAnalysis View.
-        controller.addPhenotypeTerms(new HashSet<>(Arrays.asList(
-                new PhenotypeTerm("HP:0000349", "Widow's peak", WIDOWS_PEAK_DEFINITION, "6y", "Nonprogressive",
-                        "Mild", "Chronic", "Generalized", "Bilateral", true),
-                new PhenotypeTerm("HP:0000391", "Thickened helices", "Increased thickness of the helix of the ear" +
-                        ".", "10y", "Nonprogressive", "Chronic", "Generalized", "Generalized", "Bilateral",
-                        false))));
-        controller.setPmid("");
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HPOAnalysisView.fxml"));
-        loader.setControllerFactory(param -> controller);
-        stage.setScene(new Scene(loader.load()));
-        stage.show();
     }
+
+//    /**
+//     * This is sort of a @Before method that is run before each Test case.
+//     *
+//     * @param stage
+//     * @throws Exception
+//     */
+//    @Override
+//    public void start(Stage stage) throws Exception {
+//        // simulate the terms that were in the model and that should be displayed in the HPOAnalysis View.
+//        String WIDOWS_PEAK_DEFINITION = "Frontal hairline with bilateral arcs to a low point in the " +
+//                "midline of the forehead.";
+//        controller = new HPOAnalysisController(ontology, null, "12345",
+//                new HashSet<>(Arrays.asList(
+//                        new PhenotypeTerm("HP:0000349", "Widow's peak", WIDOWS_PEAK_DEFINITION, "6y", "Nonprogressive",
+//                                "Mild", "Chronic", "Generalized", "Bilateral", true),
+//                        new PhenotypeTerm("HP:0000391", "Thickened helices", "Increased thickness of the helix of the ear" +
+//                                ".", "10y", "Nonprogressive", "Chronic", "Generalized", "Generalized", "Bilateral",
+//                                false))));
+//
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HPOAnalysisView.fxml"));
+//        loader.setControllerFactory(param -> controller);
+//        stage.setScene(new Scene(loader.load()));
+//        stage.show();
+//    }
 
     @Test
     @Ignore // should springscreen check thread and load content always using FX thread?
     public void integrationTest() throws Exception {
-        TextArea content = lookup("#contentTextArea").query();
-        Button analyze = lookup("#analyzeButton").query();
-        clickOn(content)
+//        TextArea content = lookup("#contentTextArea").query();
+        TextArea content = robot.lookup("#contentTextArea").query();
+//        Button analyze = lookup("#analyzeButton").query();
+        Button analyze = robot.lookup("#analyzeButton").query();
+//        clickOn(content)
+        robot.clickOn(content)
                 .write("Bacon ham cholesterol and hypertension are cool but not hepatosplenomegaly")
                 .clickOn(analyze);
         Thread.sleep(5000); // allow time for response
-        VBox yesBox = lookup("#yesTermsVBox").query();
-        List<Node> yesBoxes = ((VBox) lookup("#yesTermsVBox").query()).getChildren();
+//        VBox yesBox = lookup("#yesTermsVBox").query();
+        VBox yesBox = robot.lookup("#yesTermsVBox").query();
+//        List<Node> yesBoxes = ((VBox) lookup("#yesTermsVBox").query()).getChildren();
+        List<Node> yesBoxes = ((VBox) robot.lookup("#yesTermsVBox").query()).getChildren();
     }
 
     /**
      * Test the method {@link HPOAnalysisController#addPhenotypeTerms(Set)}. Add new {@link PhenotypeTerm}.
-     *
-     * @throws Exception
      */
     @Test
     public void addPhenotypeTerms() throws Exception {
@@ -113,14 +154,15 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
 
     /**
      * Add a new term using autocompletion suggestion box. The term is present in the patient.
-     *
-     * @throws Exception
      */
     @Test
     public void addPresentTerm() throws Exception {
-        TextField addTerm = lookup("#addTermTextField").query();
-        Button addButton = lookup("#addTermButton").query();
-        clickOn(addTerm).write("hyper").moveBy(-150, 70).clickOn(MouseButton.PRIMARY).clickOn(addButton);
+//        TextField addTerm = lookup("#addTermTextField").query();
+        TextField addTerm = robot.lookup("#addTermTextField").query();
+//        Button addButton = lookup("#addTermButton").query();
+        Button addButton = robot.lookup("#addTermButton").query();
+//        clickOn(addTerm).write("hyper").moveBy(-150, 70).clickOn(MouseButton.PRIMARY).clickOn(addButton);
+        robot.clickOn(addTerm).write("hyper").moveBy(-150, 70).clickOn(MouseButton.PRIMARY).clickOn(addButton);
         assertEquals(3, controller.getPhenotypeTerms().size());
         PhenotypeTerm term = sortSet(controller.getPhenotypeTerms(), PhenotypeTerm.comparatorByHpoID()).get(2);
         assertEquals("HP:0008281", term.getHpoId());
@@ -136,13 +178,20 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
      */
     @Test
     public void addNonPresent() throws Exception {
-        TextField addTerm = lookup("#addTermTextField").query();
-        CheckBox not = lookup("#notObservedCheckBox").query();
-        Button addButton = lookup("#addTermButton").query();
-        clickOn(addTerm).write("hyper").moveBy(-150, 70);
-        clickOn(MouseButton.PRIMARY);
-        clickOn(not);
-        clickOn(addButton);
+//        TextField addTerm = lookup("#addTermTextField").query();
+        TextField addTerm = robot.lookup("#addTermTextField").query();
+//        CheckBox not = lookup("#notObservedCheckBox").query();
+        CheckBox not = robot.lookup("#notObservedCheckBox").query();
+//        Button addButton = lookup("#addTermButton").query();
+        Button addButton = robot.lookup("#addTermButton").query();
+//        clickOn(addTerm).write("hyper").moveBy(-150, 70);
+        robot.clickOn(addTerm).write("hyper").moveBy(-150, 70);
+//        clickOn(MouseButton.PRIMARY);
+        robot.clickOn(MouseButton.PRIMARY);
+//        clickOn(not);
+        robot.clickOn(not);
+//        clickOn(addButton);
+        robot.clickOn(addButton);
         PhenotypeTerm term = sortSet(controller.getPhenotypeTerms(), PhenotypeTerm.comparatorByHpoID()).get(2);
         assertEquals("HP:0008281", term.getHpoId());
         assertEquals("Acute hyperammonemia", term.getName());
@@ -159,9 +208,12 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
     @Test
     public void removeButtonAction() throws Exception {
         assertEquals(2, controller.getPhenotypeTerms().size());
-        TableView<PhenotypeTerm> termTableView = lookup("#hpoTermsTableView").query();
-        Button removeButton = lookup("#removeTermButton").query();
-        moveTo(termTableView).moveBy(-80, -45).clickOn(MouseButton.PRIMARY).clickOn(removeButton);
+//        TableView<PhenotypeTerm> termTableView = lookup("#hpoTermsTableView").query();
+        TableView<PhenotypeTerm> termTableView = robot.lookup("#hpoTermsTableView").query();
+//        Button removeButton = lookup("#removeTermButton").query();
+        Button removeButton = robot.lookup("#removeTermButton").query();
+//        moveTo(termTableView).moveBy(-80, -45).clickOn(MouseButton.PRIMARY).clickOn(removeButton);
+        robot.moveTo(termTableView).moveBy(-80, -45).clickOn(MouseButton.PRIMARY).clickOn(removeButton);
         assertEquals(1, controller.getPhenotypeTerms().size());
     }
 
