@@ -3,17 +3,19 @@ package org.monarchinitiative.hpotextmining.application;
 import com.genestalker.springscreen.core.DialogController;
 import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
+import org.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
+import org.monarchinitiative.hpotextmining.model.TextMiningResult;
 import org.monarchinitiative.hpotextmining.util.WidthAwareTextFields;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.*;
@@ -26,21 +28,31 @@ import java.util.*;
  */
 public class HPOAnalysisController implements DialogController {
 
+    private static final Logger log = LogManager.getLogger();
+
+    private final ConfigureController configureController;
+
+    private final PresentController presentController;
+
+    private final Ontology ontology;
+
+    private Parent configurePane;
+
+    private Parent presentPane;
+
     private FXMLDialog dialog;
 
-    private StringProperty pmid = new SimpleStringProperty(this, "pmid", "");
 
-    @Autowired
-    private Ontology ontology;
-
+    /**
+     * Temporary copy for storing already present PhenotypeTerms until the controller GUI elements are initialized by
+     * the FXML loader. The content is moved into the TableView in {@link #initialize(URL, ResourceBundle)} method.
+     */
     private Set<PhenotypeTerm> terms = new HashSet<>();
 
     /**
      * Map of term names to term IDs.
      */
     private Map<String, String> labels = new HashMap<>();
-
-    private HPOAnalysisScreenConfig screenConfig;
 
     @FXML
     private AnchorPane treeViewAnchorPane;
@@ -75,12 +87,43 @@ public class HPOAnalysisController implements DialogController {
     @FXML
     private TableColumn<PhenotypeTerm, String> definitionTableColumn;
 
-    public HPOAnalysisController(HPOAnalysisScreenConfig screenConfig) {
-        this.screenConfig = screenConfig;
-    }
+    public HPOAnalysisController(Ontology ontology, URL textMiningServer, String pmid, Set<PhenotypeTerm> terms) {
+        this.ontology = ontology;
+        this.configureController = new ConfigureController(textMiningServer, pmid);
+        this.presentController = new PresentController(ontology);
+        this.terms.addAll(terms);
 
-    private static void cleanup() {
-        System.gc();
+        configureController.setSignal(signal -> {
+            switch (signal) {
+                case DONE:
+                    presentController.setResults(configureController.getJsonResponse(), configureController.getText());
+                    textMiningStackPane.getChildren().clear();
+                    textMiningStackPane.getChildren().add(presentPane);
+                    break;
+                case FAILED:
+                    log.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
+                    break;
+                case CANCELLED:
+                    log.warn("Text mining analysis cancelled");
+                    break;
+            }
+        });
+
+        presentController.setSignal(signal -> {
+            switch (signal) {
+                case DONE:
+                    addPhenotypeTerms(presentController.getApprovedTerms());
+                    textMiningStackPane.getChildren().clear();
+                    textMiningStackPane.getChildren().add(configurePane);
+                    break;
+                case FAILED:
+                    log.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
+                    break;
+                case CANCELLED:
+                    log.warn("Text mining analysis cancelled");
+                    break;
+            }
+        });
     }
 
     @Override
@@ -90,18 +133,6 @@ public class HPOAnalysisController implements DialogController {
 
     StackPane getTextMiningStackPane() {
         return textMiningStackPane;
-    }
-
-    public String getPmid() {
-        return pmid.get();
-    }
-
-    public void setPmid(String pmid) {
-        this.pmid.set(pmid);
-    }
-
-    public StringProperty pmidProperty() {
-        return pmid;
     }
 
     /**
@@ -134,20 +165,17 @@ public class HPOAnalysisController implements DialogController {
     @FXML
     void okButtonAction() {
         dialog.close();
-        cleanup();
     }
 
     /**
-     * Add term into the table.
+     * Add term that has been entered into textfield into the table.
      */
     @FXML
     void addTermButtonAction() {
         String id = labels.get(addTermTextField.getText());
         if (id != null) {
             Term term = ontology.getTerm(id);
-            Set<PhenotypeTerm> terms = new HashSet<>();
-            terms.add(new PhenotypeTerm(term, !notObservedCheckBox.isSelected()));
-            addPhenotypeTerms(terms);
+            hpoTermsTableView.getItems().add(new PhenotypeTerm(term, !notObservedCheckBox.isSelected()));
             addTermTextField.clear();
             notObservedCheckBox.setSelected(false);
         }
@@ -169,18 +197,29 @@ public class HPOAnalysisController implements DialogController {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        textMiningStackPane.getChildren().add(screenConfig.configureDialog());
-        if (terms != null) {
-            hpoTermsTableView.getItems().addAll(terms);
-        }
-
         hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getHpoId()));
         hpoNameTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getName()));
         observedTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper((cdf.getValue().isPresent()) ? "YES"
                 : "NOT"));
         definitionTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getDefinition()));
 
+        hpoTermsTableView.getItems().addAll(terms);
+        terms = null;
+
+        configurePane = FXMLDialog.loadParent(configureController, getClass().getResource("/fxml/ConfigureView.fxml"));
+        presentPane = FXMLDialog.loadParent(presentController, getClass().getResource("/fxml/PresentView.fxml"));
+
+        textMiningStackPane.getChildren().add(configurePane);
+
         ontology.getTermMap().forEach(term -> labels.put(term.getName().toString(), term.getIDAsString()));
         WidthAwareTextFields.bindWidthAwareAutoCompletion(addTermTextField, labels.keySet());
     }
+
+    /**
+     * @return
+     */
+    public TextMiningResult getResults() {
+        return new SimpleTextMiningResult(configureController.getPmid(), getPhenotypeTerms());
+    }
+
 }

@@ -8,19 +8,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.*;
-import org.junit.rules.TestRule;
-import org.junit.runner.RunWith;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermContainer;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.loadui.testfx.GuiTest;
 import org.monarchinitiative.hpotextmining.model.BiolarkResult;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 import org.monarchinitiative.hpotextmining.model.SimpleBiolarkTerm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
-import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 
 import java.io.IOException;
@@ -39,16 +36,14 @@ import static org.junit.Assert.*;
 /**
  * Tests of {@link PresentController} class. Created by Daniel Danis on 6/19/17.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = HPOTermsAnalysisConfigTest.class)
-public class PresentControllerTest extends ApplicationTest {
+public class PresentControllerTest extends GuiTest {
 
     /**
      * Tested instance
      */
-    @Autowired
     private PresentController controller;
 
+    private static Ontology ontology;
 
     /**
      * Read file containing sample data from classpath.
@@ -57,25 +52,28 @@ public class PresentControllerTest extends ApplicationTest {
         return Files.readAllLines(Paths.get(url.toURI())).stream().collect(Collectors.joining("\n"));
     }
 
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PresentView.fxml"));
-        loader.setControllerFactory(param -> controller);
-        stage.setScene(new Scene(loader.load()));
-        stage.show();
+    /**
+     * Prepare Ontology.
+     */
+    @BeforeClass
+    public static void setUpBefore() throws Exception {
+        String hpoPath = "target/test-classes/HP.obo";
+        OBOParser parser = new OBOParser(new OBOParserFileInput(hpoPath),
+                OBOParser.PARSE_DEFINITIONS);
+        String result = parser.doParse();
+        TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
+                .getDate());
+        ontology = Ontology.create(termContainer);
     }
 
     /**
      * Test that clicking on term in YES section will add it into the set approved terms.
-     *
-     * @throws Exception
      */
     @Test
     public void select_yes_checkboxes() throws Exception {
         intitializeController();
-        List<Node> yesBoxes = ((VBox) lookup("#yesTermsVBox").query()).getChildren();
-        clickOn(yesBoxes.get(0)).clickOn(yesBoxes.get(4)).clickOn(yesBoxes.get(6));
+        List<Node> yesBoxes = ((VBox) find("#yesTermsVBox")).getChildren();
+        click(yesBoxes.get(0)).click(yesBoxes.get(4)).click(yesBoxes.get(6));
         Set<PhenotypeTerm> resultSet = controller.getApprovedTerms();
         assertEquals(3, resultSet.size());
         List<PhenotypeTerm> sortedTerms = resultSet.stream()
@@ -99,14 +97,12 @@ public class PresentControllerTest extends ApplicationTest {
 
     /**
      * Test that clicking on term in NOT section will add it into the set approved terms.
-     *
-     * @throws Exception
      */
     @Test
     public void select_not_checkboxes() throws Exception {
         intitializeController();
-        List<Node> notBoxes = ((VBox) lookup("#notTermsVBox").query()).getChildren();
-        clickOn(notBoxes.get(0));
+        List<Node> notBoxes = ((VBox) find("#notTermsVBox")).getChildren();
+        click(notBoxes.get(0));
         Set<PhenotypeTerm> resultSet = controller.getApprovedTerms();
         assertEquals(1, resultSet.size());
         PhenotypeTerm term = resultSet.iterator().next();
@@ -117,23 +113,19 @@ public class PresentControllerTest extends ApplicationTest {
 
     /**
      * Test that standard input data creates 7 yes term checkboxes & 1 not term checkbox.
-     *
-     * @throws Exception
      */
     @Test
     public void setResults() throws Exception {
         intitializeController();
-        List<Node> yesBoxes = ((VBox) lookup("#yesTermsVBox").query()).getChildren();
+        List<Node> yesBoxes = ((VBox) find("#yesTermsVBox")).getChildren();
         assertEquals(7, yesBoxes.size());
-        List<Node> notBoxes = ((VBox) lookup("#notTermsVBox").query()).getChildren();
+        List<Node> notBoxes = ((VBox) find("#notTermsVBox")).getChildren();
         assertEquals(1, notBoxes.size());
     }
 
     /**
      * Test {@link PresentController#colorizeHTML(Set, String)} function with input where the terms are not overlapping
      * themselves.
-     *
-     * @throws Exception
      */
     @Test
     public void colorizeHTML() throws Exception {
@@ -147,8 +139,6 @@ public class PresentControllerTest extends ApplicationTest {
 
     /**
      * Test {@link PresentController#colorizeHTML(Set, String)} function with input where the terms are overlapping.
-     *
-     * @throws Exception
      */
     @Test
     public void colorizeOverlappingHTML() throws Exception {
@@ -163,8 +153,6 @@ public class PresentControllerTest extends ApplicationTest {
     /**
      * Test functionality of JSON Parser which will convert String JSON response from the server into a Set of {@link
      * BiolarkResult} objects.
-     *
-     * @throws Exception
      */
     @Test
     public void decodeResultsTest() throws Exception {
@@ -199,8 +187,6 @@ public class PresentControllerTest extends ApplicationTest {
 
     /**
      * Populate controller with test data.
-     * @throws Exception
-     *
      */
     private void intitializeController() throws Exception {
         String json = readFileFromClasspath(getClass().getResource("/payload/payload.json"));
@@ -209,4 +195,9 @@ public class PresentControllerTest extends ApplicationTest {
         Thread.sleep(500); // give JavaFX Thread time to load results
     }
 
+    @Override
+    protected Parent getRootNode() {
+        controller = new PresentController(ontology);
+        return FXMLDialog.loadParent(controller, getClass().getResource("/fxml/PresentView.fxml"));
+    }
 }

@@ -2,11 +2,19 @@ package org.monarchinitiative.hpotextmining;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
+import ontologizer.io.obo.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermContainer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 import org.monarchinitiative.hpotextmining.model.TextMiningResult;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -20,32 +28,34 @@ import java.util.Set;
  * Set<PhenotypeTerm> terms = new HashSet<>();      // set of PhenotypeTerms already present in the model
  * String textMiningUrl = http://example.com        // url of the text-mining server
  *
- * TextMiningAnalysis analysis = new TextMiningAnalysis(hpoPath, pmid, terms, textMiningUrl);
- * Optional<TextMiningResult> textMiningResult = analysis.run(stage);
- * textMiningResult.ifPresent(result -> {
+ * @Override
+ * public void start(Stage stage) throws Exception {
+ *     URL url = new URL(textMiningUrl);
+ *     TextMiningAnalysis analysis = new TextMiningAnalysis.TextMiningAnalysisBuilder()
+ *        .setOntology(ontology()).setURL(url).setPmid(pmid).setPhenotypeTerms(new HashSet<>()).build();
+ *     TextMiningResult results = analysis.run(stage);
+ *     System.err.println(results);
+ * }
  *
- *     // set of YES terms approved by the curator
- *     Set<PhenotypeTerm> yesTerms = result.getYesTerms();
  *
- *     // set of NOT terms approved by the curator
- *     Set<PhenotypeTerm> notTerms = result.getNotTerms();
- *
- *     // PMID of the publication
- *     String pmid = result.getPMID();
- *
- *     System.out.println("PMID: " + pmid);
- *     System.out.println("YES terms: " + yesTerms);
- *     System.out.println("NOT terms: " + notTerms);
- * });
- *
- *     </pre>
+ * public Ontology ontology() throws IOException, OBOParserException {
+ *     OBOParser parser = new OBOParser(new OBOParserFileInput(hpoPath), OBOParser.PARSE_DEFINITIONS);
+ *     String result = parser.doParse();
+ *     log.info(String.format("HPO file parse result: %s", result));
+ *     TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(),parser.getDate());
+ *     return Ontology.create(termContainer);
+ * }
+ * }
+ * </pre>
  * </p> Created by Daniel Danis on 8/1/17.
  */
 public class Main extends Application {
 
+    private static final Logger log = LogManager.getLogger();
+
     private String pmid = "12345";
 
-    private String hpoPath = "/home/ielis/ielis/HpoTextMining/src/test/resources/HP.obo";
+    private static String hpoPath = "/home/ielis/ielis/HpoTextMining/src/test/resources/HP.obo";
 
     private Set<PhenotypeTerm> terms = new HashSet<>();
 
@@ -60,23 +70,20 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) throws Exception {
+        URL url = new URL(textMiningUrl);
+        TextMiningAnalysis analysis = new TextMiningAnalysis.TextMiningAnalysisBuilder()
+                .setOntology(ontology()).setURL(url).setPmid(pmid).setPhenotypeTerms(new HashSet<>()).build();
+        TextMiningResult results = analysis.run(stage);
+        System.err.println(results);
+    }
 
-        TextMiningAnalysis analysis = new TextMiningAnalysis(hpoPath, pmid, terms, textMiningUrl);
-        Optional<TextMiningResult> textMiningResult = analysis.run(stage);
-        textMiningResult.ifPresent(result -> {
-
-            // set of YES terms approved by the curator
-            Set<PhenotypeTerm> yesTerms = result.getYesTerms();
-
-            // set of NOT terms approved by the curator
-            Set<PhenotypeTerm> notTerms = result.getNotTerms();
-
-            // PMID of the publication
-            String pmid = result.getPMID();
-
-            System.out.println("PMID: " + pmid);
-            System.out.println("YES terms: " + yesTerms);
-            System.out.println("NOT terms: " + notTerms);
-        });
+    private static Ontology ontology() throws IOException, OBOParserException {
+        OBOParser parser = new OBOParser(new OBOParserFileInput(hpoPath),
+                OBOParser.PARSE_DEFINITIONS);
+        String result = parser.doParse();
+        log.info(String.format("HPO file parse result: %s", result));
+        TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
+                .getDate());
+        return Ontology.create(termContainer);
     }
 }
