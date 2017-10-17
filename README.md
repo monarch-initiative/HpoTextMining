@@ -19,7 +19,7 @@ The ***HpoTextMining*** presents a dialog window to the curator/user. The dialog
 
 ```bash
 git clone https://github.com/ielis/HpoTextMining.git; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
-git checkout ${project.version}  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
+git checkout v${project.version}  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
 mvn clean    # clean the repo before installation
 mvn install  # run the installation
 ```
