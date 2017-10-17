@@ -91,6 +91,7 @@ public class HPOTextMining {
     public TextMiningResult runAnalysis() {
         HPOAnalysisController controller = new HPOAnalysisController(ontology, textminingServer);
         controller.addPhenotypeTerms(terms);
+        controller.setPmid(pmid);
         FXMLDialog dialog = new FXMLDialog.FXMLDialogBuilder()
                 .setModality(Modality.NONE)
                 .setFXML(getClass().getResource("/fxml/HPOAnalysisView.fxml"))

@@ -30,12 +30,25 @@ public class ConfigureControllerTest extends ApplicationTest {
 
 
     /**
-     * Test input to pmid text field.
+     * Test setting PMID using setter.
      *
      * @throws Exception bla
      */
     @Test
-    public void testPmid() throws Exception {
+    public void testSettingPmid() throws Exception {
+        assertThat(controller.getPmid(), is(""));
+        controller.setPmid("16543");
+        assertThat(controller.getPmid(), is("16543"));
+    }
+
+
+    /**
+     * Test typing to pmid text field.
+     *
+     * @throws Exception bla
+     */
+    @Test
+    public void testTypingPmid() throws Exception {
         clickOn("#pmidTextField").write("131");
         assertThat(controller.getPmid(), is("131"));
     }
