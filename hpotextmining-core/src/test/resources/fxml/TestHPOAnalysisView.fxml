@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.3" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.controller.HPOAnalysisController">
+  <items>
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" minWidth="300.0">
+        <content>
+            <StackPane fx:id="treeViewStackPane" />
+        </content>
+      </ScrollPane>
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308">
+         <content>
+            <SplitPane dividerPositions="0.6829573934837093" minHeight="600.0" minWidth="835.0" orientation="VERTICAL">
+              <items>
+                  <StackPane fx:id="textMiningStackPane" />
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label text="Approved terms" VBox.vgrow="NEVER">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </VBox.margin>
+                        </Label>
+                        <TableView fx:id="hpoTermsTableView" prefWidth="1040.0" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="hpoIdTableColumn" editable="false" maxWidth="150.0" prefWidth="120.0" text="ID" />
+                              <TableColumn fx:id="observedTableColumn" editable="false" maxWidth="200.0" prefWidth="120.0" text="Observed" />
+                            <TableColumn fx:id="hpoNameTableColumn" editable="false" maxWidth="500.0" prefWidth="250.0" text="Name" />
+                              <TableColumn fx:id="definitionTableColumn" editable="false" maxWidth="600.0" prefWidth="600.0" text="Definition" />
+                          </columns>
+                        </TableView>
+                        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                           <children>
+                              <Button fx:id="removeButton" maxHeight="30.0" maxWidth="130.0" minHeight="30.0" minWidth="130.0" mnemonicParsing="false" onAction="#removeButtonAction" text="Remove" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="Remove selected term from approved terms" wrapText="true" />
+                                 </tooltip>
+                              </Button>
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button layoutX="808.0" layoutY="15.0" maxHeight="30.0" maxWidth="130.0" minHeight="30.0" minWidth="130.0" mnemonicParsing="false" onAction="#okButtonAction" text="OK" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </HBox.margin>
+                                 <tooltip>
+                                    <Tooltip text="Accept approved terms and close the window" wrapText="true" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </content>
+      </ScrollPane>
+  </items>
+</SplitPane>

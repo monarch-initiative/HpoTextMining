@@ -1,17 +1,27 @@
-# Hpo text mining plugin
-Perform text mining for identification  of HPO terms in free text from scientific publication.
+# HpoTextMining
+***HpoTextMining*** allows convenient curation of phenotype information
 
-## What is this for?
-TODO
+## Aim
+The aim of ***HpoTextMining*** is to allow easy & convenient curation of phenotypic information using Human Phenotype Ontology (HPO).
+The software is designed to be a plugin in more complex curation software built using *JavaFX* framework.
 
 ## How to use
+The ***HpoTextMining*** presents a dialog window to the curator/user. The dialog window consists of following subparts:
+
+- **approved terms table** - table (at the bottom) that contains the approved phenotype terms. The terms which are inside the table will be returned as results after closing or hitting OK button of the dialog
+- **ontology tree pane** - tree hierarchy of the ontology is displayed on the left side of the dialog. User can expand individual levels and add selected terms into the approved terms table
+- **text-mining pane** - place where user submits a query text that is mined for HPO terms. Then, results of the analysis are presented in the same pane
+
+
+## How to use in *JavaFX* app
 ### Installation to local Maven repository
-The plugin is designed to be used as a part of other application that is created using JavaFX platform. It is also a Maven project, but it is not available from Maven Central Repository yet. Therefore, to be able to use the plugin as Maven dependency, it is neccessary to perform installation into local repository.
+*HpoTextMining* is a Maven project, but it is not available from Maven Central Repository yet. Therefore, in order to use the plugin as a Maven dependency, it is neccessary to install specific version into the local Maven repository first.
 
 ```bash
-git clone https://github.com/ielis/HpoTextMining.git
-cd HpoTextMining
-mvn install
+git clone https://github.com/ielis/HpoTextMining.git; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
+git checkout v${project.version}  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
+mvn clean    # clean the repo before installation
+mvn install  # run the installation
 ```
 
 ### Adding as Maven dependency
@@ -19,33 +29,9 @@ After installation, add following into `pom.xml` file of the project where you w
 ```
 <dependency>
 	<groupId>org.monarchinitiative</groupId>
-	<artifactId>hpotextmining</artifactId>
+	<artifactId>hpotextmining-core</artifactId>
 	<version>${project.version}</version>
 </dependency>
 ```
-### Plug into a JavaFX application
-Finally, usage of the plugin could look like this (see `Main` class):
-
-```java
-// omitted imports
-public class Main extends Application {
-
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		Optional<TextMiningResult> textMiningResult = TextMiningAnalysis.run();
-		if (textMiningResult.isPresent()) {
-			// data container with results
-			TextMiningResult result = textMiningResult.get();
-			
-			Set<Term> yesTerms = result.getYesTerms();   // set of YES terms approved by the curator
-			Set<Term> notTerms = result.getNotTerms();   // set of NOT terms approved by the curator
-			String pmid = result.getPMID();              // PMID of the publication
-			
-			// do something with results
-		}
-	}
-	
-	public static void main(String[] args) {
-		launch(args);
-}
-```
+### Plug into the app
+Read **Main** and **ApplicationConfig** classes of the *hpotextmining-demo* module to see how a usage of the plugin could look like.

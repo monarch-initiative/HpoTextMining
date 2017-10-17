@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.controller.OntologyTreeController">
+   <children>
+      <SplitPane dividerPositions="0.9" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
+        <items>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" text="HPO tree browser">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="10.0" right="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <TextField fx:id="searchTextField" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="180.0" promptText="Search for a term here.." HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <Button fx:id="goButton" defaultButton="true" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#goButtonAction" text="Go">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Search for the term in the ontology tree" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <TreeView fx:id="ontologyTreeView" maxHeight="1.7976931348623157E308" minHeight="200.0" VBox.vgrow="SOMETIMES" />
+               </children>
+            </VBox>
+            <VBox maxHeight="400.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <WebView fx:id="infoWebView" minHeight="200.0" minWidth="-1.0" prefHeight="250.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                     <children>
+                        <CheckBox fx:id="notPresentCheckBox" mnemonicParsing="false" text="NOT present">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Check if the term was absent" />
+                           </tooltip>
+                        </CheckBox>
+                        <Button fx:id="addButton" alignment="CENTER" minHeight="30.0" minWidth="130.0" mnemonicParsing="false" onAction="#addButtonAction" text="Add" HBox.hgrow="NEVER">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                           <tooltip>
+                              <Tooltip text="Add selected term to approved terms table" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+        </items>
+      </SplitPane>
+   </children>
+</VBox>
