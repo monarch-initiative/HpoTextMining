@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Driver class for plugging the software into other <em>JavaFX</em> app.
+ *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.1.0
  * @since 0.1
@@ -32,7 +34,7 @@ public class HPOTextMining {
 
 
     /**
-     * Create instance of HPOTextMining.
+     * Create instance of HPOTextMining & initialize resources.
      *
      * @param ontology         {@link Ontology} with HPO term hierarchy
      * @param textminingServer {@link URL} pointing to text mining server

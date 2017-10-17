@@ -5,34 +5,48 @@ import com.genestalker.springscreen.core.FXMLDialog;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.monarchinitiative.hpotextmining.TextMiningResult;
 import org.monarchinitiative.hpotextmining.model.PhenotypeTerm;
-import org.monarchinitiative.hpotextmining.util.WidthAwareTextFields;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.function.Consumer;
 
 /**
- * This class acts as the controller of the main dialog window of the HPO text-mining analysis. It contains multiple
- * subparts: <ul><li><b>text-mining pane</b> - place where user submits a query text that is mined for HPO terms. The
- * results of analysis are presented in the same pane</li><li><b>summary pane</b> - contains field for manual lookup of
- * HPO terms which offers autocompletion and table displaying accepted terms that will be returned as results.</li></ul>
+ * This class acts as the controller of the main dialog window of the HPO dialog. The dialog window can be divided
+ * into these subparts:
+ * <ul>
+ * <li><b>ontology tree pane</b> - tree hierarchy of the ontology is presented here</li>
+ * <li><b>text-mining pane</b> - place where user submits a query text that is mined for HPO terms. The results
+ * of the analysis are then presented in the same pane</li>
+ * <li><b>approved terms</b> - table with the approved terms</li>
+ * </ul>
+ * <p>
+ * The terms which are inside the <em>approved terms</em> table will be wrapped into {@link TextMiningResult} and
+ * returned as results after closing the dialog.
+ *
+ * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
+ * @version 0.1.0
+ * @since 0.1
  */
 public class HPOAnalysisController implements DialogController {
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private ConfigureController configureController;
 
     private PresentController presentController;
 
-    private Ontology ontology;
+    private OntologyTreeController ontologyTreeController;
 
     private Parent configurePane;
 
@@ -46,31 +60,17 @@ public class HPOAnalysisController implements DialogController {
      */
     private Set<PhenotypeTerm> terms = new HashSet<>();
 
-    /**
-     * Map of term names to term IDs.
-     */
-    private Map<String, String> labels = new HashMap<>();
-
-    /**
-     * TODO - implement presentation of HPO term Treeview structure on the left side of the dialog.
-     */
     @FXML
-    private AnchorPane treeViewAnchorPane;
+    private StackPane treeViewStackPane;
 
     @FXML
     private StackPane textMiningStackPane;
 
+    /**
+     * Clicking on this button invokes action described in {@link #removeButtonAction()}.
+     */
     @FXML
-    private TextField addTermTextField;
-
-    @FXML
-    private CheckBox notObservedCheckBox;
-
-    @FXML
-    private Button addTermButton;
-
-    @FXML
-    private Button removeTermButton;
+    private Button removeButton;
 
     /**
      * This table contains accepted {@link PhenotypeTerm}s.
@@ -92,17 +92,20 @@ public class HPOAnalysisController implements DialogController {
 
 
     /**
-     * Create controller.
+     * Create the controller.
      *
      * @param ontology         {@link Ontology} containing HPO terms
      * @param textMiningServer {@link URL} pointing to server that performs text-mining analysis
      */
     public HPOAnalysisController(Ontology ontology, URL textMiningServer) {
-        this.ontology = ontology;
 
         this.configureController = new ConfigureController(textMiningServer);
 
         this.presentController = new PresentController(ontology);
+
+        // This action will be run after user approves a PhenotypeTerm in the ontologyTreePane
+        Consumer<PhenotypeTerm> addHook = (ph -> hpoTermsTableView.getItems().add(ph));
+        this.ontologyTreeController = new OntologyTreeController(ontology, addHook);
 
         configureController.setSignal(signal -> {
             switch (signal) {
@@ -112,10 +115,10 @@ public class HPOAnalysisController implements DialogController {
                     textMiningStackPane.getChildren().add(presentPane);
                     break;
                 case FAILED:
-                    log.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
+                    LOGGER.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
                     break;
                 case CANCELLED:
-                    log.warn("Text mining analysis cancelled");
+                    LOGGER.warn("Text mining analysis cancelled");
                     break;
             }
         });
@@ -128,10 +131,10 @@ public class HPOAnalysisController implements DialogController {
                     textMiningStackPane.getChildren().add(configurePane);
                     break;
                 case FAILED:
-                    log.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
+                    LOGGER.warn("Sorry, text mining analysis failed."); // TODO - improve cancellation & failed handling
                     break;
                 case CANCELLED:
-                    log.warn("Text mining analysis cancelled");
+                    LOGGER.warn("Text mining analysis cancelled");
                     break;
             }
         });
@@ -152,6 +155,7 @@ public class HPOAnalysisController implements DialogController {
     public void setDialog(FXMLDialog dialog) {
         this.dialog = dialog;
     }
+
 
     /**
      * Get set of approved {@link PhenotypeTerm}s.
@@ -180,26 +184,11 @@ public class HPOAnalysisController implements DialogController {
 
 
     /**
-     * The end of analysis. Close the main dialog window.
+     * The end of analysis. Close the dialog window.
      */
     @FXML
     void okButtonAction() {
         dialog.close();
-    }
-
-
-    /**
-     * Add term that has been entered into textfield into the table.
-     */
-    @FXML
-    void addTermButtonAction() {
-        String id = labels.get(addTermTextField.getText());
-        if (id != null) {
-            Term term = ontology.getTerm(id);
-            hpoTermsTableView.getItems().add(new PhenotypeTerm(term, !notObservedCheckBox.isSelected()));
-            addTermTextField.clear();
-            notObservedCheckBox.setSelected(false);
-        }
     }
 
 
@@ -220,19 +209,24 @@ public class HPOAnalysisController implements DialogController {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // initialize behaviour of columns of the TableView
         hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getHpoId()));
         hpoNameTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getName()));
         observedTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper((cdf.getValue().isPresent()) ? "YES"
                 : "NOT"));
         definitionTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getDefinition()));
 
+        // populate sub-components of this dialog
         configurePane = FXMLDialog.loadParent(configureController, getClass().getResource("/fxml/ConfigureView.fxml"));
         presentPane = FXMLDialog.loadParent(presentController, getClass().getResource("/fxml/PresentView.fxml"));
-
         textMiningStackPane.getChildren().add(configurePane);
 
-        ontology.getTermMap().forEach(term -> labels.put(term.getName().toString(), term.getIDAsString()));
-        WidthAwareTextFields.bindWidthAwareAutoCompletion(addTermTextField, labels.keySet());
+        Parent ontologyViewPane = FXMLDialog.loadParent(ontologyTreeController,
+                getClass().getResource("/fxml/OntologyTreeView.fxml"));
+        treeViewStackPane.getChildren().add(ontologyViewPane);
+
+        if (!terms.isEmpty())
+            hpoTermsTableView.getItems().addAll(terms);
     }
 
 

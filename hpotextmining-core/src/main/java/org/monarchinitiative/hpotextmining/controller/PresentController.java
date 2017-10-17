@@ -26,14 +26,15 @@ import static org.monarchinitiative.hpotextmining.controller.HPOAnalysisControll
 
 /**
  * This class is responsible for displaying the results of performed text-mining analysis. <p>The controller accepts
- * response from the server performing text-mining analysis in JSON format and the analyzed text. The analyzed text is
- * presented and regions of text based on which the putative HPO terms were identified are highlighted. Tooltips
- * containing the HPO term id & name are also created for these regions.
+ * response from the server performing text-mining analysis in JSON format and the analyzed text. The analyzed text
+ * with highlighted term-containing regions is presented to the user. Tooltips containing the HPO term id & name are
+ * also created for the highlighted regions.
  * <p>
  * Identified <em>YES</em> and <em>NOT</em> HPO terms are displayed on the right side of the screen as a set of
  * checkboxes. The user/biocurator is supposed to review the analyzed text and select those checkboxes that have been
- * identified correctly. After selection, it is necessary
+ * identified correctly.
  * <p>
+ * Selected terms must be approved with <em>Add selected terms</em> button in order to add them into the model.
  *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.1.0
@@ -141,6 +142,8 @@ public class PresentController implements Initializable {
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getStart());
             Term term = ontology.getTerm(result.getTerm().getId());
+            if (term == null)
+                continue;
 
             htmlBuilder.append(
                     // highlighted text
@@ -271,7 +274,7 @@ public class PresentController implements Initializable {
      *
      * @param jsonResponse JSON string to be parsed.
      * @return set of {@link BiolarkResult} objects.
-     * @throws IOException
+     * @throws IOException in case of parsing problems
      */
     static Set<BiolarkResult> decodePayload(String jsonResponse) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

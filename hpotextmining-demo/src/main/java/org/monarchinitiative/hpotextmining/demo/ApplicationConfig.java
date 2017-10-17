@@ -1,7 +1,6 @@
 package org.monarchinitiative.hpotextmining.demo;
 
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import ontologizer.io.obo.OBOParser;
 import ontologizer.io.obo.OBOParserException;
 import ontologizer.io.obo.OBOParserFileInput;
@@ -27,10 +26,10 @@ import java.net.URL;
  * @since 0.1
  */
 @Configuration
-@PropertySource("hpotextmining-demo.properties")
+@PropertySource("file:${properties.path}")
 public class ApplicationConfig {
 
-    private static final Logger log = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
     private Environment env;
@@ -45,7 +44,7 @@ public class ApplicationConfig {
      *
      * @return {@link HPOTextMining} object
      * @throws IOException        in case of I/O errors
-     * @throws OBOParserException in case of errors during parsing of <em>*.obo</em> ontology file
+     * @throws OBOParserException in case of errors during parsing of <em>*.obo</em> ONTOLOGY file
      */
     @Bean
     public HPOTextMining hpoTextMining() throws IOException, OBOParserException {
@@ -57,16 +56,15 @@ public class ApplicationConfig {
     /**
      * Parse <em>*.obo</em> file and create {@link Ontology} for {@link HPOTextMining} object.
      *
-     * @return {@link Ontology} representing the hierarchy of the ontology
-     * @throws IOException        if the path to <em>*.obo</em> ontology file is incorrect
-     * @throws OBOParserException if there is a problem with parsing of the ontology
+     * @return {@link Ontology} representing the hierarchy of the ONTOLOGY
+     * @throws IOException        if the path to <em>*.obo</em> ONTOLOGY file is incorrect
+     * @throws OBOParserException if there is a problem with parsing of the ONTOLOGY
      */
     private Ontology ontology() throws IOException, OBOParserException {
-        String hpoPath = env.getProperty("hpo.path");
-        OBOParser parser = new OBOParser(new OBOParserFileInput(hpoPath),
+        LOGGER.info(String.format("Loading obo from %s", env.getProperty("hp.obo.path")));
+        OBOParser parser = new OBOParser(new OBOParserFileInput(env.getProperty("hp.obo.path")),
                 OBOParser.PARSE_DEFINITIONS);
         String result = parser.doParse();
-        log.info(String.format("HPO file parse result: %s", result));
         TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
                 .getDate());
         return Ontology.create(termContainer);

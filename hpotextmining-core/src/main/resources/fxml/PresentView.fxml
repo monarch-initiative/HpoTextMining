@@ -5,57 +5,62 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.controller.PresentController">
+<VBox minHeight="400.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.controller.PresentController">
    <children>
-      <SplitPane dividerPositions="0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="700.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.75" VBox.vgrow="ALWAYS">
         <items>
-            <WebView fx:id="webView" prefWidth="400.0" />
-            <SplitPane dividerPositions="0.66" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-              <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                     <children>
-                        <Label text="HPO terms:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="5.0" layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
-                           <content>
-                              <VBox fx:id="yesTermsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="350.0" minWidth="150.0" />
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                     <children>
-                        <Label text="&quot;NOT&quot; HPO terms:" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
-                           <font>
-                              <Font name="System Bold" size="16.0" />
-                           </font>
-                        </Label>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="5.0" layoutY="30.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0">
-                           <content>
-                              <VBox fx:id="notTermsVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="160.0" />
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </AnchorPane>
-              </items>
-            </SplitPane>
+            <WebView fx:id="webView" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" />
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefWidth="220.0">
+               <content>
+                  <SplitPane dividerPositions="0.66" minWidth="195.0" orientation="VERTICAL">
+                    <items>
+                        <VBox>
+                           <children>
+                              <Label text="HPO terms:">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox fx:id="yesTermsVBox" minHeight="340.0" VBox.vgrow="SOMETIMES" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="&quot;NOT&quot; HPO terms:">
+                                 <font>
+                                    <Font name="System Bold" size="16.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <VBox fx:id="notTermsVBox" minHeight="160.0" VBox.vgrow="SOMETIMES" />
+                           </children>
+                        </VBox>
+                    </items>
+                  </SplitPane>
+               </content>
+            </ScrollPane>
         </items>
       </SplitPane>
       <HBox alignment="CENTER" VBox.vgrow="NEVER">
          <children>
             <Button alignment="CENTER" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#addTermsButtonAction" text="Add selected terms">
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
+               <tooltip>
+                  <Tooltip text="Add selected terms into the approved terms table" />
+               </tooltip>
             </Button>
          </children>
       </HBox>

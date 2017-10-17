@@ -10,6 +10,10 @@ import java.util.Comparator;
 
 /**
  * This class is a POJO containing attributes of HPO terms.
+ *
+ * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
+ * @version 0.1.0
+ * @since 0.1
  */
 public class PhenotypeTerm {
 
@@ -100,10 +104,10 @@ public class PhenotypeTerm {
 
         PhenotypeTerm that = (PhenotypeTerm) o;
 
-        if (isPresent() != that.isPresent()) return false;
-        if (!getHpoId().equals(that.getHpoId())) return false;
-        if (!getName().equals(that.getName())) return false;
-        return getDefinition() != null ? !getDefinition().equals(that.getDefinition()) : that.getDefinition() != null;
+        if (present != that.present) return false;
+        if (!hpoId.equals(that.hpoId)) return false;
+        if (!name.equals(that.name)) return false;
+        return definition.equals(that.definition);
     }
 
 
