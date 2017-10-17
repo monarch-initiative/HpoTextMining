@@ -7,12 +7,12 @@
     <parent>
         <artifactId>HpoTextMining</artifactId>
         <groupId>org.monarchinitiative</groupId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>hpotextmining-core</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>${parent.version}</version>
 
     <description>Use this module to perform text mining for HPO terms from publication.</description>
 
