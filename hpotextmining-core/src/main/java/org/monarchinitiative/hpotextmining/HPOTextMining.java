@@ -30,7 +30,7 @@ public class HPOTextMining {
 
     private Set<PhenotypeTerm> terms = new HashSet<>();
 
-    private String pmid;
+    private String pmid = "";
 
 
     /**
@@ -54,12 +54,12 @@ public class HPOTextMining {
 
 
     /**
-     * Set PMID string.
+     * Set PMID string. If null is passed, then <code>""</code> is set.
      *
      * @param pmid String with PMID that will be displayed in dialog
      */
     public void setPmid(String pmid) {
-        this.pmid = pmid;
+        this.pmid = (pmid == null) ? "" : pmid;
     }
 
 
