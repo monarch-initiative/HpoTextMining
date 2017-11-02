@@ -19,7 +19,7 @@ The ***HpoTextMining*** presents a dialog window to the curator/user. The dialog
 
 ```bash
 git clone https://github.com/monarch-initiative/HpoTextMining; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
-git checkout v${project.version}  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
+git checkout v0.2.0  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
 mvn clean    # clean the repo before installation
 mvn install  # run the installation
 ```
@@ -30,7 +30,7 @@ After installation, add following into `pom.xml` file of the project where you w
 <dependency>
 	<groupId>com.github.monarch-initiative</groupId>
 	<artifactId>hpotextmining-core</artifactId>
-	<version>${project.version}</version>
+	<version>0.2.0</version>
 </dependency>
 ```
 ### Plug into the app
