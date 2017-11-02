@@ -18,7 +18,7 @@ The ***HpoTextMining*** presents a dialog window to the curator/user. The dialog
 *HpoTextMining* is a Maven project, but it is not available from Maven Central Repository yet. Therefore, in order to use the plugin as a Maven dependency, it is neccessary to install specific version into the local Maven repository first.
 
 ```bash
-git clone https://github.com/ielis/HpoTextMining.git; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
+git clone https://github.com/monarch-initiative/HpoTextMining; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
 git checkout v${project.version}  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
 mvn clean    # clean the repo before installation
 mvn install  # run the installation
@@ -28,7 +28,7 @@ mvn install  # run the installation
 After installation, add following into `pom.xml` file of the project where you want to use the plugin.
 ```
 <dependency>
-	<groupId>org.monarchinitiative</groupId>
+	<groupId>com.github.monarch-initiative</groupId>
 	<artifactId>hpotextmining-core</artifactId>
 	<version>${project.version}</version>
 </dependency>

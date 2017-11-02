@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.monarchinitiative</groupId>
-    <artifactId>HpoTextMining</artifactId>
+    <groupId>com.github.monarch-initiative</groupId>
+    <artifactId>hpotextmining</artifactId>
     <packaging>pom</packaging>
     <version>0.1.0</version>
     <modules>
@@ -12,7 +12,9 @@
         <module>hpotextmining-demo</module>
     </modules>
     <name>HPO Text Mining</name>
-    <description>Use this module to perform text mining for HPO terms from publication.</description>
+    <description>Use this module to perform text mining for HPO terms</description>
+    <url>https://github.com/monarch-initiative/HpoTextMining.git</url>
+    <inceptionYear>2017</inceptionYear>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,17 +22,89 @@
         <jdk.version>1.8</jdk.version>
     </properties>
 
-    <build>
+    <licenses>
+        <license>
+            <name>3-clause BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
+    <developers>
+        <developer>
+            <name>Daniel Danis</name>
+            <email>daniel.danis@jax.org</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:monarch-initiative/HpoTextMining.git</connection>
+        <developerConnection>scm:git:git@github.com:monarch-initiative/HpoTextMining.git</developerConnection>
+        <url>scm:git:git@github.com:monarch-initiative/HpoTextMining.git</url>
+        <tag>hpotextmining-${project.version}</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>sonatype-oss-release</id>
+        </profile>
+    </profiles>
+
+    <build>
         <plugins>
+            <!-- To attach sources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- To attach javadocs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- override version of GPG plugin to use new GPG signing features -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -43,7 +117,6 @@
             <artifactId>log4j-core</artifactId>
             <version>2.8.2</version>
         </dependency>
-
 
     </dependencies>
 
