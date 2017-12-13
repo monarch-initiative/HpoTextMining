@@ -14,24 +14,13 @@ The ***HpoTextMining*** presents a dialog window to the curator/user. The dialog
 
 
 ## How to use in *JavaFX* app
-### Installation to local Maven repository
-*HpoTextMining* is a Maven project, but it is not available from Maven Central Repository yet. Therefore, in order to use the plugin as a Maven dependency, it is neccessary to install specific version into the local Maven repository first.
-
-```bash
-git clone https://github.com/monarch-initiative/HpoTextMining; cd HpoTextMining  # clone the repo into local filesystem & enter the directory
-git checkout v0.2.0  # checkout tag for installation of a specific release (e.g. not a SNAPSHOT version)
-mvn clean    # clean the repo before installation
-mvn install  # run the installation
-```
-
-### Adding as Maven dependency
-After installation, add following into `pom.xml` file of the project where you want to use the plugin.
+In order to use *HpoTextMining* in your project, add the following dependency into your `pom.xml` file.
 ```
 <dependency>
 	<groupId>com.github.monarch-initiative</groupId>
 	<artifactId>hpotextmining-core</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 </dependency>
 ```
-### Plug into the app
-Read **Main** and **ApplicationConfig** classes of the *hpotextmining-demo* module to see how a usage of the plugin could look like.
+## Example usage
+See `Main` and `ApplicationConfig` classes of the *hpotextmining-demo* module to see an example usage.
