@@ -19,7 +19,7 @@ In order to use *HpoTextMining* in your project, add the following dependency in
 <dependency>
 	<groupId>com.github.monarch-initiative</groupId>
 	<artifactId>hpotextmining-core</artifactId>
-	<version>0.2.0</version>
+	<version>0.2.1</version>
 </dependency>
 ```
 ## Example usage
