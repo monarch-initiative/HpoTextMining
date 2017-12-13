@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.model.BiolarkResult;
 import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -11,6 +12,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import netscape.javascript.JSObject;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +28,8 @@ import java.util.stream.Collectors;
  * This class is responsible for displaying the results of performed text-mining analysis. <p>The controller accepts
  * response from the server performing text-mining analysis in JSON format and the analyzed text. The analyzed text
  * with highlighted term-containing regions is presented to the user. Tooltips containing the HPO term id and name are
- * also created for the highlighted regions.
+ * also created for the highlighted regions. After clicking on the highlighted region, corresponding term is selected
+ * in the ontology TreeView (left part of the main window).
  * <p>
  * Identified <em>YES</em> and <em>NOT</em> HPO terms are displayed on the right side of the screen as a set of
  * checkboxes. The user/biocurator is supposed to review the analyzed text and select those checkboxes that have been
@@ -40,12 +43,15 @@ import java.util.stream.Collectors;
  */
 public class PresentController implements Initializable {
 
-    private static final Logger log = LogManager.getLogger(PresentController.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * Header of html with defined CSS for displaying tooltips. Tooltips will contain HPO id and label.
+     * Header of html defining CSS & JavaScript for the presented text. CSS defines style for tooltips and
+     * highlighted text. JavaScript code will allow focus on HPO term in the ontology treeview after clicking on the
+     * highlighted text.
      */
-    private static final String HTML_BEGIN = "<html><style> .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted black; }" +
+    private static final String HTML_HEAD = "<html><head>" +
+            "<style> .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted black; }" +
             ".tooltip .tooltiptext { visibility: hidden; width: 230px; background-color: #555; color: #fff; " +
             "text-align: left;" +
             " border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -60px;" +
@@ -53,16 +59,25 @@ public class PresentController implements Initializable {
             ".tooltip .tooltiptext::after { content: \"\"; position: absolute; top: 100%; left: 50%; margin-left: -5px;" +
             " border-width: 5px; border-style: solid; border-color: #555 transparent transparent transparent; }" +
             ".tooltip:hover .tooltiptext { visibility: visible; opacity: 1;}" +
-            "</style><body>" +
-            "<h2>HPO text-mining analysis results:</h2><p>";
+            "</style>" +
+            "<script>function focusOnTermJS(obj) {javafx_bridge.focusToTerm(obj);}</script>" +
+            "</head>";
+
+    private static final String HTML_BODY_BEGIN = "<body><h2>HPO text-mining analysis results:</h2><p>";
+
+    private static final String HTML_BODY_END = "</p></body></html>";
 
     /**
-     * Html template for highlighting the text based on which a HPO term has been identified. Contains two placeholders.
-     * The initial space is intentional (prevents lack of space between words with series of hits). <ol> <li>Text based
-     * on which a HPO term has been identified</li> <li>Tooltip text</li> </ol>
+     * Html template for highlighting the text based on which a HPO term has been identified. Contains three
+     * placeholders: <ol>
+     * <li>HPO term ID (param for javascript, it will be used to focus on HPO term in the ontology tree)</li>
+     * <li>part of the query text based on which the HPO term has been identified</li>
+     * <li>tooltip text</li> </ol>
+     * The initial space is intentional, it prevents lack of space between words with series of hits.
      */
-    private static final String HIGHLIGHTED_TEMPLATE = " <b><span class=\"tooltip\" style=\"color:red\">%s" +
-            "<span class=\"tooltiptext\">%s</span></span></b>";
+    private static final String HIGHLIGHTED_TEMPLATE = " " +
+            "<span class=\"tooltip\" style=\"color:red;\" onclick=\"focusOnTermJS('%s')\">%s" +
+            "<span class=\"tooltiptext\">%s</span></span>";
 
     /**
      * Template for tooltips which appear when cursor hovers over highlighted terms.
@@ -77,7 +92,11 @@ public class PresentController implements Initializable {
     @FXML
     private WebView webView;
 
+    private WebEngine webEngine;
+
     private Consumer<HPOAnalysisController.Signal> signal;
+
+    private Consumer<String> focusToTermHook = (e) -> LOGGER.warn("Unable to focus on term, hook is unset");
 
     /**
      * Box on the right side of the screen where "YES" Terms will be added.
@@ -118,16 +137,26 @@ public class PresentController implements Initializable {
 
 
     /**
-     * Use set of {@link BiolarkResult} objects to colorize regions of analyzed text based on which the HPO terms have
-     * been identified. Generate HTML content that will be presented to the curator.
-     *
-     * @param resultSet set of {@link BiolarkResult} objects.
-     * @param minedText string with mined text.
-     * @return html content to be presented to the curator.
+     * @param hook {@link Consumer} that will accept String with HPO term ID in order to show the term in ontology
+     *             tree view
      */
-    String colorizeHTML(Set<BiolarkResult> resultSet, String minedText) {
+    void setFocusToTermHook(Consumer<String> hook) {
+        this.focusToTermHook = hook;
+    }
+
+
+    /**
+     * Use set of {@link BiolarkResult} objects to colorize regions of analyzed (query) text based on which the HPO
+     * terms have been identified. Generated HTML content will be presented to the curator in the {@link #webView}.
+     *
+     * @param resultSet Set of {@link BiolarkResult} objects
+     * @param minedText String with mined (query) text
+     * @return String in HTML format that will be displayed in the {@link #webView}
+     */
+    private String colorizeHTML(Set<BiolarkResult> resultSet, String minedText) {
         StringBuilder htmlBuilder = new StringBuilder();
-        htmlBuilder.append(HTML_BEGIN);
+        htmlBuilder.append(HTML_HEAD);
+        htmlBuilder.append(HTML_BODY_BEGIN);
 
         // sort to process minedText sequentially.
         List<BiolarkResult> sortedResults = resultSet.stream()
@@ -145,7 +174,9 @@ public class PresentController implements Initializable {
 
             htmlBuilder.append(
                     // highlighted text
-                    String.format(HIGHLIGHTED_TEMPLATE, minedText.substring(start, result.getEnd()),
+                    String.format(HIGHLIGHTED_TEMPLATE,
+                            term.getIDAsString(),
+                            minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
                             String.format(TOOLTIP_TEMPLATE, term.getIDAsString(), term.getName().toString())));
@@ -155,8 +186,8 @@ public class PresentController implements Initializable {
 
         // process last part of mined text, if there is any
         htmlBuilder.append(minedText.substring(offset));
-        htmlBuilder.append("</p>");
-        htmlBuilder.append("</body></html>");
+        htmlBuilder.append(HTML_BODY_END);
+        // get rid of double spaces
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
     }
 
@@ -176,7 +207,16 @@ public class PresentController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // no-op
+        webEngine = webView.getEngine();
+        // register JavaBridge object in the JavaScript engine of the webEngine
+        webEngine.getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                JSObject win = (JSObject) webEngine.executeScript("window");
+                win.setMember("javafx_bridge", new JavaBridge());
+                // redirect JavaScript console.LOGGER() to sysout defined in the JavaBridge
+                webEngine.executeScript("console.log = function(message) {javafx_bridge.log(message);};");
+            }
+        });
     }
 
 
@@ -193,7 +233,7 @@ public class PresentController implements Initializable {
         try {
             results.addAll(decodePayload(jsonResult));
         } catch (IOException e) {
-            log.warn(e);
+            LOGGER.warn(e);
             e.printStackTrace();
         }
 
@@ -219,8 +259,7 @@ public class PresentController implements Initializable {
         notTermsVBox.getChildren().addAll(notTerms);
 
         String html = colorizeHTML(results, minedText);
-        WebEngine engine = webView.getEngine();
-        engine.loadContent(html);
+        webEngine.loadContent(html);
     }
 
 
@@ -274,9 +313,29 @@ public class PresentController implements Initializable {
      * @return set of {@link BiolarkResult} objects.
      * @throws IOException in case of parsing problems
      */
-    static Set<BiolarkResult> decodePayload(String jsonResponse) throws IOException {
+    private static Set<BiolarkResult> decodePayload(String jsonResponse) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
         return mapper.readValue(jsonResponse, javaType);
+    }
+
+
+    /**
+     * This class is the bridge between JavaScript run in the {@link #webView} and Java code.
+     */
+    public class JavaBridge {
+
+        public void log(String message) {
+            LOGGER.info(message);
+        }
+
+
+        /**
+         * @param termId String like HP:1234567
+         */
+        public void focusToTerm(String termId) {
+            LOGGER.debug("Focusing on term with ID {}", termId);
+            focusToTermHook.accept(termId);
+        }
     }
 }

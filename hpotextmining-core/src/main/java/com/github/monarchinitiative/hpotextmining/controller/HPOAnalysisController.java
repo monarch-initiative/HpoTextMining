@@ -138,6 +138,9 @@ public class HPOAnalysisController implements DialogController {
                     break;
             }
         });
+
+        // clicking on the highlighted text chunk will show the corresponding item in the ontology TreeView
+        presentController.setFocusToTermHook(ontologyTreeController::focusOnTerm);
     }
 
 

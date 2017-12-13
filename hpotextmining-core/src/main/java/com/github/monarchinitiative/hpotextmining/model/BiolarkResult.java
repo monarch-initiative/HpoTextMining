@@ -26,6 +26,7 @@ public class BiolarkResult {
 
     private final boolean negated;
 
+
     /**
      * Create instance from single response object. This instance contains coordinates of the "term-containing"
      * substring within the analyzed text.
@@ -55,45 +56,41 @@ public class BiolarkResult {
         this.negated = negated;
     }
 
-    public static Comparator<BiolarkResult> compareByStart() {
-        return (left, right) -> ComparisonChain.start()
-                .compare(left.getStart(), right.getStart())
-                .result();
-    }
-
-    public static Comparator<BiolarkResult> compareByName() {
-        return (left, right) -> ComparisonChain.start()
-                .compare(left.getTerm().getLabel(), right.getTerm().getLabel())
-                .result();
-    }
 
     public int getStart() {
         return start;
     }
 
+
     public int getEnd() {
         return end;
     }
+
 
     public int getLength() {
         return length;
     }
 
+
     public String getOriginal_text() {
         return original_text;
     }
+
 
     public String getSource() {
         return source;
     }
 
+
     public SimpleBiolarkTerm getTerm() {
         return term;
     }
 
+
     public boolean isNegated() {
         return negated;
     }
+
 
     @Override
     public int hashCode() {
@@ -106,6 +103,7 @@ public class BiolarkResult {
         result = 31 * result + (negated ? 1 : 0);
         return result;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -123,6 +121,7 @@ public class BiolarkResult {
         return term.equals(that.term);
     }
 
+
     @Override
     public String toString() {
         return "BiolarkResult{" +
@@ -134,5 +133,27 @@ public class BiolarkResult {
                 ", term=" + term +
                 ", negated=" + negated +
                 '}';
+    }
+
+
+    /**
+     * @return {@link Comparator} for sorting {@link BiolarkResult}s by their {@link BiolarkResult#start} attribute in
+     * ascending order
+     */
+    public static Comparator<BiolarkResult> compareByStart() {
+        return (left, right) -> ComparisonChain.start()
+                .compare(left.getStart(), right.getStart())
+                .result();
+    }
+
+
+    /**
+     * @return {@link Comparator} for sorting {@link BiolarkResult}s by alphabetic sorting of the HPO label in
+     * ascending order
+     */
+    public static Comparator<BiolarkResult> compareByName() {
+        return (left, right) -> ComparisonChain.start()
+                .compare(left.getTerm().getLabel(), right.getTerm().getLabel())
+                .result();
     }
 }

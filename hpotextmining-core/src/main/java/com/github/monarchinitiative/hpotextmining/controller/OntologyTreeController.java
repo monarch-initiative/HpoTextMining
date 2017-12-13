@@ -176,6 +176,21 @@ public class OntologyTreeController implements DialogController {
 
 
     /**
+     * Focus on the HPO term with given ID if the term is contained in the ontology.
+     *
+     * @param termId String with HPO term id (e.g. HP:0002527 for Falls)
+     */
+    void focusOnTerm(String termId) {
+        Term term = ontology.getTerm(termId);
+        if (term == null) {
+            LOGGER.warn("Unable to focus on term with id {} because it is not defined in the ontology", termId);
+            return;
+        }
+        expandUntilTerm(term);
+    }
+
+
+    /**
      * Find the path from the root term to given {@link Term}, expand the tree and set the selection model of the
      * TreeView to the term position.
      *
