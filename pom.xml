@@ -10,6 +10,7 @@
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
+        <module>hpotextmining-gui</module>
     </modules>
     <name>HPO Text Mining</name>
     <description>Use this module to perform text mining for HPO terms</description>
