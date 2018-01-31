@@ -24,3 +24,7 @@ In order to use *HpoTextMining* in your project, add the following dependency in
 ```
 ## Example usage
 See `Main` and `ApplicationConfig` classes of the *hpotextmining-demo* module to see an example usage.
+
+## Services used
+
+ * [Monarch BioLark instance](https://phenotyper.monarchinitiative.org:5678)
