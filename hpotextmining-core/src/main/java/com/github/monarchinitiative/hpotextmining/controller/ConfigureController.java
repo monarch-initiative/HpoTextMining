@@ -28,6 +28,7 @@ import static com.github.monarchinitiative.hpotextmining.controller.HPOAnalysisC
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public class ConfigureController implements Initializable {
 
 

@@ -38,6 +38,7 @@ import java.util.function.Consumer;
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public class HPOAnalysisController implements DialogController {
 
     private static final Logger LOGGER = LogManager.getLogger();

@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
  * @version 0.2.1
  * @since 0.2
  */
-public class UTF8Control extends ResourceBundle.Control {
+public final class UTF8Control extends ResourceBundle.Control {
 
     private String charsetName = "UTF-8";
 

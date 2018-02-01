@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public class PresentController implements Initializable {
 
     private static final Logger LOGGER = LogManager.getLogger();
