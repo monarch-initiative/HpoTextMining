@@ -2,8 +2,7 @@ package com.github.monarchinitiative.hpotextmining;
 
 import com.genestalker.springscreen.core.FXMLDialog;
 import com.github.monarchinitiative.hpotextmining.controller.HPOAnalysisController;
-import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
-import com.github.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
+//import com.github.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
@@ -20,6 +19,7 @@ import java.util.Set;
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public class HPOTextMining {
 
     private final Window owner;
@@ -28,7 +28,7 @@ public class HPOTextMining {
 
     private final URL textminingServer;
 
-    private Set<PhenotypeTerm> terms = new HashSet<>();
+//    private Set<PhenotypeTerm> terms = new HashSet<>();
 
     private String pmid = "";
 
@@ -68,9 +68,9 @@ public class HPOTextMining {
      *
      * @return copy of {@link Set} with approved {@link PhenotypeTerm}s
      */
-    public Set<PhenotypeTerm> getTerms() {
-        return new HashSet<>(terms);
-    }
+//    public Set<PhenotypeTerm> getTerms() {
+//        return new HashSet<>(terms);
+//    }
 
 
     /**
@@ -78,9 +78,9 @@ public class HPOTextMining {
      *
      * @param terms {@link Set} of {@link PhenotypeTerm}s to display
      */
-    public void addTerms(Set<PhenotypeTerm> terms) {
-        this.terms.addAll(terms);
-    }
+//    public void addTerms(Set<PhenotypeTerm> terms) {
+//        this.terms.addAll(terms);
+//    }
 
 
     /**
@@ -90,17 +90,18 @@ public class HPOTextMining {
      */
     public TextMiningResult runAnalysis() {
         HPOAnalysisController controller = new HPOAnalysisController(ontology, textminingServer);
-        controller.addPhenotypeTerms(terms);
+//        controller.addPhenotypeTerms(terms);
         controller.setPmid(pmid);
         FXMLDialog dialog = new FXMLDialog.FXMLDialogBuilder()
                 .setModality(Modality.NONE)
                 .setFXML(getClass().getResource("/fxml/HPOAnalysisView.fxml"))
-                .setDialogController(controller)
+//                .setDialogController(controller)
                 .setStageStyle(StageStyle.DECORATED)
                 .setOwner(owner)
                 .build();
         dialog.showAndWait();
-        return new SimpleTextMiningResult(controller.getPhenotypeTerms(), controller.getPmid());
+//        return new SimpleTextMiningResult(controller.getPhenotypeTerms(), controller.getPmid());
+        return null;
     }
 
 }

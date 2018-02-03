@@ -1,4 +1,4 @@
-package com.github.monarchinitiative.hpotextmining.util;
+package com.github.monarchinitiative.hpotextmining.gui.util;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import impl.org.controlsfx.autocompletion.SuggestionProvider;
@@ -7,7 +7,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding;
 
 import java.util.Collection;
 
-public class WidthAwareTextFields {
+public final class WidthAwareTextFields {
 
     /**
      * Create autocompletion binding between given {@link TextField} instance and Collection of possible suggestions.

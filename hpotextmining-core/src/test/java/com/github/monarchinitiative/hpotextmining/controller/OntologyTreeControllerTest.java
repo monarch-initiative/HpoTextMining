@@ -59,7 +59,7 @@ public class OntologyTreeControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        controller = new OntologyTreeController(ontology, pt -> {/* do nothing*/});
+//        controller = new OntologyTreeController(ontology, pt -> {/* do nothing*/});
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestOntologyTreeView.fxml"));
         loader.setControllerFactory(param -> controller);
         Scene scene = new Scene(loader.load());

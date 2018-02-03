@@ -1,6 +1,5 @@
 package com.github.monarchinitiative.hpotextmining;
 
-import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 
 import java.util.Set;
 
@@ -11,6 +10,7 @@ import java.util.Set;
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public interface TextMiningResult {
 
     /**
@@ -18,7 +18,7 @@ public interface TextMiningResult {
      *
      * @return {@link Set} of {@link PhenotypeTerm}s
      */
-    Set<PhenotypeTerm> getTerms();
+//    Set<PhenotypeTerm> getTerms();
 
     /**
      * Get string with PMID of the publication which was used in biocuration.

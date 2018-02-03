@@ -2,8 +2,6 @@ package com.github.monarchinitiative.hpotextmining.controller;
 
 import com.genestalker.springscreen.core.DialogController;
 import com.genestalker.springscreen.core.FXMLDialog;
-import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
-import com.github.monarchinitiative.hpotextmining.util.WidthAwareTextFields;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,14 +35,16 @@ import java.util.stream.Collectors;
  * @since 0.1
  */
 @Deprecated
-public class OntologyTreeController implements DialogController {
+public class OntologyTreeController
+//        implements DialogController
+{
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Approved {@link PhenotypeTerm} is submitted here.
      */
-    private final Consumer<PhenotypeTerm> addHook;
+//    private final Consumer<PhenotypeTerm> addHook;
 
     /**
      * Ontology object containing {@link Term}s and their relationships.
@@ -106,10 +106,10 @@ public class OntologyTreeController implements DialogController {
      * @param ontology {@link Ontology} object containing the term hierarchy and relationships.
      * @param addHook  {@link Consumer} for approved {@link PhenotypeTerm}s.
      */
-    public OntologyTreeController(Ontology ontology, Consumer<PhenotypeTerm> addHook) {
-        this.ontology = ontology;
-        this.addHook = addHook;
-    }
+//    public OntologyTreeController(Ontology ontology, Consumer<PhenotypeTerm> addHook) {
+//        this.ontology = ontology;
+//        this.addHook = addHook;
+//    }
 
 
     /**
@@ -131,22 +131,22 @@ public class OntologyTreeController implements DialogController {
      */
     @FXML
     private void addButtonAction() {
-        if (ontologyTreeView.getSelectionModel().getSelectedItem() != null) {
-            PhenotypeTerm phenotypeTerm = new PhenotypeTerm(
-                    ontologyTreeView.getSelectionModel().getSelectedItem().getValue(), !notPresentCheckBox.isSelected());
-            addHook.accept(phenotypeTerm);
-        }
-        notPresentCheckBox.setSelected(false);
+//        if (ontologyTreeView.getSelectionModel().getSelectedItem() != null) {
+//            PhenotypeTerm phenotypeTerm = new PhenotypeTerm(
+//                    ontologyTreeView.getSelectionModel().getSelectedItem().getValue(), !notPresentCheckBox.isSelected());
+//            addHook.accept(phenotypeTerm);
+//        }
+//        notPresentCheckBox.setSelected(false);
     }
 
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void setDialog(FXMLDialog dialog) {
-        this.dialog = dialog;
-    }
+//    @Override
+//    public void setDialog(FXMLDialog dialog) {
+//        this.dialog = dialog;
+//    }
 
 
     /**
@@ -155,7 +155,7 @@ public class OntologyTreeController implements DialogController {
      * <p>
      * {@inheritDoc}
      */
-    @Override
+//    @Override
     public void initialize(URL location, ResourceBundle resources) {
         // populate the TreeView with top-level elements from ontology hierarchy
         TreeItem<Term> root = new OntologyTreeController.TermTreeItem(ontology.getRootTerm());
@@ -167,7 +167,7 @@ public class OntologyTreeController implements DialogController {
 
         // create Map for lookup of the terms in the ontology based on their Name
         ontology.getTermMap().forEach(term -> labels.put(term.getName().toString(), term.getIDAsString()));
-        WidthAwareTextFields.bindWidthAwareAutoCompletion(searchTextField, labels.keySet());
+//        WidthAwareTextFields.bindWidthAwareAutoCompletion(searchTextField, labels.keySet());
 
         // show intro message in the infoWebView
         infoWebEngine = infoWebView.getEngine();

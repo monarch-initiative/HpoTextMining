@@ -13,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import ontologizer.ontology.Ontology;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 
 import java.net.URL;
 import java.util.HashSet;
@@ -39,7 +38,9 @@ import java.util.function.Consumer;
  * @since 0.1
  */
 @Deprecated
-public class HPOAnalysisController implements DialogController {
+public class HPOAnalysisController
+//        implements DialogController
+{
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -59,7 +60,7 @@ public class HPOAnalysisController implements DialogController {
      * Temporary copy for storing already present PhenotypeTerms until the controller GUI elements are initialized by
      * the FXML loader. The content is moved into the TableView in {@link #initialize(URL, ResourceBundle)} method.
      */
-    private Set<PhenotypeTerm> terms = new HashSet<>();
+//    private Set<PhenotypeTerm> terms = new HashSet<>();
 
     @FXML
     private StackPane treeViewStackPane;
@@ -76,20 +77,20 @@ public class HPOAnalysisController implements DialogController {
     /**
      * This table contains accepted {@link PhenotypeTerm}s.
      */
-    @FXML
-    private TableView<PhenotypeTerm> hpoTermsTableView;
+//    @FXML
+//    private TableView<PhenotypeTerm> hpoTermsTableView;
 
-    @FXML
-    private TableColumn<PhenotypeTerm, String> hpoIdTableColumn;
-
-    @FXML
-    private TableColumn<PhenotypeTerm, String> hpoNameTableColumn;
-
-    @FXML
-    private TableColumn<PhenotypeTerm, String> observedTableColumn;
-
-    @FXML
-    private TableColumn<PhenotypeTerm, String> definitionTableColumn;
+//    @FXML
+//    private TableColumn<PhenotypeTerm, String> hpoIdTableColumn;
+//
+//    @FXML
+//    private TableColumn<PhenotypeTerm, String> hpoNameTableColumn;
+//
+//    @FXML
+//    private TableColumn<PhenotypeTerm, String> observedTableColumn;
+//
+//    @FXML
+//    private TableColumn<PhenotypeTerm, String> definitionTableColumn;
 
 
     /**
@@ -105,8 +106,8 @@ public class HPOAnalysisController implements DialogController {
         this.presentController = new PresentController(ontology);
 
         // This action will be run after user approves a PhenotypeTerm in the ontologyTreePane
-        Consumer<PhenotypeTerm> addHook = (ph -> hpoTermsTableView.getItems().add(ph));
-        this.ontologyTreeController = new OntologyTreeController(ontology, addHook);
+//        Consumer<PhenotypeTerm> addHook = (ph -> hpoTermsTableView.getItems().add(ph));
+//        this.ontologyTreeController = new OntologyTreeController(ontology, addHook);
 
         configureController.setSignal(signal -> {
             switch (signal) {
@@ -127,7 +128,7 @@ public class HPOAnalysisController implements DialogController {
         presentController.setSignal(signal -> {
             switch (signal) {
                 case DONE:
-                    addPhenotypeTerms(presentController.getApprovedTerms());
+//                    addPhenotypeTerms(presentController.getApprovedTerms());
                     textMiningStackPane.getChildren().clear();
                     textMiningStackPane.getChildren().add(configurePane);
                     break;
@@ -155,10 +156,10 @@ public class HPOAnalysisController implements DialogController {
     }
 
 
-    @Override
-    public void setDialog(FXMLDialog dialog) {
-        this.dialog = dialog;
-    }
+//    @Override
+//    public void setDialog(FXMLDialog dialog) {
+//        this.dialog = dialog;
+//    }
 
 
     /**
@@ -166,9 +167,9 @@ public class HPOAnalysisController implements DialogController {
      *
      * @return new {@link Set} containing the approved terms
      */
-    public Set<PhenotypeTerm> getPhenotypeTerms() {
-        return new HashSet<>(hpoTermsTableView.getItems());
-    }
+//    public Set<PhenotypeTerm> getPhenotypeTerms() {
+//        return new HashSet<>(hpoTermsTableView.getItems());
+//    }
 
 
     /**
@@ -176,15 +177,15 @@ public class HPOAnalysisController implements DialogController {
      *
      * @param phenotypeTerms {@link Set} of {@link PhenotypeTerm}s
      */
-    public void addPhenotypeTerms(Set<PhenotypeTerm> phenotypeTerms) {
-        if (hpoTermsTableView == null) { // make a temporary copy until processing of GUI elements by FXMLLoader
-            terms.addAll(phenotypeTerms);
-        } else {
-            phenotypeTerms.stream()
-                    .filter(t -> !hpoTermsTableView.getItems().contains(t))
-                    .forEach(t -> hpoTermsTableView.getItems().add(t));
-        }
-    }
+//    public void addPhenotypeTerms(Set<PhenotypeTerm> phenotypeTerms) {
+//        if (hpoTermsTableView == null) { // make a temporary copy until processing of GUI elements by FXMLLoader
+//            terms.addAll(phenotypeTerms);
+//        } else {
+//            phenotypeTerms.stream()
+//                    .filter(t -> !hpoTermsTableView.getItems().contains(t))
+//                    .forEach(t -> hpoTermsTableView.getItems().add(t));
+//        }
+//    }
 
 
     /**
@@ -199,37 +200,36 @@ public class HPOAnalysisController implements DialogController {
     /**
      * Remove selected {@link PhenotypeTerm} from TableView.
      */
-    @FXML
-    void removeButtonAction() {
-        hpoTermsTableView.getItems().removeAll(hpoTermsTableView.getSelectionModel().getSelectedItems());
-    }
+//    @FXML
+//    void removeButtonAction() {
+//        hpoTermsTableView.getItems().removeAll(hpoTermsTableView.getSelectionModel().getSelectedItems());
+//    }
 
 
     /**
      * {@inheritDoc}
-     *
      */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // initialize behaviour of columns of the TableView
-        hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getHpoId()));
-        hpoNameTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getName()));
-        observedTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper((cdf.getValue().isPresent()) ? "YES"
-                : "NOT"));
-        definitionTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getDefinition()));
-
-        // populate sub-components of this dialog
-        configurePane = FXMLDialog.loadParent(configureController, getClass().getResource("/fxml/ConfigureView.fxml"));
-        presentPane = FXMLDialog.loadParent(presentController, getClass().getResource("/fxml/PresentView.fxml"));
-        textMiningStackPane.getChildren().add(configurePane);
-
-        Parent ontologyViewPane = FXMLDialog.loadParent(ontologyTreeController,
-                getClass().getResource("/fxml/OntologyTreeView.fxml"));
-        treeViewStackPane.getChildren().add(ontologyViewPane);
-
-        if (!terms.isEmpty())
-            hpoTermsTableView.getItems().addAll(terms);
-    }
+//    @Override
+//    public void initialize(URL location, ResourceBundle resources) {
+//         initialize behaviour of columns of the TableView
+//        hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getHpoId()));
+//        hpoNameTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getName()));
+//        observedTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper((cdf.getValue().isPresent()) ? "YES"
+//                : "NOT"));
+//        definitionTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getDefinition()));
+//
+//         populate sub-components of this dialog
+//        configurePane = FXMLDialog.loadParent(configureController, getClass().getResource("/fxml/ConfigureView.fxml"));
+//        presentPane = FXMLDialog.loadParent(presentController, getClass().getResource("/fxml/PresentView.fxml"));
+//        textMiningStackPane.getChildren().add(configurePane);
+//
+//        Parent ontologyViewPane = FXMLDialog.loadParent(ontologyTreeController,
+//                getClass().getResource("/fxml/OntologyTreeView.fxml"));
+//        treeViewStackPane.getChildren().add(ontologyViewPane);
+//
+//        if (!terms.isEmpty())
+//            hpoTermsTableView.getItems().addAll(terms);
+//    }
 
 
     /**

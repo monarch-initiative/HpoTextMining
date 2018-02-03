@@ -32,7 +32,7 @@
                         <Insets />
                      </VBox.margin>
                      <children>
-                        <TextField fx:id="searchTextField" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="180.0" promptText="Search for a term here.." HBox.hgrow="ALWAYS">
+                        <TextField fx:id="searchTextField" maxWidth="1.7976931348623157E308" minHeight="30.0" minWidth="180.0" promptText="Search for a termId here.." HBox.hgrow="ALWAYS">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
@@ -42,7 +42,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                            <tooltip>
-                              <Tooltip text="Search for the term in the ontology tree" />
+                              <Tooltip text="Search for the termId in the ontology tree" />
                            </tooltip>
                         </Button>
                      </children>
@@ -60,7 +60,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                            <tooltip>
-                              <Tooltip text="Check if the term was absent" />
+                              <Tooltip text="Check if the termId was absent" />
                            </tooltip>
                         </CheckBox>
                         <Button fx:id="addButton" alignment="CENTER" minHeight="30.0" minWidth="130.0" mnemonicParsing="false" onAction="#addButtonAction" text="Add" HBox.hgrow="NEVER">
@@ -68,7 +68,7 @@
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                            <tooltip>
-                              <Tooltip text="Add selected term to approved terms table" />
+                              <Tooltip text="Add selected termId to approved terms table" />
                            </tooltip>
                         </Button>
                      </children>

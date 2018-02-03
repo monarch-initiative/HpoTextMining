@@ -61,6 +61,11 @@
                             <mainClass>com.github.monarchinitiative.hpotextmining.gui.Play</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>**/assembly/**</exclude>
+                        <exclude>HP.obo</exclude>
+                        <exclude>application.properties</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 

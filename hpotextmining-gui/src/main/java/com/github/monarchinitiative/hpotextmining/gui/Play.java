@@ -10,7 +10,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
@@ -21,12 +27,10 @@ import java.util.concurrent.ExecutorService;
  */
 public final class Play extends Application {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private Injector injector;
 
-
-    public static void main(String[] args) {
-        Application.launch(args);
-    }
 
     @Override
     public void start(final Stage window) throws Exception {
@@ -46,5 +50,18 @@ public final class Play extends Application {
     public void stop() throws Exception {
         super.stop();
         injector.getInstance(ExecutorService.class).shutdown();
+        HpoTextMiningModule.getApplicationPropertiesPath().ifPresent(file -> {
+            try {
+                injector.getInstance(Properties.class).store(new
+                        FileWriter(file), "Properties used in the HPO text mining GUI");
+            } catch (IOException e) {
+                LOGGER.warn(e);
+            }
+        });
+    }
+
+
+    public static void main(String[] args) {
+        Application.launch(args);
     }
 }

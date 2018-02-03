@@ -1,4 +1,4 @@
-package com.github.monarchinitiative.hpotextmining.model;
+package com.github.monarchinitiative.hpotextmining.core.miners.biolark;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +10,7 @@ import java.util.Comparator;
  * The server performing text-mining analysis returns results as a collection of JSON objects. This class serves as a
  * model for those objects. Created by Daniel Danis on 6/19/17.
  */
-public class BiolarkResult {
+public final class BiolarkResult {
 
     private final int start;
 

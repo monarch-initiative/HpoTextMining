@@ -15,6 +15,7 @@ import java.net.URL;
  * @version 0.1.0
  * @since 0.1
  */
+@Deprecated
 public class AskServer extends Task<String> {
 
     private final URL server;

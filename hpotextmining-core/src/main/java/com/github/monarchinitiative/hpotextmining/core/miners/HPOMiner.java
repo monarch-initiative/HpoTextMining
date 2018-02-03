@@ -1,4 +1,6 @@
-package com.github.monarchinitiative.hpotextmining.model;
+package com.github.monarchinitiative.hpotextmining.core.miners;
+
+import java.util.Set;
 
 /**
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
@@ -6,5 +8,7 @@ package com.github.monarchinitiative.hpotextmining.model;
  * @since 0.2
  */
 public interface HPOMiner {
+
+    Set<MinedTerm> doMining(final String query);
 
 }

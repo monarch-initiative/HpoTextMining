@@ -51,7 +51,7 @@
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                                  <tooltip>
-                                    <Tooltip text="Remove selected term from approved terms" wrapText="true" />
+                                    <Tooltip text="Remove selected termId from approved terms" wrapText="true" />
                                  </tooltip>
                               </Button>
                               <Region HBox.hgrow="ALWAYS" />

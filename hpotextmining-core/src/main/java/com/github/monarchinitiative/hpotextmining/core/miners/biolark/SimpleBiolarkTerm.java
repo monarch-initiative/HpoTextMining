@@ -1,4 +1,4 @@
-package com.github.monarchinitiative.hpotextmining.model;
+package com.github.monarchinitiative.hpotextmining.core.miners.biolark;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * <p>
  * Created by Daniel Danis on 6/19/17.
  */
-public class SimpleBiolarkTerm {
+public final class SimpleBiolarkTerm {
 
     /* HPO id (uri) of this term. */
     private final String id;

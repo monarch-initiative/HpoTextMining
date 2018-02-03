@@ -1,11 +1,13 @@
 package com.github.monarchinitiative.hpotextmining.gui.controllers;
 
+import com.github.monarchinitiative.hpotextmining.gui.OptionalService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import java.util.function.Consumer;
 
 /**
@@ -17,22 +19,36 @@ public final class Configure {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final OptionalService optionalService;
+
     @FXML
     public TextArea contentTextArea;
 
     @FXML
     public Button analyzeButton;
 
-    private Consumer<String> hook;
+    private Consumer<String> queryHook;
+
+
+    @Inject
+    public Configure(OptionalService optionalService) {
+        this.optionalService = optionalService;
+    }
+
+
+    public void initialize() {
+        analyzeButton.disableProperty().bind(optionalService.ontologyProperty().isNull());
+        contentTextArea.disableProperty().bind(optionalService.ontologyProperty().isNull());
+    }
 
 
     /**
      * This hook will consume the text entered into {@link #contentTextArea}.
      *
-     * @param hook {@link Consumer} of String with text that will be mined for HPO terms
+     * @param queryHook {@link Consumer} of String with text that will be mined for HPO terms
      */
-    public void setHook(Consumer<String> hook) {
-        this.hook = hook;
+    void setQueryHook(Consumer<String> queryHook) {
+        this.queryHook = queryHook;
     }
 
 
@@ -42,8 +58,8 @@ public final class Configure {
      */
     @FXML
     public void analyzeButtonClicked() {
-        if (hook != null) {
-            hook.accept(
+        if (queryHook != null) {
+            queryHook.accept(
                     contentTextArea.getText()
                             .replace("-" + System.lineSeparator(), "") // remove hyphens from words
                             .replace(System.lineSeparator(), " ") // remove line separators

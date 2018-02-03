@@ -2,8 +2,7 @@ package com.github.monarchinitiative.hpotextmining.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
-import com.github.monarchinitiative.hpotextmining.model.BiolarkResult;
-import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
+import com.github.monarchinitiative.hpotextmining.core.miners.biolark.BiolarkResult;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -194,7 +193,7 @@ public class PresentController implements Initializable {
 
 
     /**
-     * End of analysis. Add approved terms into {@link HPOAnalysisController#hpoTermsTableView} and display configure
+     * End of analysis. Add approved terms into {@link HPOAnalysisController #hpoTermsTableView} and display configure
      * Dialog to allow next round of text-mining analysis.
      */
     @FXML
@@ -270,28 +269,28 @@ public class PresentController implements Initializable {
      *
      * @return {@link Set} of approved {@link PhenotypeTerm}s.
      */
-    Set<PhenotypeTerm> getApprovedTerms() {
-        Set<String> yesApproved = Arrays.stream(yesTerms)
-                .filter(CheckBox::isSelected)
-                .map(CheckBox::getText)
-                .collect(Collectors.toSet());
-        Set<String> notApproved = Arrays.stream(notTerms)
-                .filter(CheckBox::isSelected)
-                .map(CheckBox::getText)
-                .collect(Collectors.toSet());
-
-        Set<PhenotypeTerm> all = new HashSet<>();
-        // filter all results to get only those corresponding to selected checkboxes
-        all.addAll(results.stream()
-                .filter(result -> yesApproved.contains(result.getTerm().getLabel())) // create present Phenotype
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), true))
-                .collect(Collectors.toSet()));
-        all.addAll(results.stream()
-                .filter(result -> notApproved.contains(result.getTerm().getLabel())) // create non-present PhenotypeTerm
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), false))
-                .collect(Collectors.toSet()));
-        return all;
-    }
+//    Set<PhenotypeTerm> getApprovedTerms() {
+//        Set<String> yesApproved = Arrays.stream(yesTerms)
+//                .filter(CheckBox::isSelected)
+//                .map(CheckBox::getText)
+//                .collect(Collectors.toSet());
+//        Set<String> notApproved = Arrays.stream(notTerms)
+//                .filter(CheckBox::isSelected)
+//                .map(CheckBox::getText)
+//                .collect(Collectors.toSet());
+//
+//        Set<PhenotypeTerm> all = new HashSet<>();
+//         filter all results to get only those corresponding to selected checkboxes
+//        all.addAll(results.stream()
+//                .filter(result -> yesApproved.contains(result.getTerm().getLabel())) // create present Phenotype
+//                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), true))
+//                .collect(Collectors.toSet()));
+//        all.addAll(results.stream()
+//                .filter(result -> notApproved.contains(result.getTerm().getLabel())) // create non-present PhenotypeTerm
+//                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), false))
+//                .collect(Collectors.toSet()));
+//        return all;
+//    }
 
 
     /**
