@@ -3,6 +3,8 @@ package com.github.monarchinitiative.hpotextmining.gui;
 import com.github.monarchinitiative.hpotextmining.gui.controllers.Main;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -50,14 +52,13 @@ public final class Play extends Application {
     public void stop() throws Exception {
         super.stop();
         injector.getInstance(ExecutorService.class).shutdown();
-        HpoTextMiningModule.getApplicationPropertiesPath().ifPresent(file -> {
-            try {
-                injector.getInstance(Properties.class).store(new
-                        FileWriter(file), "Properties used in the HPO text mining GUI");
-            } catch (IOException e) {
-                LOGGER.warn(e);
-            }
-        });
+        // implement property writing
+
+        // save properties
+        Properties properties = injector.getInstance(Properties.class);
+        File where = injector.getInstance(Key.get(File.class, Names.named("propertiesFilePath")));
+        properties.store(new FileWriter(where), "HPO text mining properties");
+        LOGGER.info("Properties saved to {}", where.getAbsolutePath());
     }
 
 

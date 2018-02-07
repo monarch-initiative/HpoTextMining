@@ -9,6 +9,6 @@ import java.util.Set;
  */
 public interface HPOMiner {
 
-    Set<MinedTerm> doMining(final String query);
+    Set<MinedTerm> doMining(final String query) throws Exception;
 
 }

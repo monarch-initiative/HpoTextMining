@@ -26,7 +26,7 @@ public class AskServerTest {
     /**
      * "Tested" instance
      */
-    private AskServer askServer;
+//    private AskServer askServer;
 
 
     /**
@@ -36,16 +36,16 @@ public class AskServerTest {
      */
     @Test
     public void just4fun() throws Exception {
-        askServer = new AskServer(textMiningUrl);
-        askServer.setQuery(payloadReader.lines().collect(Collectors.joining("\n")));
-        askServer.setOnSucceeded(e -> {
-            try {
-                System.out.println(askServer.get());
-            } catch (InterruptedException | ExecutionException e1) {
-                e1.printStackTrace();
-            }
-        });
-        System.out.println(askServer.call()); // rude calling of the task without creating new Thread
+//        askServer = new AskServer(textMiningUrl);
+//        askServer.setQuery(payloadReader.lines().collect(Collectors.joining("\n")));
+//        askServer.setOnSucceeded(e -> {
+//            try {
+//                System.out.println(askServer.get());
+//            } catch (InterruptedException | ExecutionException e1) {
+//                e1.printStackTrace();
+//            }
+//        });
+//        System.out.println(askServer.call()); // rude calling of the task without creating new Thread
     }
 
 

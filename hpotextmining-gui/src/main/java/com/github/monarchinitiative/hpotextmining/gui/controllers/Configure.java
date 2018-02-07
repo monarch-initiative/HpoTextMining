@@ -1,6 +1,6 @@
 package com.github.monarchinitiative.hpotextmining.gui.controllers;
 
-import com.github.monarchinitiative.hpotextmining.gui.OptionalService;
+import com.github.monarchinitiative.hpotextmining.gui.resources.OptionalResources;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -19,7 +19,7 @@ public final class Configure {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final OptionalService optionalService;
+    private final OptionalResources optionalResources;
 
     @FXML
     public TextArea contentTextArea;
@@ -31,14 +31,14 @@ public final class Configure {
 
 
     @Inject
-    public Configure(OptionalService optionalService) {
-        this.optionalService = optionalService;
+    public Configure(OptionalResources optionalResources) {
+        this.optionalResources = optionalResources;
     }
 
 
     public void initialize() {
-        analyzeButton.disableProperty().bind(optionalService.ontologyProperty().isNull());
-        contentTextArea.disableProperty().bind(optionalService.ontologyProperty().isNull());
+        analyzeButton.disableProperty().bind(optionalResources.ontologyProperty().isNull());
+        contentTextArea.disableProperty().bind(optionalResources.ontologyProperty().isNull());
     }
 
 

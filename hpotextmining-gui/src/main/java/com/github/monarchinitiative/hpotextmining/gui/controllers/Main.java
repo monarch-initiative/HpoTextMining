@@ -11,13 +11,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Comparator;
@@ -33,6 +36,14 @@ public final class Main {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final Configure configure;
+
+    private final Present present;
+
+    private final OntologyTree ontologyTree;
+
+    private final Stage mainWindow;
+
     @FXML
     public ScrollPane rightScrollPane;
 
@@ -45,11 +56,8 @@ public final class Main {
     @FXML
     public Button removeButton;
 
-    private final Configure configure;
-
-    private final Present present;
-
-    private final OntologyTree ontologyTree;
+    @Inject
+    private Injector injector;
 
     private Parent configureParent, presentParent;
 
@@ -65,15 +73,13 @@ public final class Main {
     @FXML
     private TableColumn<PhenotypeTerm, String> definitionTableColumn;
 
-    private final Injector injector;
-
 
     @Inject
-    public Main(Configure configure, Present present, OntologyTree ontologyTree, Injector injector) {
+    public Main(Configure configure, Present present, OntologyTree ontologyTree, @Named("mainWindow") Stage mainWindow) {
         this.configure = configure;
         this.present = present;
         this.ontologyTree = ontologyTree;
-        this.injector = injector;
+        this.mainWindow = mainWindow;
     }
 
 
@@ -135,6 +141,16 @@ public final class Main {
 
     @FXML
     public void setResourcesMenuItemAction() {
+        try {
+            Stage stage = new Stage();
+            stage.initOwner(mainWindow);
+            Parent root = FXMLLoader.load(Main.class.getResource("PropertyManager.fxml"),
+                    injector.getInstance(ResourceBundle.class), new JavaFXBuilderFactory(), injector::getInstance);
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            LOGGER.warn(e);
+        }
     }
 
 

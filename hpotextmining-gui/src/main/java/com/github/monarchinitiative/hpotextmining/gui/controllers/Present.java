@@ -2,7 +2,7 @@ package com.github.monarchinitiative.hpotextmining.gui.controllers;
 
 import com.github.monarchinitiative.hpotextmining.core.miners.HPOMiner;
 import com.github.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import com.github.monarchinitiative.hpotextmining.gui.OptionalService;
+import com.github.monarchinitiative.hpotextmining.gui.resources.OptionalResources;
 import com.google.common.collect.ComparisonChain;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -13,9 +13,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -84,10 +82,12 @@ public final class Present {
 
     private final ExecutorService executor;
 
-    private final OptionalService optionalService;
+    private final OptionalResources optionalResources;
 
     @FXML
     public WebView webView;
+
+    private WebEngine webEngine;
 
     @FXML
     public VBox yesTermsVBox;
@@ -99,9 +99,10 @@ public final class Present {
     public Button cancelButton;
 
     @FXML
-    public ProgressBar miningProgressBar;
+    public ProgressIndicator miningProgressIndicator;
 
-    private WebEngine webEngine;
+    @FXML
+    public Label miningProgressLabel;
 
     /**
      * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
@@ -122,16 +123,17 @@ public final class Present {
 
 
     @Inject
-    public Present(HPOMiner miner, ExecutorService executor, OptionalService optionalService) {
+    public Present(HPOMiner miner, ExecutorService executor, OptionalResources optionalResources) {
         this.miner = miner;
         this.executor = executor;
-        this.optionalService = optionalService;
+        this.optionalResources = optionalResources;
     }
 
 
     public void initialize() {
         miningService = new MiningService();
-        miningProgressBar.progressProperty().bind(miningService.progressProperty());
+        miningProgressIndicator.progressProperty().bind(miningService.progressProperty());
+        miningProgressLabel.textProperty().bind(miningService.messageProperty());
         miningService.setOnRunning(e -> {
             webEngine.loadContent(HTML_HEAD + MINING_IN_PROGRESS + HTML_BODY_END);
             cancelButton.setDisable(false);
@@ -229,7 +231,7 @@ public final class Present {
 
         yesTerms = terms.stream()
                 .filter(MinedTerm::isPresent)
-                .map(term -> optionalService.getOntology().getTerm(term.getTermId()))
+                .map(term -> optionalResources.getOntology().getTerm(term.getTermId()))
                 .distinct()
                 .sorted(termComparator())
                 .map(Present::checkBoxFactory)
@@ -237,7 +239,7 @@ public final class Present {
 
         notTerms = terms.stream()
                 .filter(term -> !term.isPresent())
-                .map(term -> optionalService.getOntology().getTerm(term.getTermId()))
+                .map(term -> optionalResources.getOntology().getTerm(term.getTermId()))
                 .distinct()
                 .sorted(termComparator())
                 .map(Present::checkBoxFactory)
@@ -276,7 +278,7 @@ public final class Present {
             int start = result.getBegin() < offset ? offset : result.getBegin();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getBegin());
-            Term term = optionalService.getOntology().getTerm(result.getTermId());
+            Term term = optionalResources.getOntology().getTerm(result.getTermId());
             if (term == null)
                 continue;
 
@@ -374,12 +376,19 @@ public final class Present {
             return new Task<Set<MinedTerm>>() {
 
                 @Override
-                protected Set<MinedTerm> call() throws Exception {
+                protected Set<MinedTerm> call() {
                     final String query = getQuery();
                     final HPOMiner miner = getMiner();
-
-                    Set<MinedTerm> terms = miner.doMining(query);
-                    updateProgress(1, 1);
+                    Set<MinedTerm> terms = new HashSet<>();
+                    try {
+                        terms.addAll(miner.doMining(query));
+                        updateProgress(1, 1);
+                    } catch (Exception ex) {
+                        LOGGER.warn(ex);
+                        failed();
+                        updateMessage(ex.toString());
+                        updateProgress(0, 1);
+                    }
                     return terms;
                 }
             };

@@ -1,6 +1,6 @@
 package com.github.monarchinitiative.hpotextmining.controller;
 
-import com.github.monarchinitiative.hpotextmining.HPOTextMining;
+//import com.github.monarchinitiative.hpotextmining.HPOTextMining;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -39,13 +39,13 @@ public class PresentControllerTest extends ApplicationTest {
     /**
      * Tested instance
      */
-    private PresentController controller;
+//    private PresentController controller;
 
 
     @Test
     public void justForFun() throws Exception {
-        Platform.runLater(() -> controller.setResults(jsonResponse, queryText));
-        sleep(3000);
+//        Platform.runLater(() -> controller.setResults(jsonResponse, queryText));
+//        sleep(3000);
     }
 
 
@@ -54,12 +54,12 @@ public class PresentControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        controller = new PresentController(ontology);
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestPresentView.fxml"));
-        loader.setControllerFactory(param -> controller);
-        Scene scene = new Scene(loader.load());
-        stage.setScene(scene);
-        stage.show();
+//        controller = new PresentController(ontology);
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestPresentView.fxml"));
+//        loader.setControllerFactory(param -> controller);
+//        Scene scene = new Scene(loader.load());
+//        stage.setScene(scene);
+//        stage.show();
     }
 
 

@@ -1,0 +1,18 @@
+package com.github.monarchinitiative.hpotextmining.gui.resources;
+
+/**
+ * Classes that implement this interface are responsible for making sure that the resource {@link T} is valid, before
+ * it is used in GUI.
+ *
+ * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
+ * @version 0.2.1
+ * @see OptionalResources
+ * @see ResourceValidators
+ * @since 0.2
+ */
+@FunctionalInterface
+public interface ResourceValidator<T> {
+
+    boolean isValid(T resource);
+
+}
