@@ -52,7 +52,6 @@ public final class Play extends Application {
     public void stop() throws Exception {
         super.stop();
         injector.getInstance(ExecutorService.class).shutdown();
-        // implement property writing
 
         // save properties
         Properties properties = injector.getInstance(Properties.class);

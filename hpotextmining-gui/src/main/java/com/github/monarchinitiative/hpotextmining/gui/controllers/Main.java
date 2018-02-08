@@ -24,7 +24,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
@@ -51,7 +53,7 @@ public final class Main {
     public StackPane textMiningStackPane;
 
     @FXML
-    public TableView<PhenotypeTerm> hpoTermsTableView;
+    private TableView<PhenotypeTerm> hpoTermsTableView;
 
     @FXML
     public Button removeButton;
@@ -124,13 +126,13 @@ public final class Main {
 
 
     @FXML
-    public void exitMenuItemAction() {
+    void exitMenuItemAction() {
         Platform.exit();
     }
 
 
     @FXML
-    public void aboutMenuItemAction() {
+    void aboutMenuItemAction() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sorry");
         alert.setHeaderText("Sorry");
@@ -140,7 +142,7 @@ public final class Main {
 
 
     @FXML
-    public void setResourcesMenuItemAction() {
+    void setResourcesMenuItemAction() {
         try {
             Stage stage = new Stage();
             stage.initOwner(mainWindow);
@@ -155,7 +157,7 @@ public final class Main {
 
 
     @FXML
-    public void exportPhenopacketMenuItemAction() {
+    void exportPhenopacketMenuItemAction() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sorry");
         alert.setHeaderText("Sorry");
@@ -173,6 +175,10 @@ public final class Main {
     public void okButtonAction() {
     }
 
+
+    public Set<PhenotypeTerm> getPhenotypeTerms() {
+        return new HashSet<>(hpoTermsTableView.getItems());
+    }
 
     /**
      * This class is a POJO containing attributes of HPO terms.

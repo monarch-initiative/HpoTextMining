@@ -21,12 +21,4 @@
 			<outputDirectory>${file.separator}lib</outputDirectory>
 		</fileSet>
 	</fileSets>
-    <files>
-        <!-- application properties file-->
-        <file>
-            <source>${project.build.outputDirectory}${file.separator}application.properties</source>
-            <outputDirectory>${file.separator}</outputDirectory>
-            <filtered>true</filtered>
-        </file>
-    </files>
 </assembly>

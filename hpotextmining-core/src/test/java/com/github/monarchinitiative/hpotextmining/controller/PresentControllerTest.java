@@ -39,12 +39,12 @@ public class PresentControllerTest extends ApplicationTest {
     /**
      * Tested instance
      */
-//    private PresentController controller;
+//    private PresentController com.github.monarchinitiative.hpotextmining.gui.controller;
 
 
     @Test
     public void justForFun() throws Exception {
-//        Platform.runLater(() -> controller.setResults(jsonResponse, queryText));
+//        Platform.runLater(() -> com.github.monarchinitiative.hpotextmining.gui.controller.setResults(jsonResponse, queryText));
 //        sleep(3000);
     }
 
@@ -54,9 +54,9 @@ public class PresentControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-//        controller = new PresentController(ontology);
+//        com.github.monarchinitiative.hpotextmining.gui.controller = new PresentController(ontology);
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestPresentView.fxml"));
-//        loader.setControllerFactory(param -> controller);
+//        loader.setControllerFactory(param -> com.github.monarchinitiative.hpotextmining.gui.controller);
 //        Scene scene = new Scene(loader.load());
 //        stage.setScene(scene);
 //        stage.show();

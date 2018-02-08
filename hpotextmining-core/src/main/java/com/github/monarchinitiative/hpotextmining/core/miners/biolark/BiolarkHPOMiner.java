@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * This {@link HPOMiner} uses <em>Biolark</em> web API to discover positions of HPO terms within provided query.
+ *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.2.1
  * @since 0.2
@@ -35,7 +37,9 @@ public final class BiolarkHPOMiner implements HPOMiner {
 
 
     /**
-     * Performs mining of the provided text using Biolark service.
+     * Performs mining of the provided text using Biolark service; <code>query</code> String is sent to the Biolark
+     * API and the Thread is blocked until a <em>JSON</em> response is received. The response is then decoded into
+     * {@link MinedTerm}s.
      *
      * @param query String with text to be mined for HPO terms
      * @return {@link Set} of {@link MinedTerm}s representing identified HPO terms. The set is empty, if I/O error
@@ -92,7 +96,6 @@ public final class BiolarkHPOMiner implements HPOMiner {
      * @return possibly empty set of {@link BiolarkResult} objects
      */
     private Set<BiolarkResult> decodePayload(String jsonResponse) {
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);

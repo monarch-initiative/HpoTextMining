@@ -5,16 +5,36 @@ import com.google.common.collect.ComparisonChain;
 import java.util.Comparator;
 
 /**
+ * This class is a POJO for representation of a HPO term identified by text-mining.
+ *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.2.1
+ * @see HPOMiner
  * @since 0.2
  */
 public final class MinedTerm {
 
-    private final int begin, end;
+    /**
+     * Zero-based begin coordinate (like in BED format) of text region, based on which this HPO term has been
+     * identified. The coordinate is with reference to the whole text that has been mined for HPO terms
+     */
+    private final int begin;
 
+    /**
+     * One-based end coordinate (like in BED format) of text region, based on which this HPO term has been
+     * identified. The coordinate is with reference to the whole text that has been mined for HPO terms
+     */
+    private final int end;
+
+    /**
+     * ID of the HPO term that is being represented by this MinedTerm. E.g. HP:0003198
+     */
     private final String termId;
 
+    /**
+     * Boolean flag indicating that the term was either present or absent in the patient/proband who is
+     * being described by the mined text
+     */
     private final boolean present;
 
 
@@ -79,6 +99,7 @@ public final class MinedTerm {
                 ", present=" + present +
                 '}';
     }
+
 
     public static Comparator<MinedTerm> compareByBegin() {
         return (l, r) -> ComparisonChain.start().compare(l.getBegin(), r.getBegin()).result();

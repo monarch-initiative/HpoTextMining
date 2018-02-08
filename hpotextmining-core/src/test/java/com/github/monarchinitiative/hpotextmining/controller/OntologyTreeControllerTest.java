@@ -34,7 +34,7 @@ public class OntologyTreeControllerTest extends ApplicationTest {
 
     private static Ontology ontology;
 
-//    private OntologyTreeController controller;
+//    private OntologyTreeController com.github.monarchinitiative.hpotextmining.gui.controller;
 
 
     /**
@@ -44,15 +44,15 @@ public class OntologyTreeControllerTest extends ApplicationTest {
      */
     @Test
     public void testAutocompletionAndSearch() throws Exception {
-//        assertTrue(controller.getSelectedTerm() == null);
+//        assertTrue(com.github.monarchinitiative.hpotextmining.gui.controller.getSelectedTerm() == null);
 //        doubleClickOn("#searchTextField").write("hepatosplenomegaly")
 //                .sleep(800).moveBy(10, 30).clickOn(MouseButton.PRIMARY)
 //                .clickOn("#goButton");
-//        assertEquals("HP:0001433", controller.getSelectedTerm().getValue().getID().toString());
+//        assertEquals("HP:0001433", com.github.monarchinitiative.hpotextmining.gui.controller.getSelectedTerm().getValue().getID().toString());
 //        doubleClickOn("#searchTextField").write("hyperten")
 //                .sleep(800).moveBy(10, 80).clickOn(MouseButton.PRIMARY)
 //                .clickOn("#goButton");
-//        assertEquals("HP:0000822", controller.getSelectedTerm().getValue().getID().toString());
+//        assertEquals("HP:0000822", com.github.monarchinitiative.hpotextmining.gui.controller.getSelectedTerm().getValue().getID().toString());
     }
 
 
@@ -61,9 +61,9 @@ public class OntologyTreeControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-//        controller = new OntologyTreeController(ontology, pt -> {/* do nothing*/});
+//        com.github.monarchinitiative.hpotextmining.gui.controller = new OntologyTreeController(ontology, pt -> {/* do nothing*/});
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestOntologyTreeView.fxml"));
-//        loader.setControllerFactory(param -> controller);
+//        loader.setControllerFactory(param -> com.github.monarchinitiative.hpotextmining.gui.controller);
 //        Scene scene = new Scene(loader.load());
 //        stage.setScene(scene);
 //        stage.show();
