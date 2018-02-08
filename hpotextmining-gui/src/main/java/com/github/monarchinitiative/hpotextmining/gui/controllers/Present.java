@@ -87,7 +87,8 @@ public final class Present {
     @FXML
     public WebView webView;
 
-    private WebEngine webEngine;
+    @FXML
+    public Button addTermsButton;
 
     @FXML
     public VBox yesTermsVBox;
@@ -103,6 +104,8 @@ public final class Present {
 
     @FXML
     public Label miningProgressLabel;
+
+    private WebEngine webEngine;
 
     /**
      * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.

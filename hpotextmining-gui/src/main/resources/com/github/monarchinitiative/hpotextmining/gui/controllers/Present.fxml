@@ -78,7 +78,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </HBox.margin>
             </Button>
-            <Button alignment="CENTER" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#addTermsButtonAction" text="Add selected terms" HBox.hgrow="NEVER">
+            <Button fx:id="addTermsButton" alignment="CENTER" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#addTermsButtonAction" text="Add selected terms" HBox.hgrow="NEVER">
                <tooltip>
                   <Tooltip text="Add selected terms into the approved terms table" />
                </tooltip>

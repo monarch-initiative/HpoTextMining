@@ -92,7 +92,6 @@ public final class BiolarkHPOMiner implements HPOMiner {
      * @return possibly empty set of {@link BiolarkResult} objects
      */
     private Set<BiolarkResult> decodePayload(String jsonResponse) {
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);

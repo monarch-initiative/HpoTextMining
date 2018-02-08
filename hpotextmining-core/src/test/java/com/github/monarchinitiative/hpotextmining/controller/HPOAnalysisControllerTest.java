@@ -42,7 +42,7 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
     /**
      * Tested instance
      */
-//    private HPOAnalysisController controller;
+//    private HPOAnalysisController com.github.monarchinitiative.hpotextmining.gui.controller;
 
 
     /**
@@ -52,19 +52,19 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
      */
     @Test
     public void testOntologyTreeIntegration() throws Exception {
-//        assertThat(controller.getPhenotypeTerms(), hasSize(0));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPhenotypeTerms(), hasSize(0));
 //        doubleClickOn("#searchTextField").write("hepatosplenomegaly")
 //                .sleep(800).moveBy(10, 30).clickOn(MouseButton.PRIMARY)
 //                .clickOn("#goButton").clickOn("#addButton");
-//        assertThat(controller.getPhenotypeTerms(), hasSize(1));
-//        assertThat(controller.getPhenotypeTerms(), Matchers.hasItem(new PhenotypeTerm("HP:0001433", "Hepatosplenomegaly", "Simultaneous enlargement of the liver and spleen.",
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPhenotypeTerms(), hasSize(1));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPhenotypeTerms(), Matchers.hasItem(new PhenotypeTerm("HP:0001433", "Hepatosplenomegaly", "Simultaneous enlargement of the liver and spleen.",
 //                true)));
 //
 //        doubleClickOn("#searchTextField").write("hyperten")
 //                .sleep(800).moveBy(10, 80).clickOn(MouseButton.PRIMARY)
 //                .clickOn("#goButton").clickOn("#notPresentCheckBox").clickOn("#addButton");
-//        assertThat(controller.getPhenotypeTerms(), hasSize(2));
-//        assertTrue(controller.getPhenotypeTerms().contains(new PhenotypeTerm("HP:0000822", "Hypertension", "The " +
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPhenotypeTerms(), hasSize(2));
+//        assertTrue(com.github.monarchinitiative.hpotextmining.gui.controller.getPhenotypeTerms().contains(new PhenotypeTerm("HP:0000822", "Hypertension", "The " +
 //                "presence of chronic increased pressure in the systemic arterial system.", false)));
     }
 
@@ -77,7 +77,7 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
     @Test
     public void testPmid() throws Exception {
 //        clickOn("#pmidTextField").write("132");
-//        assertThat(controller.getPmid(), is("132"));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPmid(), is("132"));
     }
 
     // TODO - test removing terms from the table
@@ -88,9 +88,9 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-//        controller = new HPOAnalysisController(ontology, textMiningUrl);
+//        com.github.monarchinitiative.hpotextmining.gui.controller = new HPOAnalysisController(ontology, textMiningUrl);
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestHPOAnalysisView.fxml"));
-//        loader.setControllerFactory(param -> controller);
+//        loader.setControllerFactory(param -> com.github.monarchinitiative.hpotextmining.gui.controller);
 //        Scene scene = new Scene(loader.load());
 //        stage.setScene(scene);
 //        stage.show();

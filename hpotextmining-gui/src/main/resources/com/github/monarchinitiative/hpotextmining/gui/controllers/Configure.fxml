@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 
 
-  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controllers.Configure">
+ <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controllers.Configure">
       <children>
           <Label prefHeight="30.0" text="Text-mining analysis" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
               <font>

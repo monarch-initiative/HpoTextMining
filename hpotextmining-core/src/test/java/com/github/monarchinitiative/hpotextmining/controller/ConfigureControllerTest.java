@@ -21,9 +21,9 @@ public class ConfigureControllerTest extends ApplicationTest {
     private static URL textMiningUrl;
 
     /**
-     * Tested controller.
+     * Tested com.github.monarchinitiative.hpotextmining.gui.controller.
      */
-//    private ConfigureController controller;
+//    private ConfigureController com.github.monarchinitiative.hpotextmining.gui.controller;
 
 
     /**
@@ -33,9 +33,9 @@ public class ConfigureControllerTest extends ApplicationTest {
      */
     @Test
     public void testSettingPmid() throws Exception {
-//        assertThat(controller.getPmid(), is(""));
-//        controller.setPmid("16543");
-//        assertThat(controller.getPmid(), is("16543"));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPmid(), is(""));
+//        com.github.monarchinitiative.hpotextmining.gui.controller.setPmid("16543");
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPmid(), is("16543"));
     }
 
 
@@ -47,7 +47,7 @@ public class ConfigureControllerTest extends ApplicationTest {
     @Test
     public void testTypingPmid() throws Exception {
 //        clickOn("#pmidTextField").write("131");
-//        assertThat(controller.getPmid(), is("131"));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getPmid(), is("131"));
     }
 
 
@@ -59,7 +59,7 @@ public class ConfigureControllerTest extends ApplicationTest {
     @Test
     public void testInputToTextArea() throws Exception {
 //        clickOn("#contentTextArea").write("Hey ya!");
-//        assertThat(controller.getText(), is("Hey ya!"));
+//        assertThat(com.github.monarchinitiative.hpotextmining.gui.controller.getText(), is("Hey ya!"));
     }
 
 
@@ -68,9 +68,9 @@ public class ConfigureControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-//        controller = new ConfigureController(textMiningUrl);
+//        com.github.monarchinitiative.hpotextmining.gui.controller = new ConfigureController(textMiningUrl);
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/TestConfigureView.fxml"));
-//        loader.setControllerFactory(param -> controller);
+//        loader.setControllerFactory(param -> com.github.monarchinitiative.hpotextmining.gui.controller);
 //        Scene scene = new Scene(loader.load());
 //        stage.setScene(scene);
 //        stage.show();
