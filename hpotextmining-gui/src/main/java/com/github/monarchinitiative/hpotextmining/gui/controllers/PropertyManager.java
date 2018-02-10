@@ -22,6 +22,7 @@ import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -43,6 +44,8 @@ public final class PropertyManager {
 
     private final ExecutorService executorService;
 
+    private final ResourceBundle resourceBundle;
+
     @FXML
     public Label ontologyPathLabel;
 
@@ -58,16 +61,21 @@ public final class PropertyManager {
 
     @Inject
     public PropertyManager(OptionalResources optionalResources, Properties properties,
-                           @Named("mainWindow") Stage mainWindow, ExecutorService executorService) {
+                           @Named("mainWindow") Stage mainWindow, ExecutorService executorService,
+                           ResourceBundle resourceBundle) {
         this.optionalResources = optionalResources;
         this.properties = properties;
         this.mainWindow = mainWindow;
         this.executorService = executorService;
+        this.resourceBundle = resourceBundle;
     }
 
 
     public void initialize() {
-        ontologyPathLabel.setText(properties.getProperty(HpoTextMiningModule.HP_OBO_PROPERTY));
+        ontologyPathLabel.setText((properties.getProperty(HpoTextMiningModule.HP_OBO_PROPERTY) == null)
+                ? resourceBundle.getString("property.manager.hpo.unavailable")
+                : properties.getProperty(HpoTextMiningModule.HP_OBO_PROPERTY));
+
         taskProgressBar.setVisible(false);
     }
 

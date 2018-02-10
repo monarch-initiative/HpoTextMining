@@ -14,6 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
@@ -150,7 +151,8 @@ public final class Main {
         try {
             Stage stage = new Stage();
             stage.initOwner(mainWindow);
-            Parent root = FXMLLoader.load(Main.class.getResource("PropertyManager.fxml"),
+            stage.initModality(Modality.APPLICATION_MODAL);
+            Parent root = FXMLLoader.load(PropertyManager.class.getResource("PropertyManager.fxml"),
                     injector.getInstance(ResourceBundle.class), new JavaFXBuilderFactory(), injector::getInstance);
             stage.setScene(new Scene(root));
             stage.show();

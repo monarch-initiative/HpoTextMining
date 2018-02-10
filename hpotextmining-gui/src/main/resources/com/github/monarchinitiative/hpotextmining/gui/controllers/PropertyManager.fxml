@@ -37,7 +37,7 @@
                </font>
             </Label>
             <Separator GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-            <Label text="Ontology:" GridPane.rowIndex="2">
+            <Label contentDisplay="CENTER" text="Ontology:" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
@@ -45,7 +45,7 @@
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <Label fx:id="ontologyPathLabel" minHeight="40.0" text="Set path to local ontology file or download a new one from the web" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+            <Label fx:id="ontologyPathLabel" minHeight="40.0" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>

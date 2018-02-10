@@ -111,10 +111,12 @@ public final class HpoTextMiningModule extends AbstractModule {
                 } catch (IOException | OBOParserException e) {
                     LOGGER.warn(e);
                     optionalResources.setOntology(null);
+                    properties.setProperty(HP_OBO_PROPERTY, null);
                 }
             } else {
                 LOGGER.warn("Invalid path to HP obo file: {}", ontologyPath);
                 optionalResources.setOntology(null);
+                properties.setProperty(HP_OBO_PROPERTY, null);
             }
         }
 
@@ -142,7 +144,7 @@ public final class HpoTextMiningModule extends AbstractModule {
         } else {
             try {
                 URL propertiesUrl = Main.class.getResource("/" + APPLICATION_PROPERTIES_FILENAME);
-                LOGGER.info("Trying to load app properties from bundled file {}", propertiesUrl.getPath());
+                LOGGER.info("Loading bundled app properties from {}", propertiesUrl.getPath());
                 properties.load(Main.class.getResourceAsStream("/" + APPLICATION_PROPERTIES_FILENAME));
             } catch (IOException e) {
                 LOGGER.warn(e);
