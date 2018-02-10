@@ -21,9 +21,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -48,7 +46,7 @@ public class MainTest extends ApplicationTest {
 
 
     @Test
-    public void justForFun() {
+    public void testOfTests() {
         // check adding of present and non-present terms obtained by text-mining
         ((TextArea) lookup("#contentTextArea").query()).setText(queryText);
         clickOn("#analyzeButton").sleep(1, TimeUnit.SECONDS);
@@ -94,6 +92,8 @@ public class MainTest extends ApplicationTest {
 
 
     /**
+     * This method is somewhat like the @Before method of JUnit framework. The Stage is provided, where you need to
+     * put the Parent initialized with the controller that you want to test.
      * {@inheritDoc}
      */
     @Override
@@ -107,6 +107,11 @@ public class MainTest extends ApplicationTest {
     }
 
 
+    /**
+     * Read the sample payload/query text that will be mined for HPO terms.
+     *
+     * @throws Exception bla
+     */
     @BeforeClass
     public static void beforeClassSetup() throws Exception {
         BufferedReader queryTextReader = new BufferedReader(

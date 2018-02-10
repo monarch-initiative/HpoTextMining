@@ -11,21 +11,20 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controllers.PropertyManager">
+<ScrollPane fitToHeight="true" fitToWidth="true" minHeight="200.0" minWidth="400.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controllers.PropertyManager">
    <content>
       <GridPane>
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" />
-            <ColumnConstraints hgrow="ALWAYS" minWidth="300.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="130.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="NEVER" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints minHeight="5.0" vgrow="NEVER" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" vgrow="NEVER" />
-            <RowConstraints minHeight="5.0" vgrow="NEVER" />
+            <RowConstraints minHeight="10.0" vgrow="NEVER" />
             <RowConstraints minHeight="10.0" vgrow="NEVER" />
          </rowConstraints>
          <children>
@@ -37,13 +36,16 @@
                   <Font name="System Bold" size="17.0" />
                </font>
             </Label>
-            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-            <Label text="Ontology" GridPane.rowIndex="2">
+            <Separator GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+            <Label text="Ontology:" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
             </Label>
-            <Label fx:id="ontologyPathLabel" text="Set path to ontology file" GridPane.columnSpan="2" GridPane.rowIndex="3">
+            <Label fx:id="ontologyPathLabel" minHeight="40.0" text="Set path to local ontology file or download a new one from the web" wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
@@ -51,23 +53,23 @@
                   <Font name="System Italic" size="13.0" />
                </font>
             </Label>
-            <Button minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#chooseOntologyButtonAction" text="Choose" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <Button minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#chooseOntologyButtonAction" text="Choose local" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="downloadOntologyButton" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#downloadOntologyAction" text="Download" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <Button fx:id="downloadOntologyButton" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#downloadOntologyAction" text="Download" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Button>
-            <Separator prefWidth="200.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" />
-            <Label fx:id="taskLabel" maxWidth="1.7976931348623157E308" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
+            <Separator GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+            <Label fx:id="taskLabel" maxWidth="1.7976931348623157E308" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </Label>
-            <ProgressBar fx:id="taskProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
+            <ProgressBar fx:id="taskProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>

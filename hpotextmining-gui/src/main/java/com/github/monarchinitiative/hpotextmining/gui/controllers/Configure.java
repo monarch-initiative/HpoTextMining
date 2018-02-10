@@ -11,6 +11,9 @@ import javax.inject.Inject;
 import java.util.function.Consumer;
 
 /**
+ * This class is a controller for the subpart of the app that is responsible for collection of query text that will
+ * be submitted to text mining analysis.
+ *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.2.1
  * @since 0.2
@@ -54,7 +57,7 @@ public final class Configure {
 
     /**
      * Clicking on this Button signalizes that the text entered into {@link #contentTextArea} is ready for
-     * text-mining analysis
+     * text mining analysis
      */
     @FXML
     public void analyzeButtonClicked() {

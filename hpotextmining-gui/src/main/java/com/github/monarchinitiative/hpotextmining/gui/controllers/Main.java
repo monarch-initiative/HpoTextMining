@@ -29,6 +29,9 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
+ * This class is the main controller of the app. It contains several subparts, such as ontology tree view, a table for
+ * accepted HPO terms and an area for the text mining.
+ *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.2.1
  * @since 0.2
@@ -53,14 +56,15 @@ public final class Main {
     public StackPane textMiningStackPane;
 
     @FXML
-    private TableView<PhenotypeTerm> hpoTermsTableView;
+    public Button removeButton;
 
     @FXML
-    public Button removeButton;
+    private TableView<PhenotypeTerm> hpoTermsTableView;
 
     @Inject
     private Injector injector;
 
+    // These Parents are not managed by FXMLloader, since we need to show/hide them during the app run
     private Parent configureParent, presentParent;
 
     @FXML
@@ -168,17 +172,20 @@ public final class Main {
 
     @FXML
     public void removeButtonAction() {
+        hpoTermsTableView.getItems().remove(hpoTermsTableView.getSelectionModel().getSelectedIndex());
     }
 
 
     @FXML
     public void okButtonAction() {
+        hpoTermsTableView.getItems().forEach(System.out::println);
     }
 
 
     public Set<PhenotypeTerm> getPhenotypeTerms() {
         return new HashSet<>(hpoTermsTableView.getItems());
     }
+
 
     /**
      * This class is a POJO containing attributes of HPO terms.
