@@ -12,7 +12,6 @@
     <artifactId>hpotextmining-gui</artifactId>
     <properties>
         <log4j2.version>2.10.0</log4j2.version>
-        <junit.version>4.12</junit.version>
     </properties>
 
     <build>
@@ -99,6 +98,19 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>4.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-core -->
+        <dependency>
+            <groupId>de.ontologizer</groupId>
+            <artifactId>ontologizerlib-core</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-io -->
+        <dependency>
+            <groupId>de.ontologizer</groupId>
+            <artifactId>ontologizerlib-io</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.controlsfx/controlsfx -->

@@ -31,4 +31,4 @@ In order to use *HpoTextMining* in your project, add the following dependency in
 	<version>0.2.1</version>
 </dependency>
 ```
- * 
+ 

@@ -135,7 +135,7 @@ public final class TestModule extends AbstractModule {
         } else {
             try {
                 URL propertiesUrl = Main.class.getResource("/" + APPLICATION_PROPERTIES_FILENAME);
-                LOGGER.info("Trying to load app properties from bundled file {}", propertiesUrl.getPath());
+                LOGGER.info("Loading bundled app properties from {}", propertiesUrl.getPath());
                 properties.load(Main.class.getResourceAsStream("/" + APPLICATION_PROPERTIES_FILENAME));
             } catch (IOException e) {
                 LOGGER.warn(e);

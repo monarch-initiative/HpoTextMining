@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Classes implementing this interface are able to mine a set of {@link MinedTerm}s from given <code>query</code>.
  * <p>
- * The query is a free text, usually containing description of clinical situation of a patient/proband. The aim of
+ * The query is a free text, usually containing a description of a clinical situation of the patient/proband. The aim of
  * the text-mining is to identify a set of HPO terms that represent patient's phenotype. Terms may be either present
  * or absent (see {@link MinedTerm} for more info). Set of identified terms is presented to the user/curator for
  * further approval/rejection.

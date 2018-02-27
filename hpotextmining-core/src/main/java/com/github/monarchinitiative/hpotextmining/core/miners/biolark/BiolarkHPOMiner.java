@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.core.miners.HPOMiner;
 import com.github.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  */
 public final class BiolarkHPOMiner implements HPOMiner {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BiolarkHPOMiner.class);
 
     private final URL biolarkUrl;
 
@@ -101,7 +101,7 @@ public final class BiolarkHPOMiner implements HPOMiner {
             CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
             return mapper.readValue(jsonResponse, javaType);
         } catch (IOException e) {
-            LOGGER.warn(e);
+            LOGGER.warn(e.getMessage(), e);
             return new HashSet<>();
         }
     }
