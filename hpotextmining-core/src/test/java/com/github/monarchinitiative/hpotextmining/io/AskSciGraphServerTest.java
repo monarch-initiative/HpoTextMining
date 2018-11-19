@@ -9,16 +9,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * This class doesn't really test anything at the moment (hence Ignored). Use it to send query text to the server and
+ * This class test connection to Monarch text annotation services server. Use it to send query text to the server and
  * receive corresponding JSON response.
  *
- * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
- * @version 0.2.0
- * @since 0.2
+ * @author <a href="mailto:aaron.zhang@jax.org">Aaron Zhang</a>
+ * @version 0.2.2
+ * @since 0.2.2
  */
-@Ignore
-public class AskServerTest {
+public class AskSciGraphServerTest {
 
+    private static String base = "https://scigraph-ontology.monarchinitiative.org";
+    private static String path = "/scigraph/annotations/complete";
     private static URL textMiningUrl;
 
     private BufferedReader payloadReader;
@@ -26,7 +27,7 @@ public class AskServerTest {
     /**
      * "Tested" instance
      */
-    private AskTudorServer askServer;
+    private AskSciGraphServer askServer;
 
 
     /**
@@ -35,8 +36,8 @@ public class AskServerTest {
      * @throws Exception bla
      */
     @Test
-    public void just4fun() throws Exception {
-        askServer = new AskTudorServer(textMiningUrl);
+    public void askMonarchServerTest() throws Exception {
+        askServer = new AskSciGraphServer(textMiningUrl);
         askServer.setQuery(payloadReader.lines().collect(Collectors.joining("\n")));
         askServer.setOnSucceeded(e -> {
             try {
@@ -64,6 +65,6 @@ public class AskServerTest {
 
     @BeforeClass
     public static void beforeClassSetUp() throws Exception {
-        textMiningUrl = new URL("http://phenotyper.monarchinitiative.org:5678/cr/annotate");
+        textMiningUrl = new URL(new URL(base), path);
     }
 }

@@ -2,26 +2,19 @@ package com.github.monarchinitiative.hpotextmining.io;
 
 import javafx.concurrent.Task;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Task to be used to query server URL to asynchronously retrieve results of text-mining in JSON format.
- *
- * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
- * @version 0.1.0
- * @since 0.1
- */
-public class AskServer extends Task<String> {
-
+public class AskSciGraphServer extends Task<String> {
     private final URL server;
 
     private String query = null;
 
-    public AskServer(URL server) {
+    public AskSciGraphServer(URL server) {
         this.server = server;
     }
 
@@ -34,22 +27,28 @@ public class AskServer extends Task<String> {
         if (query == null) {
             throw new IllegalStateException("You must set query to be able to start analysis");
         }
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("content", query);
+        parameters.put("includeCat", "Phenotype"); //only retrieve phenotypes
+        parameters.put("includeAcronym", "true");
         StringBuilder jsonStringBuilder = new StringBuilder();
 
         try {
             HttpURLConnection connection = (HttpURLConnection)
                     server.openConnection();
-
             connection.setDoInput(true);
             connection.setDoOutput(true);
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
+            connection.setConnectTimeout(5000); //fail if no connection for 5s
+            connection.setReadTimeout(30000); //fail if no read for 30s
             connection.setRequestProperty("Content-Type",
-                    "application/json; charset=UTF-8");
+                    "application/x-www-form-urlencoded; charset=UTF-8");
             OutputStreamWriter writer = new
                     OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-            writer.write(query);
+            writer.write(getParamsString(parameters));
             writer.close();
+
             BufferedReader br = new BufferedReader(new
                     InputStreamReader(connection.getInputStream()));
 
@@ -63,5 +62,22 @@ public class AskServer extends Task<String> {
             throw new RuntimeException(e.getMessage());
         }
         return jsonStringBuilder.toString();
+    }
+
+    static String getParamsString(Map<String, String> params)
+            throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            result.append("&");
+        }
+
+        String resultString = result.toString();
+        return resultString.length() > 0
+                ? resultString.substring(0, resultString.length() - 1)
+                : resultString;
     }
 }

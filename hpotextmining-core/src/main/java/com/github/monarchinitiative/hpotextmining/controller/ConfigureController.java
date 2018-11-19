@@ -11,7 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.github.monarchinitiative.hpotextmining.io.AskServer;
+import com.github.monarchinitiative.hpotextmining.io.AskTudorServer;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -56,7 +56,7 @@ public class ConfigureController implements Initializable {
     @FXML
     private TextField pmidTextField;
 
-    private AskServer task;
+    private AskTudorServer task;
 
 
     public ConfigureController(URL textMiningServer) {
@@ -95,7 +95,7 @@ public class ConfigureController implements Initializable {
     @FXML
     void analyzeButtonClicked() {
 
-        task = new AskServer(textMiningServer);
+        task = new AskTudorServer(textMiningServer);
 
         task.setQuery(preprocessInput());
 
