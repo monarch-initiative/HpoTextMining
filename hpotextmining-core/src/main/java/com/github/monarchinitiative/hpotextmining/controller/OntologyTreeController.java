@@ -10,10 +10,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.monarchinitiative.phenol.ontology.algo.OntologyAlgorithm;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.Term;
+import org.monarchinitiative.phenol.ontology.data.TermId;
 
 import java.net.URL;
 import java.util.*;
@@ -118,7 +120,7 @@ public class OntologyTreeController implements DialogController {
     private void goButtonAction() {
         String id = labels.get(searchTextField.getText());
         if (id != null) {
-            expandUntilTerm(ontology.getTerm(id));
+            expandUntilTerm(ontology.getTermMap().get(id));
             searchTextField.clear();
         }
     }
@@ -157,7 +159,7 @@ public class OntologyTreeController implements DialogController {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // populate the TreeView with top-level elements from ontology hierarchy
-        TreeItem<Term> root = new OntologyTreeController.TermTreeItem(ontology.getRootTerm());
+        TreeItem<Term> root = new OntologyTreeController.TermTreeItem(ontology.getTermMap().get(ontology.getRootTermId()));
         root.setExpanded(true);
         ontologyTreeView.setShowRoot(false);
         ontologyTreeView.setRoot(root);
@@ -165,7 +167,8 @@ public class OntologyTreeController implements DialogController {
                 .addListener((observable, oldValue, newValue) -> updateDescription(newValue));
 
         // create Map for lookup of the terms in the ontology based on their Name
-        ontology.getTermMap().forEach(term -> labels.put(term.getName().toString(), term.getIDAsString()));
+        //ontology.getTermMap().forEach(term -> labels.put(term., term.getId()));
+        ontology.getTermMap().values().stream().forEach(term -> labels.putIfAbsent(term.getName(), term.getId().toString()));
         WidthAwareTextFields.bindWidthAwareAutoCompletion(searchTextField, labels.keySet());
 
         // show intro message in the infoWebView
@@ -181,7 +184,7 @@ public class OntologyTreeController implements DialogController {
      * @param termId String with HPO term id (e.g. HP:0002527 for Falls)
      */
     void focusOnTerm(String termId) {
-        Term term = ontology.getTerm(termId);
+        Term term = ontology.getTermMap().get(termId);
         if (term == null) {
             LOGGER.warn("Unable to focus on term with id {} because it is not defined in the ontology", termId);
             return;
@@ -197,15 +200,15 @@ public class OntologyTreeController implements DialogController {
      * @param term {@link Term} to be displayed
      */
     private void expandUntilTerm(Term term) {
-        if (ontology.existsPath(ontology.getRootTerm().getID(), term.getID())) {
+        if (OntologyAlgorithm.existsPath(ontology, ontology.getRootTermId(), term.getId())) {
             // find root -> term path through the tree
             Stack<Term> termStack = new Stack<>();
             termStack.add(term);
-            Set<Term> parents = ontology.getTermParents(term);
+            Set<TermId> parents = ontology.getParentTermIds(term.getId()); //getTermParents(term);
             while (parents.size() != 0) {
-                Term parent = parents.iterator().next();
-                termStack.add(parent);
-                parents = ontology.getTermParents(parent);
+                TermId parent = parents.iterator().next();
+                termStack.add(ontology.getTermMap().get(parent));
+                parents = ontology.getParentTermIds(parent);
             }
 
             // expand tree nodes in top -> down direction
@@ -226,7 +229,7 @@ public class OntologyTreeController implements DialogController {
             ontologyTreeView.getSelectionModel().select(target);
             ontologyTreeView.scrollTo(ontologyTreeView.getSelectionModel().getSelectedIndex());
         } else {
-            LOGGER.warn(String.format("Unable to find the path from %s to %s", ontology.getRootTerm(), term.getName()));
+            LOGGER.warn(String.format("Unable to find the path from %s to %s", ontology.getRootTermId(), term.getName()));
         }
     }
 
@@ -260,8 +263,8 @@ public class OntologyTreeController implements DialogController {
                 "<p><b>Definition:</b> %s</p>" +
                 "</body></html>";
 
-        String termID = String.format("%s:%07d", term.getID().getPrefix(), term.getID().id);
-        String synonyms = (term.getSynonyms() == null) ? "" : Arrays.stream(term.getSynonyms()).map(Object::toString)
+        String termID = String.format("%s:%07d", term.getId().getPrefix(), term.getId().getId());
+        String synonyms = (term.getSynonyms() == null) ? "" : term.getSynonyms().stream().map(t -> t.toString())
                 .collect(Collectors.joining(", ")); // Synonyms
         String definition = (term.getDefinition() == null) ? "" : term.getDefinition().toString();
 
