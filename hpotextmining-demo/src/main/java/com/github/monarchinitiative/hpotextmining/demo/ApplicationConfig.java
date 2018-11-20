@@ -48,7 +48,8 @@ public class ApplicationConfig {
      */
     @Bean
     public HPOTextMining hpoTextMining() throws IOException, OBOParserException {
-        URL textminingUrl = new URL(env.getProperty("textmining.url"));
+        //URL textminingUrl = new URL(env.getProperty("textmining.url"));
+        URL textminingUrl = new URL(new URL(env.getProperty("sciGraph.base")), env.getProperty("sciGraph.path"));
         return new HPOTextMining(ontology(), textminingUrl, owner);
     }
 

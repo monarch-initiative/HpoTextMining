@@ -3,6 +3,7 @@ package com.github.monarchinitiative.hpotextmining.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.model.BiolarkResult;
+import com.github.monarchinitiative.hpotextmining.model.MonarchSciGraphResult;
 import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -191,6 +192,48 @@ public class PresentController implements Initializable {
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
     }
 
+    /**
+     * same as above but this is for results from SciGraph
+     * @Author Aaron Zhang
+     */
+    private String colorizeHTML4ciGraph(Set<BiolarkResult> resultSet, String minedText) {
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(HTML_HEAD);
+        htmlBuilder.append(HTML_BODY_BEGIN);
+
+        // sort to process minedText sequentially.
+        List<BiolarkResult> sortedResults = resultSet.stream()
+                .sorted(BiolarkResult.compareByStart())
+                .collect(Collectors.toList());
+
+        int offset = 0;
+        for (BiolarkResult result : sortedResults) {
+            int start = result.getStart() < offset ? offset : result.getStart();
+            htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
+            start = Math.max(offset + 1, result.getStart());
+            Term term = ontology.getTerm(result.getTerm().getId());
+            if (term == null)
+                continue;
+
+            htmlBuilder.append(
+                    // highlighted text
+                    String.format(HIGHLIGHTED_TEMPLATE,
+                            term.getIDAsString(),
+                            minedText.substring(start, result.getEnd()),
+                            //minedText.substring(result.getStart(), result.getEnd()),
+                            // tooltip text -> HPO id & label
+                            String.format(TOOLTIP_TEMPLATE, term.getIDAsString(), term.getName().toString())));
+
+            //This offset has to turn off.
+            //offset = result.getEnd();
+        }
+
+        // process last part of mined text, if there is any
+        htmlBuilder.append(minedText.substring(offset));
+        htmlBuilder.append(HTML_BODY_END);
+        // get rid of double spaces
+        return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
+    }
 
     /**
      * End of analysis. Add approved terms into {@link HPOAnalysisController#hpoTermsTableView} and display configure
@@ -231,7 +274,7 @@ public class PresentController implements Initializable {
     void setResults(String jsonResult, String minedText) {
         results.clear(); // clean-up before adding new data.
         try {
-            results.addAll(decodePayload(jsonResult));
+            results.addAll(decodePayload(jsonResult, minedText));//switch to Monarch SciGraph Server
         } catch (IOException e) {
             LOGGER.warn(e);
             e.printStackTrace();
@@ -258,7 +301,8 @@ public class PresentController implements Initializable {
         yesTermsVBox.getChildren().addAll(yesTerms);
         notTermsVBox.getChildren().addAll(notTerms);
 
-        String html = colorizeHTML(results, minedText);
+        //String html = colorizeHTML(results, minedText);
+        String html = colorizeHTML4ciGraph(results, minedText);
         webEngine.loadContent(html);
     }
 
@@ -307,7 +351,7 @@ public class PresentController implements Initializable {
 
 
     /**
-     * Parse JSON string into set of intermediate result objects.
+     * Parse JSON string from Tudor Server into set of intermediate result objects.
      *
      * @param jsonResponse JSON string to be parsed.
      * @return set of {@link BiolarkResult} objects.
@@ -317,6 +361,20 @@ public class PresentController implements Initializable {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
         return mapper.readValue(jsonResponse, javaType);
+    }
+
+    /**
+     * Parse JSON string from Monarch SciGraph Server into set of intermediate result objects.
+     *
+     * @param jsonResponse JSON string to be parsed.
+     * @return set of {@link BiolarkResult} objects.
+     * @throws IOException in case of parsing problems
+     */
+    private static Set<BiolarkResult> decodePayload(String jsonResponse, String queryText) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        MonarchSciGraphResult[] monarchSciGraphResults = mapper.readValue(jsonResponse, MonarchSciGraphResult[].class);
+        return Arrays.stream(monarchSciGraphResults).map(o -> MonarchSciGraphResult.toBiolarkResult(o, queryText))
+                .filter(o -> o.getSource().contains("HP")).collect(Collectors.toSet());
     }
 
 

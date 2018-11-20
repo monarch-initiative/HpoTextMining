@@ -1,5 +1,7 @@
 package com.github.monarchinitiative.hpotextmining.controller;
 
+import com.github.monarchinitiative.hpotextmining.io.AskSciGraphServer;
+import com.github.monarchinitiative.hpotextmining.io.AskServer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.github.monarchinitiative.hpotextmining.io.AskTudorServer;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
@@ -56,7 +60,7 @@ public class ConfigureController implements Initializable {
     @FXML
     private TextField pmidTextField;
 
-    private AskTudorServer task;
+    private AskServer task;
 
 
     public ConfigureController(URL textMiningServer) {
@@ -94,10 +98,12 @@ public class ConfigureController implements Initializable {
      */
     @FXML
     void analyzeButtonClicked() {
-
-        task = new AskTudorServer(textMiningServer);
+        //task = new AskTudorServer(textMiningServer);
+        //
+        task = new AskSciGraphServer(textMiningServer);
 
         task.setQuery(preprocessInput());
+        //task.setQuery(contentTextArea.getText());
 
         task.setOnSucceeded(e -> {
             try {
@@ -110,6 +116,9 @@ public class ConfigureController implements Initializable {
         });
 
         task.setOnFailed(e -> {
+            log.warn("server host: " + textMiningServer.getHost());
+            log.warn("server path: " + textMiningServer.getPath());
+            log.warn("query text: " + contentTextArea.getText());
             log.warn("Text mining analysis failed. " + e.getSource().getMessage());
             signal.accept(FAILED);
         });

@@ -15,7 +15,7 @@ import java.net.URL;
  * @version 0.1.0
  * @since 0.1
  */
-public class AskTudorServer extends Task<String> {
+public class AskTudorServer extends AskServer{
 
     private final URL server;
 
@@ -25,6 +25,7 @@ public class AskTudorServer extends Task<String> {
         this.server = server;
     }
 
+    @Override
     public void setQuery(String query) {
         this.query = query;
     }

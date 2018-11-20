@@ -2,8 +2,15 @@ package com.github.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.types.ByteString;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 /**
@@ -85,17 +92,19 @@ public class MonarchSciGraphResult implements Comparable<MonarchSciGraphResult> 
      * @param query
      * @return
      */
-    public BiolarkResult toBiolarkResult(String query) {
+    public static BiolarkResult toBiolarkResult(MonarchSciGraphResult m, String query) {
 
-        String label = "ToGetFromPhenol";
+        //@TODO: pass in HPO term to get label and synonyms
+        String id = m.token.getId();
+        String label = "TODO:unknown yet";
         Set<String> synonyms = new HashSet<>();
-        SimpleBiolarkTerm biolarkTerm = new SimpleBiolarkTerm(this.token.getId(), label, synonyms);
+        SimpleBiolarkTerm biolarkTerm = new SimpleBiolarkTerm(m.token.getId(), label, synonyms);
 
-        BiolarkResult biolark = new BiolarkResult(this.start,
-                this.end,
-                this.end - this.start + 1,
-                query.substring(this.start, this.end),
-        this.token.getId().split(":")[0],
+        BiolarkResult biolark = new BiolarkResult(m.start,
+                m.end,
+                m.end - m.start,
+                query.substring(m.start, m.end),
+        m.token.getId().split(":")[0],
         biolarkTerm,
         false);
 

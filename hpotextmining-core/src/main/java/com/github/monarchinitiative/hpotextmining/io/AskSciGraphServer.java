@@ -9,7 +9,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AskSciGraphServer extends Task<String> {
+public class AskSciGraphServer extends AskServer {
     private final URL server;
 
     private String query = null;
@@ -18,6 +18,7 @@ public class AskSciGraphServer extends Task<String> {
         this.server = server;
     }
 
+    @Override
     public void setQuery(String query) {
         this.query = query;
     }
@@ -61,6 +62,7 @@ public class AskSciGraphServer extends Task<String> {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+
         return jsonStringBuilder.toString();
     }
 
