@@ -59,7 +59,7 @@ public class OntologyTreeController implements DialogController {
     /**
      * Map of term names to term IDs.
      */
-    private Map<String, String> labels = new HashMap<>();
+    private Map<String, TermId> labels = new HashMap<>();
 
     /**
      * Text field with autocompletion for jumping to a particular HPO term in the tree view.
@@ -120,7 +120,7 @@ public class OntologyTreeController implements DialogController {
      */
     @FXML
     private void goButtonAction() {
-        String id = labels.get(searchTextField.getText());
+        TermId id = labels.get(searchTextField.getText());
         if (id != null) {
             expandUntilTerm(ontology.getTermMap().get(id));
             searchTextField.clear();
@@ -187,7 +187,7 @@ public class OntologyTreeController implements DialogController {
 
         // create Map for lookup of the terms in the ontology based on their Name
         //ontology.getTermMap().forEach(term -> labels.put(term., term.getId()));
-        ontology.getTermMap().values().stream().forEach(term -> labels.putIfAbsent(term.getName(), term.getId().toString()));
+        ontology.getTermMap().values().stream().forEach(term -> labels.putIfAbsent(term.getName(), term.getId()));
         WidthAwareTextFields.bindWidthAwareAutoCompletion(searchTextField, labels.keySet());
 
         // show intro message in the infoWebView
@@ -220,7 +220,7 @@ public class OntologyTreeController implements DialogController {
      * @param term {@link Term} to be displayed
      */
     private void expandUntilTerm(Term term) {
-        if (OntologyAlgorithm.existsPath(ontology, ontology.getRootTermId(), term.getId())) {
+        if (OntologyAlgorithm.existsPath(ontology, term.getId(), ontology.getRootTermId())) {
             // find root -> term path through the tree
             Stack<Term> termStack = new Stack<>();
             termStack.add(term);
@@ -283,10 +283,11 @@ public class OntologyTreeController implements DialogController {
                 "<p><b>Definition:</b> %s</p>" +
                 "</body></html>";
 
-        String termID = String.format("%s:%07d", term.getId().getPrefix(), term.getId().getId());
-        String synonyms = (term.getSynonyms() == null) ? "" : term.getSynonyms().stream().map(t -> t.toString())
+        //String termID = String.format("%s:%07d", term.getId().getPrefix(), term.getId().getId());
+        String termID = term.getId().getIdWithPrefix();
+        String synonyms = (term.getSynonyms() == null) ? "" : term.getSynonyms().stream().map(t -> t.getValue())
                 .collect(Collectors.joining(", ")); // Synonyms
-        String definition = (term.getDefinition() == null) ? "" : term.getDefinition().toString();
+        String definition = (term.getDefinition() == null) ? "" : term.getDefinition();
 
         String content = String.format(HTML_TEMPLATE, termID, term.getName(), synonyms, definition);
         infoWebEngine.loadContent(content);
@@ -338,7 +339,7 @@ public class OntologyTreeController implements DialogController {
             if (childrenList == null) {
                 LOGGER.debug(String.format("Getting children for term %s", getValue().getName()));
                 childrenList = FXCollections.observableArrayList();
-                Set<Term> children = OntologyAlgorithm.getChildTerms(ontology, getValue().getId())
+                Set<Term> children = OntologyAlgorithm.getChildTerms(ontology, getValue().getId(), false)
                         .stream().map(id -> ontology.getTermMap().get(id))
                         .collect(Collectors.toSet());
                 children.stream()

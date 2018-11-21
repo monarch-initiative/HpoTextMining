@@ -2,6 +2,8 @@ package com.github.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.monarchinitiative.phenol.ontology.data.TermId;
+import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +22,7 @@ public class SimpleBiolarkTerm {
     private final String id;
 
     /* Preferred label for this term */
-    private final String label;
+    private  String label;
 
     /* Set of strings that are synonyms (alternate labels) of term's label*/
     private final Set<String> synonyms;
@@ -48,10 +50,20 @@ public class SimpleBiolarkTerm {
     /**
      * Get HPO id for this term.
      *
-     * @return string with HPO id.
+     * @return string with HPO id with prefix, e.g. HP:000082.
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * A convenient method to return the id formatted as the TermId object
+     *
+     * @return id as a TermId object
+     */
+    public TermId getTermId() {
+        String[] elements = this.id.split(":");
+        return new TermId(new TermPrefix(elements[0]), elements[1]);
     }
 
     /**
@@ -61,6 +73,10 @@ public class SimpleBiolarkTerm {
      */
     public String getLabel() {
         return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     /**

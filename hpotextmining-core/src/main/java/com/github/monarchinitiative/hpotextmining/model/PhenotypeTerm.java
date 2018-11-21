@@ -37,8 +37,8 @@ public class PhenotypeTerm {
 
 
     public PhenotypeTerm(Term term, boolean present) {
-        this.hpoId = term.getId().toString();
-        this.name = term.getName().toString();
+        this.hpoId = term.getId().getIdWithPrefix();
+        this.name = term.getName();
         this.definition = (term.getDefinition() == null) ? "" : term.getDefinition();
         this.present = present;
     }

@@ -214,11 +214,20 @@ public class PresentController implements Initializable {
         for (BiolarkResult result : sortedResults) {
             int start = result.getStart() < offset ? offset : result.getStart();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
-            start = Math.max(offset + 1, result.getStart());
-            Term term = ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, result.getTerm().getId()));
-            if (term == null)
+            //start = Math.max(offset + 1, result.getStart());
+            //Term id is a string such as "HP:0000822"
+            //format it to a TermId object
+            String[] id_elements = result.getTerm().getId().split(":");
+            TermId id_formatted;
+            if (id_elements.length != 2) {
                 continue;
-
+            } else {
+                id_formatted = new TermId(new TermPrefix(id_elements[0]), id_elements[1]);
+            }
+            Term term = ontology.getTermMap().get(id_formatted);
+            if (term == null) {
+                continue;
+            }
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
@@ -228,8 +237,7 @@ public class PresentController implements Initializable {
                             // tooltip text -> HPO id & label
                             String.format(TOOLTIP_TEMPLATE, term.getId().toString(), term.getName())));
 
-            //This offset has to turn off.
-            //offset = result.getEnd();
+            offset = result.getEnd();
         }
 
         // process last part of mined text, if there is any
@@ -283,6 +291,16 @@ public class PresentController implements Initializable {
             LOGGER.warn(e);
             e.printStackTrace();
         }
+        //results from Monarch SciGraph does not have label, so we add them here
+        results.forEach(r -> {
+            String[] id_elements = r.getTerm().getId().split(":");
+            if (id_elements.length == 2) {
+                TermPrefix prefix = new TermPrefix(id_elements[0]);
+                String id_num = id_elements[1];
+                Term term = ontology.getTermMap().get(new TermId(prefix, id_num));
+                r.getTerm().setLabel(term.getName());
+            }
+        });
 
         yesTerms = results.stream()
                 .filter(result -> !result.isNegated())
@@ -331,11 +349,11 @@ public class PresentController implements Initializable {
         // filter all results to get only those corresponding to selected checkboxes
         all.addAll(results.stream()
                 .filter(result -> yesApproved.contains(result.getTerm().getLabel())) // create present Phenotype
-                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, term.getTerm().getId())), true))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(term.getTerm().getTermId()), true))
                 .collect(Collectors.toSet()));
         all.addAll(results.stream()
                 .filter(result -> notApproved.contains(result.getTerm().getLabel())) // create non-present PhenotypeTerm
-                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, term.getTerm().getId())), false))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(term.getTerm().getTermId()), false))
                 .collect(Collectors.toSet()));
         return all;
     }
