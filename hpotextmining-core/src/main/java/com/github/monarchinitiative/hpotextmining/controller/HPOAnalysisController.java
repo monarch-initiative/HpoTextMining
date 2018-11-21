@@ -10,10 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
-import ontologizer.ontology.Ontology;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 
 import java.net.URL;
 import java.util.HashSet;

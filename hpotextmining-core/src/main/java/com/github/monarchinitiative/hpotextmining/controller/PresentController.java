@@ -14,10 +14,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.Term;
+import org.monarchinitiative.phenol.ontology.data.TermId;
+import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.io.IOException;
 import java.net.URL;
@@ -84,6 +86,8 @@ public class PresentController implements Initializable {
      * Template for tooltips which appear when cursor hovers over highlighted terms.
      */
     private static final String TOOLTIP_TEMPLATE = "%s\n%s";
+
+    private static final TermPrefix HP_TERM_PREFIX= new TermPrefix("HP");
 
     private final Ontology ontology;
 
@@ -169,18 +173,18 @@ public class PresentController implements Initializable {
             int start = result.getStart() < offset ? offset : result.getStart();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getStart());
-            Term term = ontology.getTerm(result.getTerm().getId());
+            Term term = ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, result.getTerm().getId()));
             if (term == null)
                 continue;
 
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getIDAsString(),
+                            term.getId().toString(),
                             minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getIDAsString(), term.getName().toString())));
+                            String.format(TOOLTIP_TEMPLATE, term.getId().toString(), term.getName())));
 
             offset = result.getEnd();
         }
@@ -211,18 +215,18 @@ public class PresentController implements Initializable {
             int start = result.getStart() < offset ? offset : result.getStart();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getStart());
-            Term term = ontology.getTerm(result.getTerm().getId());
+            Term term = ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, result.getTerm().getId()));
             if (term == null)
                 continue;
 
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getIDAsString(),
+                            term.getId().toString(),
                             minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getIDAsString(), term.getName().toString())));
+                            String.format(TOOLTIP_TEMPLATE, term.getId().toString(), term.getName())));
 
             //This offset has to turn off.
             //offset = result.getEnd();
@@ -327,11 +331,11 @@ public class PresentController implements Initializable {
         // filter all results to get only those corresponding to selected checkboxes
         all.addAll(results.stream()
                 .filter(result -> yesApproved.contains(result.getTerm().getLabel())) // create present Phenotype
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), true))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, term.getTerm().getId())), true))
                 .collect(Collectors.toSet()));
         all.addAll(results.stream()
                 .filter(result -> notApproved.contains(result.getTerm().getLabel())) // create non-present PhenotypeTerm
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), false))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, term.getTerm().getId())), false))
                 .collect(Collectors.toSet()));
         return all;
     }

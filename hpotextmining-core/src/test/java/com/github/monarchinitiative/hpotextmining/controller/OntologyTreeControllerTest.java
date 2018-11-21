@@ -5,15 +5,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import ontologizer.io.obo.OBOParser;
-import ontologizer.io.obo.OBOParserException;
-import ontologizer.io.obo.OBOParserFileInput;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.TermContainer;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.monarchinitiative.phenol.base.PhenolException;
+import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.testfx.framework.junit.ApplicationTest;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -46,11 +45,11 @@ public class OntologyTreeControllerTest extends ApplicationTest {
         doubleClickOn("#searchTextField").write("hepatosplenomegaly")
                 .sleep(800).moveBy(10, 30).clickOn(MouseButton.PRIMARY)
                 .clickOn("#goButton");
-        assertEquals("HP:0001433", controller.getSelectedTerm().getValue().getID().toString());
+        assertEquals("HP:0001433", controller.getSelectedTerm().getValue().getId().toString());
         doubleClickOn("#searchTextField").write("hyperten")
                 .sleep(800).moveBy(10, 80).clickOn(MouseButton.PRIMARY)
                 .clickOn("#goButton");
-        assertEquals("HP:0000822", controller.getSelectedTerm().getValue().getID().toString());
+        assertEquals("HP:0000822", controller.getSelectedTerm().getValue().getId().toString());
     }
 
 
@@ -81,12 +80,8 @@ public class OntologyTreeControllerTest extends ApplicationTest {
      * @throws IOException        if the path to <em>*.obo</em> ONTOLOGY file is incorrect
      * @throws OBOParserException if there is a problem with parsing of the ONTOLOGY
      */
-    private static Ontology ontology() throws IOException, OBOParserException {
-        OBOParser parser = new OBOParser(new OBOParserFileInput(oboPath),
-                OBOParser.PARSE_DEFINITIONS);
-        parser.doParse();
-        TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
-                .getDate());
-        return Ontology.create(termContainer);
+    private static Ontology ontology() throws IOException, PhenolException {
+        HpOboParser parser = new HpOboParser(new File(oboPath));
+        return parser.parse();
     }
 }

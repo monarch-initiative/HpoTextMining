@@ -10,12 +10,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.phenol.ontology.algo.OntologyAlgorithm;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
+import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.net.URL;
 import java.util.*;
@@ -165,6 +167,23 @@ public class OntologyTreeController implements DialogController {
         ontologyTreeView.setRoot(root);
         ontologyTreeView.getSelectionModel().selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> updateDescription(newValue));
+        ontologyTreeView.setCellFactory(new Callback<TreeView<Term>, TreeCell<Term>>() {
+            @Override
+            public TreeCell<Term> call(TreeView<Term> param) {
+                return new TreeCell<Term>() {
+                    @Override
+                    public void updateItem(Term term, boolean empty) {
+                        super.updateItem(term, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            setText(term.getName());
+                        }
+                    }
+                };
+            }
+        });
+
 
         // create Map for lookup of the terms in the ontology based on their Name
         //ontology.getTermMap().forEach(term -> labels.put(term., term.getId()));
@@ -184,7 +203,8 @@ public class OntologyTreeController implements DialogController {
      * @param termId String with HPO term id (e.g. HP:0002527 for Falls)
      */
     void focusOnTerm(String termId) {
-        Term term = ontology.getTermMap().get(termId);
+        String [] elements = termId.split(":");
+        Term term = ontology.getTermMap().get(new TermId(new TermPrefix(elements[0]), elements[1]));
         if (term == null) {
             LOGGER.warn("Unable to focus on term with id {} because it is not defined in the ontology", termId);
             return;
@@ -302,7 +322,8 @@ public class OntologyTreeController implements DialogController {
          */
         @Override
         public boolean isLeaf() {
-            Set<Term> children = ontology.getTermChildren(getValue());
+            Set<TermId> children =
+            OntologyAlgorithm.getChildTerms(ontology, getValue().getId());
             return children.size() == 0;
         }
 
@@ -317,7 +338,9 @@ public class OntologyTreeController implements DialogController {
             if (childrenList == null) {
                 LOGGER.debug(String.format("Getting children for term %s", getValue().getName()));
                 childrenList = FXCollections.observableArrayList();
-                Set<Term> children = ontology.getTermChildren(getValue());
+                Set<Term> children = OntologyAlgorithm.getChildTerms(ontology, getValue().getId())
+                        .stream().map(id -> ontology.getTermMap().get(id))
+                        .collect(Collectors.toSet());
                 children.stream()
                         .sorted((l, r) -> l.getName().compareTo(r.getName()))
                         .map(OntologyTreeController.TermTreeItem::new)

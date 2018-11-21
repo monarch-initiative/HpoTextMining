@@ -1,20 +1,19 @@
 package com.github.monarchinitiative.hpotextmining.demo;
 
 import javafx.stage.Stage;
-import ontologizer.io.obo.OBOParser;
-import ontologizer.io.obo.OBOParserException;
-import ontologizer.io.obo.OBOParserFileInput;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.TermContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.github.monarchinitiative.hpotextmining.HPOTextMining;
+import org.monarchinitiative.phenol.base.PhenolException;
+import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -47,7 +46,7 @@ public class ApplicationConfig {
      * @throws OBOParserException in case of errors during parsing of <em>*.obo</em> ONTOLOGY file
      */
     @Bean
-    public HPOTextMining hpoTextMining() throws IOException, OBOParserException {
+    public HPOTextMining hpoTextMining() throws IOException, PhenolException {
         //URL textminingUrl = new URL(env.getProperty("textmining.url"));
         URL textminingUrl = new URL(new URL(env.getProperty("sciGraph.base")), env.getProperty("sciGraph.path"));
         return new HPOTextMining(ontology(), textminingUrl, owner);
@@ -61,14 +60,10 @@ public class ApplicationConfig {
      * @throws IOException        if the path to <em>*.obo</em> ONTOLOGY file is incorrect
      * @throws OBOParserException if there is a problem with parsing of the ONTOLOGY
      */
-    private Ontology ontology() throws IOException, OBOParserException {
+    private Ontology ontology() throws IOException, PhenolException {
         LOGGER.info(String.format("Loading obo from %s", env.getProperty("hp.obo.path")));
-        OBOParser parser = new OBOParser(new OBOParserFileInput(env.getProperty("hp.obo.path")),
-                OBOParser.PARSE_DEFINITIONS);
-        String result = parser.doParse();
-        TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
-                .getDate());
-        return Ontology.create(termContainer);
+        HpOboParser parser = new HpOboParser(new File(env.getProperty("hp.obo.path")),false);
+        return parser.parse();
     }
 
 }

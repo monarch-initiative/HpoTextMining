@@ -2,16 +2,7 @@ package com.github.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Prefix;
-import ontologizer.ontology.Term;
-import ontologizer.ontology.TermID;
-import ontologizer.types.ByteString;
-
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 
 /**
  * JSON Class representation of Monarch SciGraph text mining results.
