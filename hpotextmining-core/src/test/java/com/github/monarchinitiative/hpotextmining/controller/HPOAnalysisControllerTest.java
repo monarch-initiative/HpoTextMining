@@ -11,7 +11,6 @@ import org.hamcrest.Matchers;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.monarchinitiative.phenol.base.PhenolException;
-import org.monarchinitiative.phenol.io.base.OntologyOboParser;
 import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.testfx.framework.junit.ApplicationTest;
@@ -109,7 +108,7 @@ public class HPOAnalysisControllerTest extends ApplicationTest {
      *
      * @return {@link Ontology} representing the hierarchy of the ONTOLOGY
      * @throws IOException        if the path to <em>*.obo</em> ONTOLOGY file is incorrect
-     * @throws OBOParserException if there is a problem with parsing of the ONTOLOGY
+     * @throws PhenolException if there is a problem with parsing of the ONTOLOGY
      */
     private static Ontology ontology() throws IOException, PhenolException {
         HpOboParser parser = new HpOboParser(new File(oboPath));

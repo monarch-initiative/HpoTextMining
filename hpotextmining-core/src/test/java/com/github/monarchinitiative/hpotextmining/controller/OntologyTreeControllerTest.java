@@ -49,11 +49,11 @@ public class OntologyTreeControllerTest extends ApplicationTest {
         doubleClickOn("#searchTextField").write("hepatosplenomegaly")
                 .sleep(800).moveBy(10, 30).clickOn(MouseButton.PRIMARY)
                 .clickOn("#goButton");
-        assertEquals("HP:0001433", controller.getSelectedTerm().getValue().getId().toString());
+        assertEquals("HP:0001433", controller.getSelectedTerm().getValue().getId().getIdWithPrefix());
         doubleClickOn("#searchTextField").write("hyperten")
                 .sleep(800).moveBy(10, 80).clickOn(MouseButton.PRIMARY)
                 .clickOn("#goButton");
-        assertEquals("HP:0000822", controller.getSelectedTerm().getValue().getId().toString());
+        assertEquals("HP:0000822", controller.getSelectedTerm().getValue().getId().getIdWithPrefix());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class OntologyTreeControllerTest extends ApplicationTest {
      *
      * @return {@link Ontology} representing the hierarchy of the ONTOLOGY
      * @throws IOException        if the path to <em>*.obo</em> ONTOLOGY file is incorrect
-     * @throws OBOParserException if there is a problem with parsing of the ONTOLOGY
+     * @throws PhenolException if there is a problem with parsing of the ONTOLOGY
      */
     private static Ontology ontology() throws IOException, PhenolException {
         HpOboParser parser = new HpOboParser(new File(oboPath));
