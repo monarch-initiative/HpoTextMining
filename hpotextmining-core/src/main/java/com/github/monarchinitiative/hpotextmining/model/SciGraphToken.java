@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-
+/**
+ * This class represent a "token" from SciGraph server. A token has three properties, id (String), categories (array), and terms (array). Refer the following example:
+ * {"token":{"id":"MP:0000751","categories":["Phenotype"],"terms":["myopathy"]},"start":50,"end":58}
+ */
 public class SciGraphToken {
-    private String id;
-    private List<String> categories;
-    private List<String> terms;
+    private String id; //Term ID
+    private List<String> categories; //Only value is "Phenotype" because we only queried in this category (see configuration in AskSciGraphServer).
+    private List<String> terms; //Term label, always one string
 
     @JsonCreator
     public SciGraphToken(@JsonProperty("id") String id,

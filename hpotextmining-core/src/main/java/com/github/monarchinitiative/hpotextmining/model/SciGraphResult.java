@@ -2,6 +2,7 @@ package com.github.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.*;
 
 /**
@@ -10,16 +11,16 @@ import java.util.*;
  * @version 0.1.0
  * @since 0.2.2
  */
-public class MonarchSciGraphResult implements Comparable<MonarchSciGraphResult> {
+public class SciGraphResult implements Comparable<SciGraphResult> {
 
     private SciGraphToken token;
     private int start;
     private int end;
 
     @JsonCreator
-    public MonarchSciGraphResult(@JsonProperty("token") SciGraphToken token,
-                                 @JsonProperty("start") int start,
-                                 @JsonProperty("end") int end) {
+    public SciGraphResult(@JsonProperty("token") SciGraphToken token,
+                          @JsonProperty("start") int start,
+                          @JsonProperty("end") int end) {
         this.token = token;
         this.start = start;
         this.end = end;
@@ -52,11 +53,11 @@ public class MonarchSciGraphResult implements Comparable<MonarchSciGraphResult> 
 
     @Override
     public boolean equals(Object other) {
-        if (! (other instanceof MonarchSciGraphResult)) {
+        if (! (other instanceof SciGraphResult)) {
             return false;
         }
 
-        MonarchSciGraphResult o = (MonarchSciGraphResult) other;
+        SciGraphResult o = (SciGraphResult) other;
         return this.token.equals(o.token) && this.start == o.start && this.end == o.end;
     }
 
@@ -74,7 +75,7 @@ public class MonarchSciGraphResult implements Comparable<MonarchSciGraphResult> 
      * @return
      */
     @Override
-    public int compareTo(MonarchSciGraphResult o) {
+    public int compareTo(SciGraphResult o) {
         return this.start - o.start;
     }
 
@@ -83,21 +84,20 @@ public class MonarchSciGraphResult implements Comparable<MonarchSciGraphResult> 
      * @param query
      * @return
      */
-    public static BiolarkResult toBiolarkResult(MonarchSciGraphResult m, String query) {
+    public static BiolarkResult toBiolarkResult(SciGraphResult m, String query) {
 
-        //@TODO: pass in HPO term to get label and synonyms
         String id = m.token.getId();
-        String label = "TODO:unknown yet";
+        String label = m.token.getTerms().get(0);
         Set<String> synonyms = new HashSet<>();
-        SimpleBiolarkTerm biolarkTerm = new SimpleBiolarkTerm(m.token.getId(), label, synonyms);
+        SimpleBiolarkTerm biolarkTerm = new SimpleBiolarkTerm(id, label, synonyms);
 
         BiolarkResult biolark = new BiolarkResult(m.start,
                 m.end,
                 m.end - m.start,
                 query.substring(m.start, m.end),
-        m.token.getId().split(":")[0],
-        biolarkTerm,
-        false);
+                m.token.getId().split(":")[0],
+                biolarkTerm,
+                false);
 
         return biolark;
     }

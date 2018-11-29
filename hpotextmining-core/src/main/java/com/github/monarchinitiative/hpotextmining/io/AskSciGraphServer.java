@@ -9,6 +9,11 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * This class allows using Monarch SciGraph Server for text mining.
+ * @TODO: take out the server configuration parameters to generalize it (and merge it to AskTudorServer) if necessary
+ */
 public class AskSciGraphServer extends AskServer {
     private final URL server;
 
@@ -39,7 +44,7 @@ public class AskSciGraphServer extends AskServer {
                     server.openConnection();
             connection.setDoInput(true);
             connection.setDoOutput(true);
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod("POST");
             connection.setRequestProperty("Accept", "application/json");
             connection.setConnectTimeout(5000); //fail if no connection for 5s
             connection.setReadTimeout(30000); //fail if no read for 30s

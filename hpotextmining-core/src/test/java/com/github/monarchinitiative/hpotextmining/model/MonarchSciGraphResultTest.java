@@ -1,15 +1,12 @@
 package com.github.monarchinitiative.hpotextmining.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.monarchinitiative.hpotextmining.io.AskServerTest;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +28,7 @@ public class MonarchSciGraphResultTest {
     @Test
     public void simpleTest() throws Exception{
 
-        MonarchSciGraphResult result = mapper.readValue(jsonString, MonarchSciGraphResult.class);
+        SciGraphResult result = mapper.readValue(jsonString, SciGraphResult.class);
         assertNotNull(result);
         assertEquals(result.getToken().getId(), "MP:0000751");
         assertEquals(result.getStart(), 50);
@@ -40,14 +37,14 @@ public class MonarchSciGraphResultTest {
 
     @Test
     public void jsonList() throws Exception {
-        MonarchSciGraphResult[] results = mapper.readValue(jsonListString, MonarchSciGraphResult[].class);
+        SciGraphResult[] results = mapper.readValue(jsonListString, SciGraphResult[].class);
         assertEquals(results.length, 66);
     }
 
     @Test
     public void testCompare() throws Exception {
-        MonarchSciGraphResult[] results = mapper.readValue(jsonListString, MonarchSciGraphResult[].class);
-        List<MonarchSciGraphResult> l = Arrays.asList(results);
+        SciGraphResult[] results = mapper.readValue(jsonListString, SciGraphResult[].class);
+        List<SciGraphResult> l = Arrays.asList(results);
         Collections.shuffle(l);
         //l.forEach(o -> System.out.print(o.getStart() + "\t"));
         //System.out.println("");
@@ -62,15 +59,11 @@ public class MonarchSciGraphResultTest {
     public void testToBiolark() throws Exception {
         InputStream in =getClass().getResourceAsStream("/payload.txt");
         String query = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
-        //System.out.println(query);
 
-        MonarchSciGraphResult result = mapper.readValue(jsonString, MonarchSciGraphResult.class);
-        BiolarkResult biolarkResult = MonarchSciGraphResult.toBiolarkResult(result, query);
-        System.out.println(biolarkResult);
-
-        String jsonInBiolark = "{\"start_offset\":2767,\"end_offset\":2790,\"length\":23,\"original_text\":\"spinal muscular\\natrophy\",\"source\":\"HPO\",\"term\":{\"uri\":\"HP:0007269\",\"preferredLabel\":\"Spinal muscular atrophy\",\"synonyms\":[\"Spinal muscle degeneration\",\"Spinal muscle wasting\"]},\"negated\":false}";
-        BiolarkResult biolarkResult1 = mapper.readValue(jsonInBiolark, BiolarkResult.class);
-        System.out.println(biolarkResult1);
+        SciGraphResult result = mapper.readValue(jsonString, SciGraphResult.class);
+        BiolarkResult biolarkResult = SciGraphResult.toBiolarkResult(result, query);
+        //System.out.println(biolarkResult);
+        assertNotNull(biolarkResult);
     }
 
 

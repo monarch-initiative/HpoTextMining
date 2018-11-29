@@ -3,7 +3,7 @@ package com.github.monarchinitiative.hpotextmining.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.model.BiolarkResult;
-import com.github.monarchinitiative.hpotextmining.model.MonarchSciGraphResult;
+import com.github.monarchinitiative.hpotextmining.model.SciGraphResult;
 import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
-import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.io.IOException;
@@ -173,7 +172,7 @@ public class PresentController implements Initializable {
             int start = result.getStart() < offset ? offset : result.getStart();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getStart());
-            Term term = ontology.getTermMap().get(new TermId(HP_TERM_PREFIX, result.getTerm().getId()));
+            Term term = ontology.getTermMap().get(result.getTerm().getTermId());
             if (term == null)
                 continue;
 
@@ -184,7 +183,7 @@ public class PresentController implements Initializable {
                             minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getId().toString(), term.getName())));
+                            String.format(TOOLTIP_TEMPLATE, term.getId().getIdWithPrefix(), term.getName())));
 
             offset = result.getEnd();
         }
@@ -197,7 +196,7 @@ public class PresentController implements Initializable {
     }
 
     /**
-     * same as above but this is for results from SciGraph
+     * Similar to above but this one works for results from SciGraph server
      * @Author Aaron Zhang
      */
     private String colorizeHTML4ciGraph(Set<BiolarkResult> resultSet, String minedText) {
@@ -216,15 +215,7 @@ public class PresentController implements Initializable {
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             //start = Math.max(offset + 1, result.getStart());
             //Term id is a string such as "HP:0000822"
-            //format it to a TermId object
-            String[] id_elements = result.getTerm().getId().split(":");
-            TermId id_formatted;
-            if (id_elements.length != 2) {
-                continue;
-            } else {
-                id_formatted = new TermId(new TermPrefix(id_elements[0]), id_elements[1]);
-            }
-            Term term = ontology.getTermMap().get(id_formatted);
+            Term term = ontology.getTermMap().get(result.getTerm().getTermId());
             if (term == null) {
                 continue;
             }
@@ -235,7 +226,7 @@ public class PresentController implements Initializable {
                             minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getId().toString(), term.getName())));
+                            String.format(TOOLTIP_TEMPLATE, term.getId().getIdWithPrefix(), term.getName())));
 
             offset = result.getEnd();
         }
@@ -291,16 +282,11 @@ public class PresentController implements Initializable {
             LOGGER.warn(e);
             e.printStackTrace();
         }
-        //results from Monarch SciGraph does not have label, so we add them here
-        results.forEach(r -> {
-            String[] id_elements = r.getTerm().getId().split(":");
-            if (id_elements.length == 2) {
-                TermPrefix prefix = new TermPrefix(id_elements[0]);
-                String id_num = id_elements[1];
-                Term term = ontology.getTermMap().get(new TermId(prefix, id_num));
-                r.getTerm().setLabel(term.getName());
-            }
-        });
+        //The following section add labels from ontology. we currently use the labels provided by scigraph
+//        results.forEach(r -> {
+//            Term term = ontology.getTermMap().get(r.getTerm().getTermId());
+//            r.getTerm().setLabel(term.getName());
+//        });
 
         yesTerms = results.stream()
                 .filter(result -> !result.isNegated())
@@ -388,15 +374,18 @@ public class PresentController implements Initializable {
     /**
      * Parse JSON string from Monarch SciGraph Server into set of intermediate result objects.
      *
+     * @Author Aaron Zhang
      * @param jsonResponse JSON string to be parsed.
      * @return set of {@link BiolarkResult} objects.
      * @throws IOException in case of parsing problems
      */
     private static Set<BiolarkResult> decodePayload(String jsonResponse, String queryText) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        MonarchSciGraphResult[] monarchSciGraphResults = mapper.readValue(jsonResponse, MonarchSciGraphResult[].class);
-        return Arrays.stream(monarchSciGraphResults).map(o -> MonarchSciGraphResult.toBiolarkResult(o, queryText))
-                .filter(o -> o.getSource().contains("HP")).collect(Collectors.toSet());
+        //map json result into SciGraphResult objects
+        SciGraphResult[] sciGraphResults = mapper.readValue(jsonResponse, SciGraphResult[].class);
+        //convert into BiolarkResults and return hpo terms
+        return Arrays.stream(sciGraphResults).map(o -> SciGraphResult.toBiolarkResult(o, queryText))
+                .filter(o -> o.getSource().startsWith("HP")).collect(Collectors.toSet());
     }
 
 
