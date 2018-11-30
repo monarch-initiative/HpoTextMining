@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ComparisonChain;
-import ontologizer.ontology.Term;
+import org.monarchinitiative.phenol.ontology.data.Term;
+
 
 import java.util.Comparator;
 
@@ -36,9 +37,9 @@ public class PhenotypeTerm {
 
 
     public PhenotypeTerm(Term term, boolean present) {
-        this.hpoId = term.getIDAsString();
-        this.name = term.getName().toString();
-        this.definition = (term.getDefinition() == null) ? "" : term.getDefinition().toString();
+        this.hpoId = term.getId().getIdWithPrefix();
+        this.name = term.getName();
+        this.definition = (term.getDefinition() == null) ? "" : term.getDefinition();
         this.present = present;
     }
 

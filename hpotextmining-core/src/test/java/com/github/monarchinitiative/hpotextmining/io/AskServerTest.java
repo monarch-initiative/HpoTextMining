@@ -26,7 +26,7 @@ public class AskServerTest {
     /**
      * "Tested" instance
      */
-    private AskServer askServer;
+    private AskTudorServer askServer;
 
 
     /**
@@ -36,7 +36,7 @@ public class AskServerTest {
      */
     @Test
     public void just4fun() throws Exception {
-        askServer = new AskServer(textMiningUrl);
+        askServer = new AskTudorServer(textMiningUrl);
         askServer.setQuery(payloadReader.lines().collect(Collectors.joining("\n")));
         askServer.setOnSucceeded(e -> {
             try {

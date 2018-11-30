@@ -7,7 +7,7 @@
     <parent>
         <artifactId>hpotextmining</artifactId>
         <groupId>com.github.monarch-initiative</groupId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
     </parent>
 
     <artifactId>hpotextmining-core</artifactId>
@@ -19,6 +19,7 @@
         <log4j.version>2.7</log4j.version>
         <jackson.fasterxml.version>2.8.8</jackson.fasterxml.version>
         <junit.version>4.12</junit.version>
+        <phenol.version>1.2.6</phenol.version>
     </properties>
 
     <build>
@@ -53,17 +54,10 @@
     </build>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-core -->
         <dependency>
-            <groupId>de.ontologizer</groupId>
-            <artifactId>ontologizerlib-core</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/de.ontologizer/ontologizerlib-io -->
-        <dependency>
-            <groupId>de.ontologizer</groupId>
-            <artifactId>ontologizerlib-io</artifactId>
-            <version>0.1</version>
+            <groupId>org.monarchinitiative.phenol</groupId>
+            <artifactId>phenol-io</artifactId>
+            <version>${phenol.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->

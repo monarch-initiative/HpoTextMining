@@ -7,7 +7,7 @@ import com.github.monarchinitiative.hpotextmining.model.SimpleTextMiningResult;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import ontologizer.ontology.Ontology;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
 
 import java.net.URL;
 import java.util.HashSet;

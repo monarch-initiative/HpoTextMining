@@ -3,6 +3,7 @@ package com.github.monarchinitiative.hpotextmining.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.model.BiolarkResult;
+import com.github.monarchinitiative.hpotextmining.model.SciGraphResult;
 import com.github.monarchinitiative.hpotextmining.model.PhenotypeTerm;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -13,10 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.Term;
+import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.io.IOException;
 import java.net.URL;
@@ -83,6 +85,8 @@ public class PresentController implements Initializable {
      * Template for tooltips which appear when cursor hovers over highlighted terms.
      */
     private static final String TOOLTIP_TEMPLATE = "%s\n%s";
+
+    private static final TermPrefix HP_TERM_PREFIX= new TermPrefix("HP");
 
     private final Ontology ontology;
 
@@ -168,18 +172,18 @@ public class PresentController implements Initializable {
             int start = result.getStart() < offset ? offset : result.getStart();
             htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
             start = Math.max(offset + 1, result.getStart());
-            Term term = ontology.getTerm(result.getTerm().getId());
+            Term term = ontology.getTermMap().get(result.getTerm().getTermId());
             if (term == null)
                 continue;
 
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getIDAsString(),
+                            term.getId().toString(),
                             minedText.substring(start, result.getEnd()),
                             //minedText.substring(result.getStart(), result.getEnd()),
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getIDAsString(), term.getName().toString())));
+                            String.format(TOOLTIP_TEMPLATE, term.getId().getIdWithPrefix(), term.getName())));
 
             offset = result.getEnd();
         }
@@ -191,6 +195,48 @@ public class PresentController implements Initializable {
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
     }
 
+    /**
+     * Similar to above but this one works for results from SciGraph server
+     * @Author Aaron Zhang
+     */
+    private String colorizeHTML4ciGraph(Set<BiolarkResult> resultSet, String minedText) {
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(HTML_HEAD);
+        htmlBuilder.append(HTML_BODY_BEGIN);
+
+        // sort to process minedText sequentially.
+        List<BiolarkResult> sortedResults = resultSet.stream()
+                .sorted(BiolarkResult.compareByStart())
+                .collect(Collectors.toList());
+
+        int offset = 0;
+        for (BiolarkResult result : sortedResults) {
+            int start = result.getStart() < offset ? offset : result.getStart();
+            htmlBuilder.append(minedText.substring(offset, start)); // unhighlighted text
+            //start = Math.max(offset + 1, result.getStart());
+            //Term id is a string such as "HP:0000822"
+            Term term = ontology.getTermMap().get(result.getTerm().getTermId());
+            if (term == null) {
+                continue;
+            }
+            htmlBuilder.append(
+                    // highlighted text
+                    String.format(HIGHLIGHTED_TEMPLATE,
+                            term.getId().toString(),
+                            minedText.substring(start, result.getEnd()),
+                            //minedText.substring(result.getStart(), result.getEnd()),
+                            // tooltip text -> HPO id & label
+                            String.format(TOOLTIP_TEMPLATE, term.getId().getIdWithPrefix(), term.getName())));
+
+            offset = result.getEnd();
+        }
+
+        // process last part of mined text, if there is any
+        htmlBuilder.append(minedText.substring(offset));
+        htmlBuilder.append(HTML_BODY_END);
+        // get rid of double spaces
+        return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
+    }
 
     /**
      * End of analysis. Add approved terms into {@link HPOAnalysisController#hpoTermsTableView} and display configure
@@ -231,11 +277,16 @@ public class PresentController implements Initializable {
     void setResults(String jsonResult, String minedText) {
         results.clear(); // clean-up before adding new data.
         try {
-            results.addAll(decodePayload(jsonResult));
+            results.addAll(decodePayload(jsonResult, minedText));//switch to Monarch SciGraph Server
         } catch (IOException e) {
             LOGGER.warn(e);
             e.printStackTrace();
         }
+        //The following section add labels from ontology. we currently use the labels provided by scigraph
+//        results.forEach(r -> {
+//            Term term = ontology.getTermMap().get(r.getTerm().getTermId());
+//            r.getTerm().setLabel(term.getName());
+//        });
 
         yesTerms = results.stream()
                 .filter(result -> !result.isNegated())
@@ -258,7 +309,8 @@ public class PresentController implements Initializable {
         yesTermsVBox.getChildren().addAll(yesTerms);
         notTermsVBox.getChildren().addAll(notTerms);
 
-        String html = colorizeHTML(results, minedText);
+        //String html = colorizeHTML(results, minedText);
+        String html = colorizeHTML4ciGraph(results, minedText);
         webEngine.loadContent(html);
     }
 
@@ -283,11 +335,11 @@ public class PresentController implements Initializable {
         // filter all results to get only those corresponding to selected checkboxes
         all.addAll(results.stream()
                 .filter(result -> yesApproved.contains(result.getTerm().getLabel())) // create present Phenotype
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), true))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(term.getTerm().getTermId()), true))
                 .collect(Collectors.toSet()));
         all.addAll(results.stream()
                 .filter(result -> notApproved.contains(result.getTerm().getLabel())) // create non-present PhenotypeTerm
-                .map(term -> new PhenotypeTerm(ontology.getTerm(term.getTerm().getId()), false))
+                .map(term -> new PhenotypeTerm(ontology.getTermMap().get(term.getTerm().getTermId()), false))
                 .collect(Collectors.toSet()));
         return all;
     }
@@ -307,7 +359,7 @@ public class PresentController implements Initializable {
 
 
     /**
-     * Parse JSON string into set of intermediate result objects.
+     * Parse JSON string from Tudor Server into set of intermediate result objects.
      *
      * @param jsonResponse JSON string to be parsed.
      * @return set of {@link BiolarkResult} objects.
@@ -317,6 +369,23 @@ public class PresentController implements Initializable {
         ObjectMapper mapper = new ObjectMapper();
         CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
         return mapper.readValue(jsonResponse, javaType);
+    }
+
+    /**
+     * Parse JSON string from Monarch SciGraph Server into set of intermediate result objects.
+     *
+     * @Author Aaron Zhang
+     * @param jsonResponse JSON string to be parsed.
+     * @return set of {@link BiolarkResult} objects.
+     * @throws IOException in case of parsing problems
+     */
+    private static Set<BiolarkResult> decodePayload(String jsonResponse, String queryText) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        //map json result into SciGraphResult objects
+        SciGraphResult[] sciGraphResults = mapper.readValue(jsonResponse, SciGraphResult[].class);
+        //convert into BiolarkResults and return hpo terms
+        return Arrays.stream(sciGraphResults).map(o -> SciGraphResult.toBiolarkResult(o, queryText))
+                .filter(o -> o.getSource().startsWith("HP")).collect(Collectors.toSet());
     }
 
 
