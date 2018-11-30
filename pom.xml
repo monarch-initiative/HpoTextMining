@@ -6,7 +6,7 @@
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
@@ -101,7 +101,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
