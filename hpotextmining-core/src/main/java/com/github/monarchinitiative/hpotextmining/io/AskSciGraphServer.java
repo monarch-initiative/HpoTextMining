@@ -1,8 +1,9 @@
 package com.github.monarchinitiative.hpotextmining.io;
 
-import javafx.concurrent.Task;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 /**
  * This class allows using Monarch SciGraph Server for text mining.
- * @TODO: take out the server configuration parameters to generalize it (and merge it to AskTudorServer) if necessary
+ * TODO: take out the server configuration parameters to generalize it (and merge it to AskTudorServer) if necessary
  */
 public class AskSciGraphServer extends AskServer {
     private final URL server;

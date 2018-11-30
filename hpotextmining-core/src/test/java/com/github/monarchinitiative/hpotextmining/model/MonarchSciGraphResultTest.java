@@ -19,6 +19,7 @@ public class MonarchSciGraphResultTest {
     private static String jsonString;
     private static String jsonListString;
     private static ObjectMapper mapper = new ObjectMapper();
+
     @BeforeClass
     public static void setup() {
         jsonString = "{\"token\":{\"id\":\"MP:0000751\",\"categories\":[\"Phenotype\"],\"terms\":[\"myopathy\"]},\"start\":50,\"end\":58}";
@@ -26,7 +27,7 @@ public class MonarchSciGraphResultTest {
     }
 
     @Test
-    public void simpleTest() throws Exception{
+    public void simpleTest() throws Exception {
 
         SciGraphResult result = mapper.readValue(jsonString, SciGraphResult.class);
         assertNotNull(result);
@@ -57,15 +58,16 @@ public class MonarchSciGraphResultTest {
 
     @Test
     public void testToBiolark() throws Exception {
-        InputStream in =getClass().getResourceAsStream("/payload.txt");
-        String query = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
+        String query;
+        try (InputStream in = getClass().getResourceAsStream("/payload.txt")) {
+            query = new BufferedReader(new InputStreamReader(in)).lines().collect(Collectors.joining("\n"));
+        }
 
         SciGraphResult result = mapper.readValue(jsonString, SciGraphResult.class);
         BiolarkResult biolarkResult = SciGraphResult.toBiolarkResult(result, query);
         //System.out.println(biolarkResult);
         assertNotNull(biolarkResult);
     }
-
 
 
 }
