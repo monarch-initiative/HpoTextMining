@@ -6,7 +6,7 @@
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
