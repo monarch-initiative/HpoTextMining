@@ -18,7 +18,9 @@ import java.util.Set;
 public class SciGraphResult implements Comparable<SciGraphResult> {
 
     private SciGraphToken token;
+
     private int start;
+
     private int end;
 
     @JsonCreator
@@ -32,10 +34,11 @@ public class SciGraphResult implements Comparable<SciGraphResult> {
     }
 
     /**
-     * Convert to BiolarkResults
+     * Convert to BiolarkResult.
      *
-     * @param query
-     * @return
+     * @param m     {@link SciGraphResult}
+     * @param query {@link String} with the query text
+     * @return {@link BiolarkResult} representing the <code>m</code> instance
      */
     public static BiolarkResult toBiolarkResult(SciGraphResult m, String query) {
 
@@ -44,15 +47,13 @@ public class SciGraphResult implements Comparable<SciGraphResult> {
         Set<String> synonyms = new HashSet<>();
         BiolarkToken biolarkTerm = new BiolarkToken(id, label, synonyms);
 
-        BiolarkResult biolark = new BiolarkResult(m.start,
+        return new BiolarkResult(m.start,
                 m.end,
                 m.end - m.start,
                 query.substring(m.start, m.end),
                 m.token.getId().split(":")[0],
                 biolarkTerm,
                 false);
-
-        return biolark;
     }
 
     public SciGraphToken getToken() {
@@ -99,8 +100,8 @@ public class SciGraphResult implements Comparable<SciGraphResult> {
     /**
      * Compare by the start position
      *
-     * @param o
-     * @return
+     * @param o other {@link SciGraphResult}
+     * @return result as specified by {@link Comparable}
      */
     @Override
     public int compareTo(SciGraphResult o) {
