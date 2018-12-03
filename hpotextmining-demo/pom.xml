@@ -7,11 +7,12 @@
     <parent>
         <artifactId>hpotextmining</artifactId>
         <groupId>com.github.monarch-initiative</groupId>
-        <version>0.2.2</version>
+        <version>0.2.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>hpotextmining-demo</artifactId>
-    <description>Example usage of `hpotextmining-core` module in JavaFX App</description>
+    <version>0.2.3-SNAPSHOT</version>
+    <description>Example usage of `hpotextmining-gui` module in JavaFX App</description>
 
     <properties>
         <spring.version>4.3.11.RELEASE</spring.version>
@@ -26,8 +27,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
 
@@ -60,12 +61,10 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <useUniqueVersions>false</useUniqueVersions>
-                            <mainClass>${project.groupId}.hpotextmining.demo.Main</mainClass>
+                            <mainClass>com.github.monarchinitiative.hpotextmining.demo.Play</mainClass>
                         </manifest>
                     </archive>
                     <excludes>
-                        <exclude>HP.obo</exclude>
-                        <exclude>hpotextmining-demo.properties</exclude>
                         <exclude>assembly/*</exclude>
                         <exclude>assembly</exclude>
                     </excludes>
@@ -96,16 +95,17 @@
     <dependencies>
         <dependency>
             <groupId>com.github.monarch-initiative</groupId>
-            <artifactId>hpotextmining-core</artifactId>
+            <artifactId>hpotextmining-gui</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.11.1</version>
         </dependency>
+
     </dependencies>
 
 </project>

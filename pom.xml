@@ -6,7 +6,7 @@
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.2</version>
+    <version>0.2.3-SNAPSHOT</version>
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
@@ -18,10 +18,19 @@
     <inceptionYear>2017</inceptionYear>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.version>1.8</jdk.version>
+        <java.version>1.8</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+
+        <encoding>UTF-8</encoding>
+        <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+        <project.resources.sourceEncoding>${encoding}</project.resources.sourceEncoding>
+
+        <jackson.fasterxml.version>2.8.8</jackson.fasterxml.version>
         <junit.version>4.12</junit.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <phenol.version>1.2.6</phenol.version>
     </properties>
 
     <licenses>
@@ -36,6 +45,20 @@
         <developer>
             <name>Daniel Danis</name>
             <email>daniel.danis@jax.org</email>
+            <organization>The Jackson Laboratory</organization>
+            <organizationUrl>https://www.jax.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Aaron Zhang</name>
+            <email>aaron.zhang@jax.org</email>
+            <organization>The Jackson Laboratory</organization>
+            <organizationUrl>https://www.jax.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Peter Robinson</name>
+            <email>peter.robinson@jax.org</email>
+            <organization>The Jackson Laboratory</organization>
+            <organizationUrl>https://www.jax.org</organizationUrl>
         </developer>
     </developers>
 

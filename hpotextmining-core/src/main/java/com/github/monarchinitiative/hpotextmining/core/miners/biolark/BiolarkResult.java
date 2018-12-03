@@ -22,7 +22,7 @@ public final class BiolarkResult {
 
     private final String source;
 
-    private final SimpleBiolarkTerm term;
+    private final BiolarkToken term;
 
     private final boolean negated;
 
@@ -36,7 +36,7 @@ public final class BiolarkResult {
      * @param length        length of the substring.
      * @param original_text substring text.
      * @param source        not sure what this is but it is always "HPO"
-     * @param term          identified {@link SimpleBiolarkTerm}
+     * @param term          identified {@link BiolarkToken}
      * @param negated       indicates absence/non-presence of this label in the patient
      */
     @JsonCreator
@@ -45,7 +45,7 @@ public final class BiolarkResult {
                          @JsonProperty("length") int length,
                          @JsonProperty("original_text") String original_text,
                          @JsonProperty("source") String source,
-                         @JsonProperty("term") SimpleBiolarkTerm term,
+                         @JsonProperty("term") BiolarkToken term,
                          @JsonProperty("negated") boolean negated) {
         this.start = start;
         this.end = end;
@@ -82,7 +82,7 @@ public final class BiolarkResult {
     }
 
 
-    public SimpleBiolarkTerm getTerm() {
+    public BiolarkToken getTerm() {
         return term;
     }
 

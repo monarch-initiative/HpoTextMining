@@ -1,23 +1,19 @@
 package com.github.monarchinitiative.hpotextmining.demo;
 
-import com.github.monarchinitiative.hpotextmining.core.miners.HPOMiner;
-import com.github.monarchinitiative.hpotextmining.core.miners.biolark.BiolarkHPOMiner;
-import com.github.monarchinitiative.hpotextmining.demo.controllers.Main;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ontologizer.io.obo.OBOParser;
-import ontologizer.io.obo.OBOParserException;
-import ontologizer.io.obo.OBOParserFileInput;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.TermContainer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.monarchinitiative.phenol.base.PhenolException;
+import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
+import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Example usage of HpoTextMining module in a JavaFX App.
@@ -26,50 +22,25 @@ import java.net.URL;
  * @version 0.2.1
  * @since 0.1
  */
-public final class Play extends Application {
+public class Play extends Application {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Play.class);
 
-    private static final String BIOLARK_URL = "http://phenotyper.monarchinitiative.org:5678/cr/annotate";
+    private static final String SCIGRAPH_URL_STRING = "https://scigraph-ontology.monarchinitiative.org/scigraph/annotations/complete";
 
     private static final String HPO_OBO_PATH = "/HP.obo";
 
+    private final URL scigraphUrl;
 
-    /**
-     * To run analysis, you need to have an {@link Ontology} and {@link HPOMiner}. Here, the ontology is created from
-     * OBO file that is bundled in a JAR file and the {@link BiolarkHPOMiner} is used as a miner.
-     *
-     * @param stage {@link Stage} to be used to display the app
-     * @throws Exception blah
-     */
-    @Override
-    public void start(Stage stage) throws Exception {
+    private final Ontology ontology;
 
-        HPOMiner miner = new BiolarkHPOMiner(new URL(BIOLARK_URL));
-        Main main = new Main(miner);
-        main.setOntology(getOntology());
+    private final ExecutorService executorService;
 
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("Main.fxml"));
-        loader.setControllerFactory(clazz -> main);
-        Parent root = loader.load();
-
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-
-
-    private static Ontology getOntology() {
-        try {
-            OBOParser parser = new OBOParser(new OBOParserFileInput(Play.class.getResource(HPO_OBO_PATH).getFile()),
-                    OBOParser.PARSE_DEFINITIONS);
-            LOGGER.info(parser.doParse());
-            TermContainer termContainer = new TermContainer(parser.getTermMap(), parser.getFormatVersion(), parser
-                    .getDate());
-            return Ontology.create(termContainer);
-        } catch (IOException | OBOParserException e) {
-            LOGGER.warn(e);
-            return null;
-        }
+    public Play() throws Exception {
+        HpOboParser parser = new HpOboParser(Play.class.getResourceAsStream(HPO_OBO_PATH));
+        ontology = parser.parse();
+        scigraphUrl = new URL(SCIGRAPH_URL_STRING);
+        executorService = Executors.newSingleThreadExecutor();
     }
 
 
@@ -77,4 +48,22 @@ public final class Play extends Application {
         launch(args);
     }
 
+    /**
+     * @param stage {@link Stage} to be used to display the app
+     * @throws Exception if anything wrong happens
+     */
+    @Override
+    public void start(Stage stage) throws Exception {
+        Controller controller = new Controller(stage, scigraphUrl, executorService, ontology);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Controller.fxml"));
+        loader.setControllerFactory(clz -> controller);
+        stage.setScene(new Scene(loader.load()));
+        stage.show();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        executorService.shutdown();
+    }
 }
