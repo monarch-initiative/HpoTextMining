@@ -49,6 +49,9 @@ public class SciGraphTermMinerTest {
     @Mock
     private URLConnection connection;
 
+    @Mock
+    private SciGraphTermMiner.ConnectionFactory factory;
+
     @BeforeClass
     public static void beforeClassSetUp() throws Exception {
         String path = "/scigraph/annotations/complete";
@@ -66,7 +69,7 @@ public class SciGraphTermMinerTest {
 
     @Test
     public void mineHpoTermsFromLargePayload() throws Exception {
-        URL mockUrl = new URL("file://some/path/to/file");
+        URL mockUrl = new URL("file:/some/path/to/file");
         Mockito.when(connection.getURL()).thenReturn(mockUrl);
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -75,7 +78,8 @@ public class SciGraphTermMinerTest {
         ByteArrayInputStream is = new ByteArrayInputStream(scigraphJsonResponse.getBytes());
         Mockito.when(connection.getInputStream()).thenReturn(is);
 
-        SciGraphTermMiner instance = new SciGraphTermMiner(connection);
+        Mockito.when(factory.getConnection()).thenReturn(connection);
+        SciGraphTermMiner instance = new SciGraphTermMiner(factory);
         final Set<MinedTerm> minedTerms = instance.doMining(payload);
 
         // test results - we should have 66 MinedTerms in total. Then, we test presence of five terms picked at random

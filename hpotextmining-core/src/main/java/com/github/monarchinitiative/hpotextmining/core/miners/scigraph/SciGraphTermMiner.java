@@ -27,14 +27,17 @@ public class SciGraphTermMiner implements TermMiner {
 
     private final ObjectMapper objectMapper;
 
-    private final URLConnection connection;
+    private final ConnectionFactory connectionFactory;
 
-    public SciGraphTermMiner(URL server) throws IOException {
-        this(server.openConnection());
+    public SciGraphTermMiner(URL server) {
+        this(new ConnectionFactory(server));
     }
 
-    public SciGraphTermMiner(URLConnection connection) {
-        this.connection = connection;
+    /**
+     * @param factory {@link ConnectionFactory} for making {@link URLConnection}s
+     */
+    SciGraphTermMiner(ConnectionFactory factory) {
+        this.connectionFactory = factory; // the factory makes possible to mock & test. We need to do that because class `URL` is final
         this.objectMapper = new ObjectMapper();
     }
 
@@ -74,24 +77,9 @@ public class SciGraphTermMiner implements TermMiner {
             parameters.put("includeCat", "Phenotype"); //only retrieve phenotypes
             parameters.put("includeAcronym", "true");
 
-            final String protocol = connection.getURL().getProtocol();
-            switch (protocol) {
-                case "http":
-                    ((HttpURLConnection) connection).setRequestMethod("POST");
-                    break;
-                case "https":
-                    ((HttpsURLConnection) connection).setRequestMethod("POST");
-                    break;
-                default:
-                    break;
-            }
 
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Accept", "application/json");
-            connection.setConnectTimeout(5000); //fail if no connection for 5s
-            connection.setReadTimeout(30000); //fail if no read for 30s
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            URLConnection connection = connectionFactory.getConnection();
+            String protocol = connection.getURL().getProtocol();
 
             try (OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), StandardCharsets.UTF_8)) {
                 writer.write(getParamsString(parameters));
@@ -136,5 +124,45 @@ public class SciGraphTermMiner implements TermMiner {
 
     }
 
+    /**
+     * Each time the text mining is requested we send the query to the server using a new connection.
+     */
+    public static class ConnectionFactory {
 
+        private final URL url;
+
+        public ConnectionFactory(URL url) {
+            this.url = url;
+        }
+
+        /**
+         * Set up the connection.
+         *
+         * @return {@link URLConnection} prepared to use
+         * @throws IOException in case of I/O error
+         */
+        URLConnection getConnection() throws IOException {
+            URLConnection connection = url.openConnection();
+            final String protocol = url.getProtocol();
+            switch (protocol) {
+                case "http":
+                    ((HttpURLConnection) connection).setRequestMethod("POST");
+                    break;
+                case "https":
+                    ((HttpsURLConnection) connection).setRequestMethod("POST");
+                    break;
+                default:
+                    break;
+            }
+
+            //
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setConnectTimeout(5000); //fail if no connection for 5s
+            connection.setReadTimeout(30000); //fail if no read for 30s
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            return url.openConnection();
+        }
+    }
 }
