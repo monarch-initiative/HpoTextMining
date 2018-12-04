@@ -177,7 +177,7 @@ public class SciGraphTermMiner implements TermMiner {
             connection.setConnectTimeout(5000); //fail if no connection for 5s
             connection.setReadTimeout(30000); //fail if no read for 30s
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            return url.openConnection();
+            return connection;
         }
     }
 }
