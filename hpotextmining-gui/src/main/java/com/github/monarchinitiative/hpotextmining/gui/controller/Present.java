@@ -217,7 +217,7 @@ public class Present {
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getTerm().getId().toString(),
+                            term.getTerm().getId().getIdWithPrefix(),
                             query.substring(start, term.getEnd()),
 
                             // tooltip text -> HPO id & label
