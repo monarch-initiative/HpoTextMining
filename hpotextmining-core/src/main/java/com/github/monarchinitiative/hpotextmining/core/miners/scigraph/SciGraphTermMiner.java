@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 /**
  * This class allows using Monarch SciGraph Server for text mining.
  * TODO: take out the server configuration parameters to generalize it (and merge it to AskTudorServer) if necessary
+ *
+ * @author <a href="mailto:aaron.zhang@jax.org">Aaron Zhang</a>
+ * @version 0.2.3
+ * @since 0.2.2
  */
 public class SciGraphTermMiner implements TermMiner {
 
@@ -57,6 +61,7 @@ public class SciGraphTermMiner implements TermMiner {
                 : resultString;
     }
 
+
     /**
      * @return {@link Function} mapping {@link SciGraphResult} to {@link MinedTerm}
      */
@@ -64,6 +69,16 @@ public class SciGraphTermMiner implements TermMiner {
         return sgr -> new SimpleMinedTerm(sgr.getStart(), sgr.getEnd(), sgr.getToken().getId(), true);
     }
 
+
+    /**
+     * Performs mining of the provided text using SciGraph service; <code>query</code> String is sent to the SciGraph
+     * API and the Thread is blocked until a <em>JSON</em> response is received. The response is then decoded into
+     * {@link MinedTerm}s.
+     *
+     * @param query String with text to be mined for HPO terms
+     * @return {@link Set} of {@link MinedTerm}s representing identified HPO terms. The set is empty, if I/O error
+     * occurs or if URL/query are invalid
+     */
     @Override
     public Set<MinedTerm> doMining(String query) throws TermMinerException {
         if (query == null) {

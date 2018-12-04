@@ -23,6 +23,9 @@ import java.util.Set;
 
 /**
  * This {@link TermMiner} uses <em>Biolark</em> web API to discover positions of HPO terms within provided query.
+ * <p>
+ * <b>Warning</b>This Miner might not be working properly at the moment since the Biolark API is not running. Use
+ * {@link com.github.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphTermMiner} instead
  *
  * @author <a href="mailto:daniel.danis@jax.org">Daniel Danis</a>
  * @version 0.2.1
@@ -46,10 +49,10 @@ public class BiolarkTermMiner implements TermMiner {
     /**
      * Performs mining of the provided text using Biolark service; <code>query</code> String is sent to the Biolark
      * API and the Thread is blocked until a <em>JSON</em> response is received. The response is then decoded into
-     * {@link SimpleMinedTerm}s.
+     * {@link MinedTerm}s.
      *
      * @param query String with text to be mined for HPO terms
-     * @return {@link Set} of {@link SimpleMinedTerm}s representing identified HPO terms. The set is empty, if I/O error
+     * @return {@link Set} of {@link MinedTerm}s representing identified HPO terms. The set is empty, if I/O error
      * occurs or if URL/query are invalid
      */
     @Override

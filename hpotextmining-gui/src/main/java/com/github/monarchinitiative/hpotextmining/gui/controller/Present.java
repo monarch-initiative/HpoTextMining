@@ -160,37 +160,6 @@ public class Present {
         return cb;
     }
 
-    /**
-     * Parse JSON string from Tudor Server into set of intermediate result objects.
-     *
-     * @param jsonResponse JSON string to be parsed.
-     * @return set of {@link BiolarkResult} objects.
-     * @throws IOException in case of parsing problems
-     */
-    @Deprecated
-    private static Set<BiolarkResult> decodePayload(String jsonResponse) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        CollectionType javaType = mapper.getTypeFactory().constructCollectionType(Set.class, BiolarkResult.class);
-        return mapper.readValue(jsonResponse, javaType);
-    }
-
-    /**
-     * Parse JSON string from Monarch SciGraph Server into set of intermediate result objects.
-     *
-     * @param jsonResponse JSON string to be parsed.
-     * @return set of {@link BiolarkResult} objects.
-     * @throws IOException in case of parsing problems
-     * @author Aaron Zhang
-     */
-    @Deprecated
-    private static Set<BiolarkResult> decodePayload(String jsonResponse, String queryText) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        //map json result into SciGraphResult objects
-        SciGraphResult[] sciGraphResults = mapper.readValue(jsonResponse, SciGraphResult[].class);
-        //convert into BiolarkResults and return hpo terms
-        return Arrays.stream(sciGraphResults).map(o -> SciGraphResult.toBiolarkResult(o, queryText))
-                .filter(o -> o.getSource().startsWith("HP")).collect(Collectors.toSet());
-    }
 
 
     /**
