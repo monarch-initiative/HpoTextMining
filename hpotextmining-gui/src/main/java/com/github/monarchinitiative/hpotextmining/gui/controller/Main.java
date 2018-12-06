@@ -198,7 +198,7 @@ public class Main {
             return present;
         }
 
-        Term getTerm() {
+        public Term getTerm() {
             return term;
         }
 
