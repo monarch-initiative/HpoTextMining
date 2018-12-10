@@ -168,18 +168,18 @@ public class Main {
 
         private final boolean present;
 
-        PhenotypeTerm(Term term, MinedTerm minedTerm) {
+        public PhenotypeTerm(Term term, MinedTerm minedTerm) {
             this.term = term;
             this.begin = minedTerm.getBegin();
             this.end = minedTerm.getEnd();
             this.present = minedTerm.isPresent();
         }
 
-        PhenotypeTerm(Term term, boolean present) {
+        public PhenotypeTerm(Term term, boolean present) {
             this(term, -1, -1, present);
         }
 
-        PhenotypeTerm(Term term, int begin, int end, boolean present) {
+        public PhenotypeTerm(Term term, int begin, int end, boolean present) {
             this.term = term;
             this.begin = begin;
             this.end = end;
