@@ -7,11 +7,11 @@
     <parent>
         <artifactId>hpotextmining</artifactId>
         <groupId>com.github.monarch-initiative</groupId>
-        <version>0.2.3</version>
+        <version>0.2.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>hpotextmining-demo</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.4-SNAPSHOT</version>
     <description>Example usage of `hpotextmining-gui` module in JavaFX App</description>
 
     <properties>
