@@ -119,6 +119,9 @@ public class SciGraphTermMiner implements TermMiner {
         } catch (UnsupportedEncodingException e) {
             LOGGER.warn("Unsupported encoding", e);
             throw new TermMinerException("Unsupported encoding", e);
+        } catch (UnknownHostException e) { // this happens if you are offline
+            LOGGER.warn("Unable to connect to host '{}'", e.getMessage(), e);
+            throw new TermMinerException("Unable to connect to host " + e.getMessage(), e);
         } catch (IOException e) {
             LOGGER.warn("I/O error occured", e);
             throw new TermMinerException("I/O error occured", e);

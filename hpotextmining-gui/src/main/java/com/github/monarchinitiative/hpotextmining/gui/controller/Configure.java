@@ -9,6 +9,7 @@ import javafx.scene.control.TextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -93,10 +94,14 @@ public class Configure {
         });
 
         task.setOnFailed(e -> {
-            LOGGER.warn("Text mining analysis failed. " + e.getSource().getMessage());
-            signal.accept(Main.Signal.FAILED);
-        });
-
+                    String msg = e.getSource().getMessage();
+                    if (e.getSource().getException().getCause() instanceof UnknownHostException) { // this should happen if you're offline
+                        msg = String.format("Unable to connect to %s. Is your internet connection working?", e.getSource().getException().getCause().getMessage());
+                    }
+                    PopUps.showThrowableDialog("HPO text mining", "Text mining failed", msg, e.getSource().getException().getCause());
+                    signal.accept(Main.Signal.FAILED);
+                }
+        );
         task.setOnCancelled(e -> signal.accept(Main.Signal.CANCELLED));
 
         executorService.submit(task);
