@@ -149,10 +149,10 @@ public class HpoTextMiningTest extends ApplicationTest {
         final Set<Main.PhenotypeTerm> approvedTerms = hpoTextMining.getApprovedTerms();
         assertThat(approvedTerms.size(), is(4));
 
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.constructWithPrefix("HP:0001771")), 1602, 1630, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.constructWithPrefix("HP:0040287")), 2211, 2233, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.constructWithPrefix("HP:0011747")), -1, -1, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.constructWithPrefix("HP:0012119")), -1, -1, false)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0001771")), 1602, 1630, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0040287")), 2211, 2233, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0011747")), -1, -1, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0012119")), -1, -1, false)));
     }
 
     @Override
