@@ -3,7 +3,6 @@ package com.github.monarchinitiative.hpotextmining.core.miners.biolark;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.github.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import com.github.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import com.github.monarchinitiative.hpotextmining.core.miners.TermMiner;
 import com.github.monarchinitiative.hpotextmining.core.miners.TermMinerException;
 import org.slf4j.Logger;

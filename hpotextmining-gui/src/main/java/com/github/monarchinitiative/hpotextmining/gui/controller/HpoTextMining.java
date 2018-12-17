@@ -8,7 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Callback;
-import org.monarchinitiative.phenol.base.PhenolException;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
@@ -166,18 +165,18 @@ public class HpoTextMining {
     private static Function<MinedTerm, Main.PhenotypeTerm> minedTermToPhenotypeTerm(Ontology ontology) {
         return mt -> {
             try {
-                TermId termId = TermId.constructWithPrefixInternal(mt.getTermId());
-                if (!termId.getPrefix().getValue().startsWith("HP")) { // we are only working with HPO
+                TermId termId = TermId.of(mt.getTermId());
+                if (!termId.getPrefix().startsWith("HP")) { // we are only working with HPO
                     return null;
                 }
                 Term term = ontology.getTermMap().get(termId);
                 if (term == null) {
-                    LOGGER.warn("There is not a term with id '{}' in the currently used ontology", termId.getIdWithPrefix());
+                    LOGGER.warn("There is not a term with id '{}' in the currently used ontology", termId.getValue());
                     return null;
                 } else {
                     return new Main.PhenotypeTerm(term, mt);
                 }
-            } catch (PhenolException e) {
+            } catch (Exception e) {
                 LOGGER.warn("Invalid term id '{}'. Omitting the term", mt.getTermId());
                 return null;
             }

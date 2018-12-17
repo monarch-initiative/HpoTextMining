@@ -3,7 +3,6 @@ package com.github.monarchinitiative.hpotextmining.core.miners.biolark;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -61,8 +60,9 @@ public final class BiolarkToken {
      * @return id as a TermId object
      */
     public TermId getTermId() {
-        String[] elements = this.id.split(":");
-        return new TermId(new TermPrefix(elements[0]), elements[1]);
+       // String[] elements = this.id.split(":");
+       // return TermId(new TermPrefix(elements[0]), elements[1]);
+        return TermId.of(this.id);
     }
 
     /**

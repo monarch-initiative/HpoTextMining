@@ -1,7 +1,6 @@
 package com.github.monarchinitiative.hpotextmining.core.miners;
 
 import com.google.common.collect.ComparisonChain;
-import org.monarchinitiative.phenol.ontology.data.Term;
 
 import java.util.Comparator;
 
