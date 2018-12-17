@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="configureAnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.gui.controller.Configure">
+      <children>
+          <Label prefHeight="30.0" text="Text-mining analysis" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+              <font>
+                  <Font name="System Bold" size="16.0" />
+              </font>
+              <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              </padding>
+          </Label>
+          <TextArea fx:id="contentTextArea" layoutX="14.0" layoutY="29.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Enter analyzed text here..." AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
+              <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              </padding>
+          </TextArea>
+          <Button fx:id="analyzeButton" defaultButton="true" layoutX="16.0" layoutY="344.0" minHeight="30.0" minWidth="120.0" mnemonicParsing="false" onAction="#analyzeButtonClicked" text="Analyze!" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+              <tooltip>
+                  <Tooltip text="Send text for text-mining analysis and wait for results" />
+              </tooltip>
+          </Button>
+      </children>
+  </AnchorPane>

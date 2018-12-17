@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>hpotextmining</artifactId>
-        <groupId>com.github.monarch-initiative</groupId>
+        <artifactId>HpoTextMining</artifactId>
+        <groupId>org.monarchinitiative.hpotextmining</groupId>
         <version>0.2.5-SNAPSHOT</version>
     </parent>
 
@@ -57,7 +57,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <useUniqueVersions>false</useUniqueVersions>
-                            <mainClass>com.github.monarchinitiative.hpotextmining.demo.Play</mainClass>
+                            <mainClass>org.monarchinitiative.hpotextmining.demo.Play</mainClass>
                         </manifest>
                     </archive>
                     <excludes>
@@ -90,7 +90,7 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>com.github.monarch-initiative</groupId>
+            <groupId>org.monarchinitiative.hpotextmining</groupId>
             <artifactId>hpotextmining-gui</artifactId>
             <version>${project.version}</version>
         </dependency>

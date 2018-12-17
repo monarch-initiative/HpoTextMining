@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>hpotextmining</artifactId>
-        <groupId>com.github.monarch-initiative</groupId>
+        <artifactId>HpoTextMining</artifactId>
+        <groupId>org.monarchinitiative.hpotextmining</groupId>
         <version>0.2.5-SNAPSHOT</version>
     </parent>
 
