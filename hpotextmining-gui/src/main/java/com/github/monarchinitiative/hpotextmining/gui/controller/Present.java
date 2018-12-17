@@ -1,12 +1,20 @@
 package com.github.monarchinitiative.hpotextmining.gui.controller;
 
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Worker;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -15,7 +23,9 @@ import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -110,6 +120,11 @@ public class Present {
     @FXML
     private VBox notTermsVBox;
 
+    //The scrollPane holds the above VBox. For unknown reason, VBox does not respond to drag event listener
+    //TODO: figure out the reason
+    @FXML
+    private ScrollPane notTermScrollPane;
+
     /**
      * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
      */
@@ -121,10 +136,14 @@ public class Present {
     private CheckBox[] notTerms;
 
     /**
+     * Temporarily hold content of items dragged around
+     */
+    //private static ClipboardContent draggedTerm = new ClipboardContent();
+
+    /**
      * Store the received
      */
 //    private Set<Main.PhenotypeTerm> terms = new HashSet<>();
-
 
     /**
      * @param signal          {@link Consumer} of {@link Main.Signal}
@@ -228,8 +247,77 @@ public class Present {
                 webEngine.executeScript("console.log = function(message) {javafx_bridge.log(message);};");
             }
         });
-    }
 
+        //add drag listeners to new items added to yes terms
+        yesTermsVBox.getChildren().addListener(new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(Change<? extends Node> c) {
+                while (c.next()) {
+                    if (c.wasAdded()) {
+                        c.getAddedSubList().forEach(node -> {
+                            CheckBox checkBox = (CheckBox) node;
+                            //add drag detected listener
+                            checkBox.setOnDragDetected(event -> {
+                                Dragboard db = checkBox.startDragAndDrop(TransferMode.ANY);
+                                ClipboardContent draggedTerm = new ClipboardContent();
+                                draggedTerm.putString(checkBox.getText());
+                                System.out.println("dragged item: " + checkBox.getText());
+                                db.setContent(draggedTerm);
+                                event.consume();
+                            });
+
+                            checkBox.setOnDragDone(event -> {
+                                if (event.getTransferMode() == TransferMode.MOVE){
+                                    yesTermsVBox.getChildren().remove(checkBox);
+                                    System.out.println("drag and drop completed");
+                                }
+                                event.consume();
+                            });
+                        });
+                    }
+                }
+            }
+        });
+
+        //add drop listeners to the negated term list
+        notTermScrollPane.setOnDragEntered(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragExited(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Main.PhenotypeTerm dragged_term;
+                for (Node node: yesTermsVBox.getChildren()) {
+                    CheckBox checkBox = (CheckBox) node;
+                    Main.PhenotypeTerm term = (Main.PhenotypeTerm) checkBox.getUserData();
+                    if (term.getTerm().getName().equals(dragged)) {
+                        term.setIsPresent(false);
+                        notTermsVBox.getChildren().add(checkBoxFactory(term));
+                    }
+                }
+
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
+
+    }
 
     /**
      * The data that are about to be presented are set here. The String with JSON terms are coming from the
