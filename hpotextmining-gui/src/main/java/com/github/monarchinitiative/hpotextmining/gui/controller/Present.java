@@ -12,7 +12,6 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +79,6 @@ public class Present {
      * Template for tooltips which appear when cursor hovers over highlighted terms.
      */
     private static final String TOOLTIP_TEMPLATE = "%s\n%s";
-
-    private static final TermPrefix HP_TERM_PREFIX = new TermPrefix("HP");
 
     private final Consumer<TermId> focusToTermHook;
 
@@ -198,7 +195,7 @@ public class Present {
 
 
     /**
-     * End of analysis. Add approved terms into {@link Main#hpoTermsTableView} and display configure
+     * End of analysis. Add approved terms into term table in {@link Main} and display configure
      * Dialog to allow next round of text-mining analysis.
      */
     @FXML
