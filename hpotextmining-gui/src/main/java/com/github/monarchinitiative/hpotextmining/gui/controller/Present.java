@@ -1,6 +1,6 @@
 package com.github.monarchinitiative.hpotextmining.gui.controller;
 
-import javafx.collections.ListChangeListener;
+import javafx.collections.*;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
@@ -124,21 +125,19 @@ public class Present {
     //TODO: figure out the reason
     @FXML
     private ScrollPane notTermScrollPane;
+//
+//    /**
+//     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
+//     */
+//    private CheckBox[] yesTerms;
+//
+//    /**
+//     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
+//     */
+//    private CheckBox[] notTerms;
 
-    /**
-     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
-     */
-    private CheckBox[] yesTerms;
-
-    /**
-     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
-     */
-    private CheckBox[] notTerms;
-
-    /**
-     * Temporarily hold content of items dragged around
-     */
-    //private static ClipboardContent draggedTerm = new ClipboardContent();
+    private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
+    private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
 
     /**
      * Store the received
@@ -248,6 +247,25 @@ public class Present {
             }
         });
 
+        yesTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                yesTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(yesTermsVBox.getChildren()::add);
+
+            }
+        });
+
+        notTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                notTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(notTermsVBox.getChildren()::add);
+            }
+        });
+
         //add drag listeners to new items added to yes terms
         yesTermsVBox.getChildren().addListener(new ListChangeListener<Node>() {
             @Override
@@ -302,15 +320,17 @@ public class Present {
             Dragboard dragboard = event.getDragboard();
             if (dragboard.hasString()) {
                 String dragged = dragboard.getString();
-                Main.PhenotypeTerm dragged_term;
-                for (Node node: yesTermsVBox.getChildren()) {
-                    CheckBox checkBox = (CheckBox) node;
-                    Main.PhenotypeTerm term = (Main.PhenotypeTerm) checkBox.getUserData();
-                    if (term.getTerm().getName().equals(dragged)) {
-                        term.setIsPresent(false);
-                        notTermsVBox.getChildren().add(checkBoxFactory(term));
-                    }
-                }
+                Optional<Main.PhenotypeTerm> dragged_term = yesTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                dragged_term.ifPresent(phenotypeTerm -> notTerms.add(phenotypeTerm));
+//                for (Node node: yesTermsVBox.getChildren()) {
+//                    CheckBox checkBox = (CheckBox) node;
+//                    Main.PhenotypeTerm term = (Main.PhenotypeTerm) checkBox.getUserData();
+//                    if (term.getTerm().getName().equals(dragged)) {
+//                        term.setIsPresent(false);
+//                        notTermsVBox.getChildren().add(checkBoxFactory(term));
+//                    }
+//                }
 
                 event.setDropCompleted(true);
             }
@@ -328,29 +348,35 @@ public class Present {
      * @param query String with the query text submitted by the user.
      */
     void setResults(Collection<Main.PhenotypeTerm> terms, String query) {
-        yesTermsVBox.getChildren().clear();
-        notTermsVBox.getChildren().clear();
+//        yesTermsVBox.getChildren().clear();
+//        notTermsVBox.getChildren().clear();
+        yesTerms.clear();
+        notTerms.clear();
 
-        Set<String> presentAdded = new HashSet<>();
-        Set<String> notPresentAdded = new HashSet<>();
+//        Set<String> presentAdded = new HashSet<>();
+//        Set<String> notPresentAdded = new HashSet<>();
 
         List<Main.PhenotypeTerm> termList = new ArrayList<>(terms);
         termList.sort(Comparator.comparing(t -> t.getTerm().getName()));
 
-        for (Main.PhenotypeTerm phenotypeTerm : termList) {
-            if (phenotypeTerm.isPresent()) {
-                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            } else {
-                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            }
+        termList.stream().filter(t -> t.isPresent()).forEach(yesTerms::add);
+        termList.stream().filter(t -> !t.isPresent()).forEach(notTerms::add);
 
-        }
+//        for (Main.PhenotypeTerm phenotypeTerm : termList) {
+//            if (phenotypeTerm.isPresent()) {
+//                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
+//                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
+//                    yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
+//                    yesTerms.add(phenotypeTerm);
+//                }
+//            } else {
+//                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
+//                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
+//                    notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
+//                    notTerms.add(phenotypeTerm);
+//                }
+//            }
+//        }
 
         String html = colorizeHTML4ciGraph(termList, query);
         webEngine.loadContent(html);
@@ -365,21 +391,26 @@ public class Present {
      */
     Set<Main.PhenotypeTerm> getApprovedTerms() {
 
-        List<CheckBox> boxes = new ArrayList<>();
-        for (Node child : yesTermsVBox.getChildren()) {
-            CheckBox b = ((CheckBox) child);
-            boxes.add(b);
-        }
+        Set<Main.PhenotypeTerm> set = new HashSet<>();
+        set.addAll(yesTerms);
+        set.addAll(notTerms);
+        return set;
 
-        for (Node child : notTermsVBox.getChildren()) {
-            CheckBox b = ((CheckBox) child);
-            boxes.add(b);
-        }
-
-        return boxes.stream()
-                .filter(CheckBox::isSelected)
-                .map(cb -> ((Main.PhenotypeTerm) cb.getUserData()))
-                .collect(Collectors.toSet());
+//        List<CheckBox> boxes = new ArrayList<>();
+//        for (Node child : yesTermsVBox.getChildren()) {
+//            CheckBox b = ((CheckBox) child);
+//            boxes.add(b);
+//        }
+//
+//        for (Node child : notTermsVBox.getChildren()) {
+//            CheckBox b = ((CheckBox) child);
+//            boxes.add(b);
+//        }
+//
+//        return boxes.stream()
+//                .filter(CheckBox::isSelected)
+//                .map(cb -> ((Main.PhenotypeTerm) cb.getUserData()))
+//                .collect(Collectors.toSet());
     }
 
 
