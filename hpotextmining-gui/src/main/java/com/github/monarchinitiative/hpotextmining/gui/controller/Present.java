@@ -1,12 +1,18 @@
 package com.github.monarchinitiative.hpotextmining.gui.controller;
 
+import javafx.collections.*;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -15,7 +21,9 @@ import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -110,20 +118,23 @@ public class Present {
     @FXML
     private VBox notTermsVBox;
 
-    /**
-     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
-     */
-    private CheckBox[] yesTerms;
+    //The scrollPane holds the above VBox. For unknown reason, VBox does not respond to drag event listener
+    //TODO: figure out the reason
+    @FXML
+    private ScrollPane notTermScrollPane;
+    @FXML
+    private ScrollPane yesTermScrollPane;
+
 
     /**
-     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
+     * Set of yes terms. Observe changes so that whenever there is a change, create a list of checkboxes for each term
      */
-    private CheckBox[] notTerms;
+    private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
 
     /**
-     * Store the received
+     * Set of no terms. Observe changes so that whenever there is a change, create a list of checkboxes for no terms
      */
-//    private Set<Main.PhenotypeTerm> terms = new HashSet<>();
+    private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
 
 
     /**
@@ -228,8 +239,140 @@ public class Present {
                 webEngine.executeScript("console.log = function(message) {javafx_bridge.log(message);};");
             }
         });
-    }
 
+        //when yes terms are updated, re-create checkboxes for all terms
+        yesTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                yesTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(yesTermsVBox.getChildren()::add);
+
+            }
+        });
+
+        //same as above
+        notTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                notTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(notTermsVBox.getChildren()::add);
+            }
+        });
+
+        //The listener listens to checkbox list changes. It adds drag support to every checkbox.
+        ListChangeListener<Node> changeListener = new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(Change<? extends Node> c) {
+                while (c.next()) {
+                    if (c.wasAdded()) {
+                        c.getAddedSubList().forEach(node -> {
+                            CheckBox checkBox = (CheckBox) node;
+                            //add drag detected listener
+                            checkBox.setOnDragDetected(event -> {
+                                Dragboard db = checkBox.startDragAndDrop(TransferMode.ANY);
+                                ClipboardContent draggedTerm = new ClipboardContent();
+                                draggedTerm.putString(checkBox.getText());
+                                System.out.println("dragged item: " + checkBox.getText());
+                                db.setContent(draggedTerm);
+                                event.consume();
+                            });
+
+                            //drag is done.
+                            //nothing else is needed to do as the term is already removed when drag is dropped
+                            //(see below)--it is easier to handle over there than doing it here
+                            checkBox.setOnDragDone(event -> {
+                                if (event.getTransferMode() == TransferMode.MOVE){
+                                    System.out.println("drag and drop completed");
+                                }
+                                event.consume();
+                            });
+                        });
+                    }
+                }
+            }
+        };
+
+        //add drag listeners to all checkboxes for yes terms
+        yesTermsVBox.getChildren().addListener(changeListener);
+        //add drag listeners to all checkboxes for not terms
+        notTermsVBox.getChildren().addListener(changeListener);
+
+        //add drop listeners to the negated term list
+        notTermScrollPane.setOnDragEntered(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragExited(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Optional<Main.PhenotypeTerm> dragged_term = yesTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(yesTerms::remove);
+                //change to no term and add to noTerms
+                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(false));
+                dragged_term.ifPresent(phenotypeTerm -> notTerms.add(phenotypeTerm));
+                //notice source that drop is completed
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
+
+
+        //add drop listeners to the yes term list
+        yesTermScrollPane.setOnDragEntered(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragExited(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Optional<Main.PhenotypeTerm> dragged_term = notTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(notTerms::remove);
+                //change to no term and add to noTerms
+                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(true));
+                dragged_term.ifPresent(phenotypeTerm -> yesTerms.add(phenotypeTerm));
+                //notice source that drop is completed
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
+
+    }
 
     /**
      * The data that are about to be presented are set here. The String with JSON terms are coming from the
@@ -240,29 +383,23 @@ public class Present {
      * @param query String with the query text submitted by the user.
      */
     void setResults(Collection<Main.PhenotypeTerm> terms, String query) {
-        yesTermsVBox.getChildren().clear();
-        notTermsVBox.getChildren().clear();
 
-        Set<String> presentAdded = new HashSet<>();
-        Set<String> notPresentAdded = new HashSet<>();
+        yesTerms.clear();
+        notTerms.clear();
 
         List<Main.PhenotypeTerm> termList = new ArrayList<>(terms);
         termList.sort(Comparator.comparing(t -> t.getTerm().getName()));
 
-        for (Main.PhenotypeTerm phenotypeTerm : termList) {
-            if (phenotypeTerm.isPresent()) {
-                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            } else {
-                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            }
-
-        }
+        //add terms to yesTerms or notTerms.
+        //checkboxes for each term will be added automatically using the SetChangeListerners.
+        termList.stream().filter(t -> t.isPresent()) //get yes terms
+                //one term might occur multiple times. ugly here: use a map to select unique terms (merge at duplication)
+                .collect(Collectors.toMap(t -> t.getTerm().getId(), t -> t, (t1, t2) -> t1))
+                //add unique terms to yesTerm
+                .values().forEach(yesTerms::add);
+        termList.stream().filter(t -> !t.isPresent()) //get not terms
+                .collect(Collectors.toMap(t -> t.getTerm().getId(), t -> t, (t1, t2) -> t1))
+                .values().forEach(notTerms::add);
 
         String html = colorizeHTML4ciGraph(termList, query);
         webEngine.loadContent(html);

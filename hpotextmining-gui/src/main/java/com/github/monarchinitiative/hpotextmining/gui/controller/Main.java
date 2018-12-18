@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.monarchinitiative.phenol.ontology.data.Term;
 
 import java.util.*;
@@ -151,6 +152,12 @@ public class Main {
         }
     }
 
+    @FXML
+    public void confirmAndClose() {
+        Stage stage = (Stage) leftStackPane.getScene().getWindow();
+        stage.close();
+    }
+
     /**
      * Enum used by {@link Configure} and {@link Present} to signalize progres & status.
      */
@@ -166,7 +173,7 @@ public class Main {
 
         private final int begin, end;
 
-        private final boolean present;
+        private boolean present;
 
         public PhenotypeTerm(Term term, MinedTerm minedTerm) {
             this.term = term;
@@ -196,6 +203,14 @@ public class Main {
 
         public boolean isPresent() {
             return present;
+        }
+
+        /**
+         * Allow user to change whether a term should be negated because text mining result is not always correct (or not work at all such as from SciGraph server)
+         * @param isPresent
+         */
+        public void setIsPresent(boolean isPresent) {
+            this.present = isPresent;
         }
 
         public Term getTerm() {
