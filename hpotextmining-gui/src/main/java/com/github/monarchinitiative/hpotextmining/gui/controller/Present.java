@@ -274,7 +274,7 @@ public class Present {
                                 Dragboard db = checkBox.startDragAndDrop(TransferMode.ANY);
                                 ClipboardContent draggedTerm = new ClipboardContent();
                                 draggedTerm.putString(checkBox.getText());
-                                System.out.println("dragged item: " + checkBox.getText());
+                                //System.out.println("dragged item: " + checkBox.getText());
                                 db.setContent(draggedTerm);
                                 event.consume();
                             });
@@ -284,7 +284,7 @@ public class Present {
                             //(see below)--it is easier to handle over there than doing it here
                             checkBox.setOnDragDone(event -> {
                                 if (event.getTransferMode() == TransferMode.MOVE){
-                                    System.out.println("drag and drop completed");
+                                    //System.out.println("drag and drop completed");
                                 }
                                 event.consume();
                             });
