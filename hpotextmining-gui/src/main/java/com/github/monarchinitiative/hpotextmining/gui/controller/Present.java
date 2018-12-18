@@ -2,14 +2,11 @@ package com.github.monarchinitiative.hpotextmining.gui.controller;
 
 import javafx.collections.*;
 import javafx.concurrent.Worker;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
@@ -125,24 +122,20 @@ public class Present {
     //TODO: figure out the reason
     @FXML
     private ScrollPane notTermScrollPane;
-//
-//    /**
-//     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
-//     */
-//    private CheckBox[] yesTerms;
-//
-//    /**
-//     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
-//     */
-//    private CheckBox[] notTerms;
+    @FXML
+    private ScrollPane yesTermScrollPane;
 
-    private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
-    private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
 
     /**
-     * Store the received
+     * Set of yes terms. Observe changes so that whenever there is a change, create a list of checkboxes for each term
      */
-//    private Set<Main.PhenotypeTerm> terms = new HashSet<>();
+    private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
+
+    /**
+     * Set of no terms. Observe changes so that whenever there is a change, create a list of checkboxes for no terms
+     */
+    private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
+
 
     /**
      * @param signal          {@link Consumer} of {@link Main.Signal}
@@ -247,6 +240,7 @@ public class Present {
             }
         });
 
+        //when yes terms are updated, re-create checkboxes for all terms
         yesTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
             @Override
             public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
@@ -257,6 +251,7 @@ public class Present {
             }
         });
 
+        //same as above
         notTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
             @Override
             public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
@@ -266,8 +261,8 @@ public class Present {
             }
         });
 
-        //add drag listeners to new items added to yes terms
-        yesTermsVBox.getChildren().addListener(new ListChangeListener<Node>() {
+        //The listener listens to checkbox list changes. It adds drag support to every checkbox.
+        ListChangeListener<Node> changeListener = new ListChangeListener<Node>() {
             @Override
             public void onChanged(Change<? extends Node> c) {
                 while (c.next()) {
@@ -284,9 +279,11 @@ public class Present {
                                 event.consume();
                             });
 
+                            //drag is done.
+                            //nothing else is needed to do as the term is already removed when drag is dropped
+                            //(see below)--it is easier to handle over there than doing it here
                             checkBox.setOnDragDone(event -> {
                                 if (event.getTransferMode() == TransferMode.MOVE){
-                                    yesTermsVBox.getChildren().remove(checkBox);
                                     System.out.println("drag and drop completed");
                                 }
                                 event.consume();
@@ -295,7 +292,12 @@ public class Present {
                     }
                 }
             }
-        });
+        };
+
+        //add drag listeners to all checkboxes for yes terms
+        yesTermsVBox.getChildren().addListener(changeListener);
+        //add drag listeners to all checkboxes for not terms
+        notTermsVBox.getChildren().addListener(changeListener);
 
         //add drop listeners to the negated term list
         notTermScrollPane.setOnDragEntered(event -> {
@@ -322,16 +324,49 @@ public class Present {
                 String dragged = dragboard.getString();
                 Optional<Main.PhenotypeTerm> dragged_term = yesTerms.stream()
                         .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(yesTerms::remove);
+                //change to no term and add to noTerms
+                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(false));
                 dragged_term.ifPresent(phenotypeTerm -> notTerms.add(phenotypeTerm));
-//                for (Node node: yesTermsVBox.getChildren()) {
-//                    CheckBox checkBox = (CheckBox) node;
-//                    Main.PhenotypeTerm term = (Main.PhenotypeTerm) checkBox.getUserData();
-//                    if (term.getTerm().getName().equals(dragged)) {
-//                        term.setIsPresent(false);
-//                        notTermsVBox.getChildren().add(checkBoxFactory(term));
-//                    }
-//                }
+                //notice source that drop is completed
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
 
+
+        //add drop listeners to the yes term list
+        yesTermScrollPane.setOnDragEntered(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragExited(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Optional<Main.PhenotypeTerm> dragged_term = notTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(notTerms::remove);
+                //change to no term and add to noTerms
+                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(true));
+                dragged_term.ifPresent(phenotypeTerm -> yesTerms.add(phenotypeTerm));
+                //notice source that drop is completed
                 event.setDropCompleted(true);
             }
             event.consume();
@@ -348,35 +383,23 @@ public class Present {
      * @param query String with the query text submitted by the user.
      */
     void setResults(Collection<Main.PhenotypeTerm> terms, String query) {
-//        yesTermsVBox.getChildren().clear();
-//        notTermsVBox.getChildren().clear();
+
         yesTerms.clear();
         notTerms.clear();
-
-//        Set<String> presentAdded = new HashSet<>();
-//        Set<String> notPresentAdded = new HashSet<>();
 
         List<Main.PhenotypeTerm> termList = new ArrayList<>(terms);
         termList.sort(Comparator.comparing(t -> t.getTerm().getName()));
 
-        termList.stream().filter(t -> t.isPresent()).forEach(yesTerms::add);
-        termList.stream().filter(t -> !t.isPresent()).forEach(notTerms::add);
-
-//        for (Main.PhenotypeTerm phenotypeTerm : termList) {
-//            if (phenotypeTerm.isPresent()) {
-//                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-//                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-//                    yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-//                    yesTerms.add(phenotypeTerm);
-//                }
-//            } else {
-//                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-//                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-//                    notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-//                    notTerms.add(phenotypeTerm);
-//                }
-//            }
-//        }
+        //add terms to yesTerms or notTerms.
+        //checkboxes for each term will be added automatically using the SetChangeListerners.
+        termList.stream().filter(t -> t.isPresent()) //get yes terms
+                //one term might occur multiple times. ugly here: use a map to select unique terms (merge at duplication)
+                .collect(Collectors.toMap(t -> t.getTerm().getId(), t -> t, (t1, t2) -> t1))
+                //add unique terms to yesTerm
+                .values().forEach(yesTerms::add);
+        termList.stream().filter(t -> !t.isPresent()) //get not terms
+                .collect(Collectors.toMap(t -> t.getTerm().getId(), t -> t, (t1, t2) -> t1))
+                .values().forEach(notTerms::add);
 
         String html = colorizeHTML4ciGraph(termList, query);
         webEngine.loadContent(html);
@@ -391,26 +414,21 @@ public class Present {
      */
     Set<Main.PhenotypeTerm> getApprovedTerms() {
 
-        Set<Main.PhenotypeTerm> set = new HashSet<>();
-        set.addAll(yesTerms);
-        set.addAll(notTerms);
-        return set;
+        List<CheckBox> boxes = new ArrayList<>();
+        for (Node child : yesTermsVBox.getChildren()) {
+            CheckBox b = ((CheckBox) child);
+            boxes.add(b);
+        }
 
-//        List<CheckBox> boxes = new ArrayList<>();
-//        for (Node child : yesTermsVBox.getChildren()) {
-//            CheckBox b = ((CheckBox) child);
-//            boxes.add(b);
-//        }
-//
-//        for (Node child : notTermsVBox.getChildren()) {
-//            CheckBox b = ((CheckBox) child);
-//            boxes.add(b);
-//        }
-//
-//        return boxes.stream()
-//                .filter(CheckBox::isSelected)
-//                .map(cb -> ((Main.PhenotypeTerm) cb.getUserData()))
-//                .collect(Collectors.toSet());
+        for (Node child : notTermsVBox.getChildren()) {
+            CheckBox b = ((CheckBox) child);
+            boxes.add(b);
+        }
+
+        return boxes.stream()
+                .filter(CheckBox::isSelected)
+                .map(cb -> ((Main.PhenotypeTerm) cb.getUserData()))
+                .collect(Collectors.toSet());
     }
 
 

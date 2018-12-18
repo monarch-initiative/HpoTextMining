@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.monarchinitiative.phenol.ontology.data.Term;
 
 import java.util.*;
@@ -149,6 +150,12 @@ public class Main {
             }
             hpoTermsTableView.getItems().removeAll(toBeRemoved);
         }
+    }
+
+    @FXML
+    public void confirmAndClose() {
+        Stage stage = (Stage) leftStackPane.getScene().getWindow();
+        stage.close();
     }
 
     /**
