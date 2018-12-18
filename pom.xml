@@ -6,7 +6,7 @@
     <groupId>org.monarchinitiative.hpotextmining</groupId>
     <artifactId>HpoTextMining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.2.5</version>
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
@@ -68,6 +68,12 @@
         <url>scm:git:git@github.com:monarch-initiative/HpoTextMining.git</url>
         <tag>hpotextmining-${project.version}</tag>
     </scm>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
 
     <distributionManagement>
         <repository>

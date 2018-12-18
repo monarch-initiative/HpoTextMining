@@ -6,11 +6,11 @@
     <parent>
         <artifactId>HpoTextMining</artifactId>
         <groupId>org.monarchinitiative.hpotextmining</groupId>
-        <version>0.2.5-SNAPSHOT</version>
+        <version>0.2.5</version>
     </parent>
 
     <artifactId>hpotextmining-gui</artifactId>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.2.5</version>
 
     <build>
         <plugins>
