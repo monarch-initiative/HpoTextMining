@@ -102,7 +102,7 @@ public class OntologyTree {
      * @param ontology {@link Ontology} to be displayed here as a tree
      * @param addHook  {@link Consumer} of {@link Main.PhenotypeTerm}, an approved term will be submitted here
      */
-    OntologyTree(Ontology ontology, Consumer<Main.PhenotypeTerm> addHook) {
+    public OntologyTree(Ontology ontology, Consumer<Main.PhenotypeTerm> addHook) {
         this.ontology = ontology;
         this.addHook = addHook;
     }
