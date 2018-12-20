@@ -127,6 +127,9 @@ public class OntologyTree {
      */
     @FXML
     private void addButtonAction() {
+        if (ontologyTreeView.getSelectionModel().getSelectedItem() == null) {
+            return;
+        }
         Term selected = ontologyTreeView.getSelectionModel().getSelectedItem().getValue();
         if (selected != null && addHook != null) {
             Main.PhenotypeTerm phenotypeTerm = new Main.PhenotypeTerm(selected, !notPresentCheckBox.isSelected());
