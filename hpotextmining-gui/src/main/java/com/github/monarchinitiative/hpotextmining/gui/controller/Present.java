@@ -103,9 +103,6 @@ public class Present {
     @FXML
     private Button addTermsButton;
 
-    @FXML
-    private Button cancelButton;
-
     /**
      * Box on the right side of the screen where "YES" Terms will be added.
      */
@@ -216,17 +213,7 @@ public class Present {
 
 
     /**
-     * After hitting {@link Present#cancelButton} the analysis is ended and a new {@link Configure} dialog is presented
-     * to the user.
-     */
-    @FXML
-    void cancelButtonAction() {
-        signal.accept(Main.Signal.CANCELLED);
-    }
-
-
-    /**
-     * {@inheritDoc}
+     * Initialize behavior and content of the GUI elements.
      */
     public void initialize() {
         webEngine = webView.getEngine();
