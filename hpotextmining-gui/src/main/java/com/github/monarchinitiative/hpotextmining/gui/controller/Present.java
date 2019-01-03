@@ -17,11 +17,9 @@ import netscape.javascript.JSObject;
 import org.monarchinitiative.phenol.base.PhenolException;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.monarchinitiative.phenol.ontology.data.TermPrefix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -86,8 +84,6 @@ public class Present {
      * Template for tooltips which appear when cursor hovers over highlighted terms.
      */
     private static final String TOOLTIP_TEMPLATE = "%s\n%s";
-
-    private static final TermPrefix HP_TERM_PREFIX = new TermPrefix("HP");
 
     private final Consumer<TermId> focusToTermHook;
 
@@ -186,11 +182,11 @@ public class Present {
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getTerm().getId().getIdWithPrefix(),
+                            term.getTerm().getId().getValue(),
                             query.substring(start, term.getEnd()),
 
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getTerm().getId().getIdWithPrefix(), term.getTerm().getName())));
+                            String.format(TOOLTIP_TEMPLATE, term.getTerm().getId().getValue(), term.getTerm().getName())));
 
             offset = term.getEnd();
         }
@@ -260,13 +256,13 @@ public class Present {
 
         for (Main.PhenotypeTerm phenotypeTerm : termList) {
             if (phenotypeTerm.isPresent()) {
-                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getIdWithPrefix())) {
-                    presentAdded.add(phenotypeTerm.getTerm().getId().getIdWithPrefix());
+                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
+                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
                     yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
                 }
             } else {
-                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getIdWithPrefix())) {
-                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getIdWithPrefix());
+                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
+                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
                     notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
                 }
             }
@@ -319,12 +315,8 @@ public class Present {
          */
         public void focusToTerm(String termId) {
             LOGGER.debug("Focusing on term with ID {}", termId);
-            try {
-                TermId id = TermId.constructWithPrefixInternal(termId);
-                focusToTermHook.accept(id);
-            } catch (PhenolException e) {
-                LOGGER.warn("Unable to focus on term with id '{}'", termId, e);
-            }
+            TermId id = TermId.of(termId);
+            focusToTermHook.accept(id);
         }
     }
 }

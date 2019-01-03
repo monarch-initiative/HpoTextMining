@@ -273,7 +273,7 @@ public class OntologyTree {
                 "<p><b>Definition:</b> %s</p>" +
                 "</body></html>";
 
-        String termID = term.getId().getIdWithPrefix();
+        String termID = term.getId().getValue();
         String synonyms = (term.getSynonyms() == null) ? "" : term.getSynonyms().stream()
                 .map(TermSynonym::getValue)
                 .collect(Collectors.joining(", ")); // Synonyms

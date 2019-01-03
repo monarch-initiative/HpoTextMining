@@ -83,19 +83,19 @@ public class PresentTest extends ApplicationTest {
 
         // 50-58 myopathy
         String myopathyTermIdString = "HP:0003198";
-        Term myopathyTerm = ontology.getTermMap().get(TermId.constructWithPrefix(myopathyTermIdString));
+        Term myopathyTerm = ontology.getTermMap().get(TermId.of(myopathyTermIdString));
         MinedTerm myopathyMinedTerm = new SimpleMinedTerm(50, 58, myopathyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(myopathyTerm, myopathyMinedTerm));
 
         // 75-88 visceromegaly
         String collagenopathyTermIdString = "HP:0003271";
-        Term collagenopathyTerm = ontology.getTermMap().get(TermId.constructWithPrefix(collagenopathyTermIdString));
+        Term collagenopathyTerm = ontology.getTermMap().get(TermId.of(collagenopathyTermIdString));
         MinedTerm collagenopathyMinedTerm = new SimpleMinedTerm(75, 88, collagenopathyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(collagenopathyTerm, collagenopathyMinedTerm));
 
         // 114-123 visceromegaly
         String alcoholismTermIdString = "HP:0030955";
-        Term alcoholismTerm = ontology.getTermMap().get(TermId.constructWithPrefix(alcoholismTermIdString));
+        Term alcoholismTerm = ontology.getTermMap().get(TermId.of(alcoholismTermIdString));
         MinedTerm alcoholismMinedTerm = new SimpleMinedTerm(122, 132, alcoholismTermIdString, false);
         terms.add(new Main.PhenotypeTerm(alcoholismTerm, alcoholismMinedTerm));
     }
@@ -109,7 +109,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getIdWithPrefix()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
@@ -133,7 +133,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getIdWithPrefix()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
@@ -155,7 +155,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getIdWithPrefix()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());

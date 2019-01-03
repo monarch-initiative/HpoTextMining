@@ -165,21 +165,16 @@ public class HpoTextMining {
      */
     private static Function<MinedTerm, Main.PhenotypeTerm> minedTermToPhenotypeTerm(Ontology ontology) {
         return mt -> {
-            try {
-                TermId termId = TermId.constructWithPrefixInternal(mt.getTermId());
-                if (!termId.getPrefix().getValue().startsWith("HP")) { // we are only working with HPO
-                    return null;
-                }
-                Term term = ontology.getTermMap().get(termId);
-                if (term == null) {
-                    LOGGER.warn("There is not a term with id '{}' in the currently used ontology", termId.getIdWithPrefix());
-                    return null;
-                } else {
-                    return new Main.PhenotypeTerm(term, mt);
-                }
-            } catch (PhenolException e) {
-                LOGGER.warn("Invalid term id '{}'. Omitting the term", mt.getTermId());
+            TermId termId = TermId.of(mt.getTermId());
+            if (!termId.getValue().startsWith("HP")) { // we are only working with HPO
                 return null;
+            }
+            Term term = ontology.getTermMap().get(termId);
+            if (term == null) {
+                LOGGER.warn("There is not a term with id '{}' in the currently used ontology", termId.getValue());
+                return null;
+            } else {
+                return new Main.PhenotypeTerm(term, mt);
             }
         };
     }
