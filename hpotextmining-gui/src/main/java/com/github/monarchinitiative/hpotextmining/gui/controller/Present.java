@@ -130,19 +130,14 @@ public class Present {
     private ScrollPane yesTermScrollPane;
 
     /**
-     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
+     * Observable Checkboxes corresponding to identified <em>YES</em> HPO terms.
      */
     private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
 
     /**
-     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
+     * Observable Checkboxes corresponding to identified <em>NOT</em> HPO terms.
      */
     private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
-
-    /**
-     * Store the received
-     */
-//    private Set<Main.PhenotypeTerm> terms = new HashSet<>();
 
     /**
      * Tracks the selection state of all terms. Note: use Term rather than PhenotypeTerm as the latter could mutate
