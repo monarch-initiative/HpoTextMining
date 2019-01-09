@@ -60,8 +60,6 @@ public final class BiolarkToken {
      * @return id as a TermId object
      */
     public TermId getTermId() {
-       // String[] elements = this.id.split(":");
-       // return TermId(new TermPrefix(elements[0]), elements[1]);
         return TermId.of(this.id);
     }
 
