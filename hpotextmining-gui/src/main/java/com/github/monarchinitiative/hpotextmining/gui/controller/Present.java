@@ -136,6 +136,13 @@ public class Present {
      */
     private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
 
+    /**
+     * Tracks the selection state of all terms. Note: use Term rather than PhenotypeTerm as the latter could mutate
+     * its negation term. 
+     */
+    private ObservableSet<Term> checkBoxesState = FXCollections.observableSet();
+
+
 
     /**
      * @param signal          {@link Consumer} of {@link Main.Signal}
@@ -288,9 +295,24 @@ public class Present {
                                 }
                                 event.consume();
                             });
+
+                            if (checkBoxesState.contains(((Main.PhenotypeTerm)checkBox.getUserData()).getTerm())) {
+                                checkBox.setSelected(true);
+                            } else {
+                                checkBox.setSelected(false);
+                            }
+
+                            checkBox.selectedProperty().addListener((selected, oldvalue, newvalue) -> {
+                                if(newvalue) {
+                                    checkBoxesState.add(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
+                                } else {
+                                    checkBoxesState.remove(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
+                                }
+                            });
                         });
                     }
                 }
+
             }
         };
 
