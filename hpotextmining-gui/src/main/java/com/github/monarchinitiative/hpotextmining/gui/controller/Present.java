@@ -141,10 +141,9 @@ public class Present {
 
     /**
      * Tracks the selection state of all terms. Note: use Term rather than PhenotypeTerm as the latter could mutate
-     * its negation term. 
+     * its negation term.
      */
     private ObservableSet<Term> checkBoxesState = FXCollections.observableSet();
-
 
 
     /**
@@ -172,7 +171,32 @@ public class Present {
         return cb;
     }
 
-
+    /**
+     * Collection of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
+     * {@link #setResults(Collection, String)} methods may contain the same HPO terms present at multiple sites of query
+     * text (if the same term is mentioned in multiple sites of query text).
+     * <p>
+     * We still want to show only one CheckBox per term.
+     * <p>
+     * Here we get the {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
+     * unique {@link Term}.
+     *
+     * @param terms {@link Collection} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}
+     *              submitted to {@link #setResults(Collection, String)} method
+     * @return {@link List} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm} that
+     * represent unique {@link Term}s.
+     */
+    private static List<Main.PhenotypeTerm> deduplicate(Collection<Main.PhenotypeTerm> terms) {
+        Set<String> ids = new HashSet<>();
+        List<Main.PhenotypeTerm> deduplicated = new ArrayList<>();
+        for (Main.PhenotypeTerm term : terms) {
+            if (!ids.contains(term.getTerm().getId().getId())) {
+                deduplicated.add(term);
+            }
+            ids.add(term.getTerm().getId().getId());
+        }
+        return deduplicated;
+    }
 
     /**
      * Similar to above but this one works for terms from SciGraph server
@@ -192,7 +216,7 @@ public class Present {
         int offset = 0;
         for (Main.PhenotypeTerm term : sortedByBegin) {
             int start = Math.max(term.getBegin(), offset);
-            htmlBuilder.append(query.substring(offset, start)); // unhighlighted text
+            htmlBuilder.append(query, offset, start); // unhighlighted text
             //start = Math.max(offset + 1, result.getStart());
             //Term id is an information such as "HP:0000822"
             htmlBuilder.append(
@@ -214,16 +238,14 @@ public class Present {
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
     }
 
-
     /**
-     * End of analysis. Add approved terms into {@link Main#hpoTermsTableView} and display configure
+     * End of analysis. Add approved terms into {@link Main}'s <code>hpoTermsTableView</code> and display configure
      * Dialog to allow next round of text-mining analysis.
      */
     @FXML
     void addTermsButtonAction() {
         signal.accept(Main.Signal.DONE);
     }
-
 
     /**
      * After hitting {@link Present#cancelButton} the analysis is ended and a new {@link Configure} dialog is presented
@@ -233,7 +255,6 @@ public class Present {
     void cancelButtonAction() {
         signal.accept(Main.Signal.CANCELLED);
     }
-
 
     /**
      * {@inheritDoc}
@@ -284,7 +305,7 @@ public class Present {
                                 Dragboard db = checkBox.startDragAndDrop(TransferMode.ANY);
                                 ClipboardContent draggedTerm = new ClipboardContent();
                                 draggedTerm.putString(checkBox.getText());
-                                System.out.println("dragged item: " + checkBox.getText());
+                                LOGGER.debug("dragged item: " + checkBox.getText());
                                 db.setContent(draggedTerm);
                                 event.consume();
                             });
@@ -293,20 +314,20 @@ public class Present {
                             //nothing else is needed to do as the term is already removed when drag is dropped
                             //(see below)--it is easier to handle over there than doing it here
                             checkBox.setOnDragDone(event -> {
-                                if (event.getTransferMode() == TransferMode.MOVE){
-                                    System.out.println("drag and drop completed");
+                                if (event.getTransferMode() == TransferMode.MOVE) {
+                                    LOGGER.debug("drag and drop completed");
                                 }
                                 event.consume();
                             });
 
-                            if (checkBoxesState.contains(((Main.PhenotypeTerm)checkBox.getUserData()).getTerm())) {
+                            if (checkBoxesState.contains(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm())) {
                                 checkBox.setSelected(true);
                             } else {
                                 checkBox.setSelected(false);
                             }
 
                             checkBox.selectedProperty().addListener((selected, oldvalue, newvalue) -> {
-                                if(newvalue) {
+                                if (newvalue) {
                                     checkBoxesState.add(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
                                 } else {
                                     checkBoxesState.remove(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
@@ -352,8 +373,8 @@ public class Present {
                 //remove from the yesTerms
                 dragged_term.ifPresent(yesTerms::remove);
                 //change to no term and add to noTerms
-                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(false));
-                dragged_term.ifPresent(phenotypeTerm -> notTerms.add(phenotypeTerm));
+//                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(false));
+                dragged_term.ifPresent(phenotypeTerm -> notTerms.add(new Main.PhenotypeTerm(phenotypeTerm, false)));
                 //notice source that drop is completed
                 event.setDropCompleted(true);
             }
@@ -389,8 +410,8 @@ public class Present {
                 //remove from the yesTerms
                 dragged_term.ifPresent(notTerms::remove);
                 //change to no term and add to noTerms
-                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(true));
-                dragged_term.ifPresent(phenotypeTerm -> yesTerms.add(phenotypeTerm));
+//                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(true));
+                dragged_term.ifPresent(phenotypeTerm -> yesTerms.add(new Main.PhenotypeTerm(phenotypeTerm, true)));
                 //notice source that drop is completed
                 event.setDropCompleted(true);
             }
@@ -398,7 +419,6 @@ public class Present {
         });
 
     }
-
 
     /**
      * The data that are about to be presented are set here. The String with JSON terms are coming from the
@@ -412,7 +432,7 @@ public class Present {
         yesTerms.clear();
         notTerms.clear();
 
-        List<Main.PhenotypeTerm> termList = new ArrayList<>(terms);
+        List<Main.PhenotypeTerm> termList = deduplicate(terms);
         termList.sort(Comparator.comparing(t -> t.getTerm().getName()));
 
         termList.stream().filter(t -> t.isPresent()).forEach(yesTerms::add);
@@ -421,7 +441,6 @@ public class Present {
         String html = colorizeHTML4ciGraph(termList, query);
         webEngine.loadContent(html);
     }
-
 
     /**
      * Return the final set of <em>YES</em> & <em>NOT</em> {@link Main.PhenotypeTerm} objects which have been approved by
