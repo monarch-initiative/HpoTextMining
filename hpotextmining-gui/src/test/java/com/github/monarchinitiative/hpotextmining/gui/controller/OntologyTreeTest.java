@@ -32,9 +32,6 @@ public class OntologyTreeTest extends ApplicationTest {
 
     private static Ontology ontology = OntologySuiteBase.getOntology();
 
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     private List<Main.PhenotypeTerm> results = new ArrayList<>(3);
 
     private OntologyTree controller;
