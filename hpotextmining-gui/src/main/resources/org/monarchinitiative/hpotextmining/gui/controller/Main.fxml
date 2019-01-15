@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.29797979797979796" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.monarchinitiative.hpotextmining.gui.controller.Main">
+<SplitPane dividerPositions="0.29797979797979796" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controller.Main">
     <items>
         <StackPane fx:id="leftStackPane">
         </StackPane>
@@ -41,13 +41,14 @@
                                         <TableColumn fx:id="definitionTableColumn" editable="false" maxWidth="3000.0" prefWidth="500.0" text="Definition" />
                                     </columns>
                                 </TableView>
-                        <HBox alignment="CENTER" prefHeight="35.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <HBox alignment="CENTER" prefHeight="35.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#removeTermButtonAction" text="Remove term" HBox.hgrow="NEVER">
+                              <Button mnemonicParsing="false" onAction="#removeTermButtonAction" text="Remove term">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
                               </Button>
+                              <Button mnemonicParsing="false" onAction="#confirmAndClose" text="Confirm &amp; Close" />
                            </children>
                         </HBox>
                             </children>

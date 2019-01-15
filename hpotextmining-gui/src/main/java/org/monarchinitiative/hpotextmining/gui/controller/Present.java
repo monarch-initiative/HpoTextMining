@@ -1,21 +1,34 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
+
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -110,20 +123,27 @@ public class Present {
     @FXML
     private VBox notTermsVBox;
 
-    /**
-     * Array of generated checkboxes corresponding to identified <em>YES</em> HPO terms.
-     */
-    private CheckBox[] yesTerms;
+    @FXML
+    private ScrollPane notTermScrollPane;
+
+    @FXML
+    private ScrollPane yesTermScrollPane;
 
     /**
-     * Array of generated checkboxes corresponding to identified <em>NOT</em> HPO terms.
+     * Observable Checkboxes corresponding to identified <em>YES</em> HPO terms.
      */
-    private CheckBox[] notTerms;
+    private ObservableSet<Main.PhenotypeTerm> yesTerms = FXCollections.observableSet();
 
     /**
-     * Store the received
+     * Observable Checkboxes corresponding to identified <em>NOT</em> HPO terms.
      */
-//    private Set<Main.PhenotypeTerm> terms = new HashSet<>();
+    private ObservableSet<Main.PhenotypeTerm> notTerms = FXCollections.observableSet();
+
+    /**
+     * Tracks the selection state of all terms. Note: use Term rather than PhenotypeTerm as the latter could mutate
+     * its negation term.
+     */
+    private ObservableSet<Term> checkBoxesState = FXCollections.observableSet();
 
 
     /**
@@ -151,7 +171,32 @@ public class Present {
         return cb;
     }
 
-
+    /**
+     * Collection of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
+     * {@link #setResults(Collection, String)} methods may contain the same HPO terms present at multiple sites of query
+     * text (if the same term is mentioned in multiple sites of query text).
+     * <p>
+     * We still want to show only one CheckBox per term.
+     * <p>
+     * Here we get the {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
+     * unique {@link Term}.
+     *
+     * @param terms {@link Collection} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}
+     *              submitted to {@link #setResults(Collection, String)} method
+     * @return {@link List} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm} that
+     * represent unique {@link Term}s.
+     */
+    private static List<Main.PhenotypeTerm> deduplicate(Collection<Main.PhenotypeTerm> terms) {
+        Set<String> ids = new HashSet<>();
+        List<Main.PhenotypeTerm> deduplicated = new ArrayList<>();
+        for (Main.PhenotypeTerm term : terms) {
+            if (!ids.contains(term.getTerm().getId().getId())) {
+                deduplicated.add(term);
+            }
+            ids.add(term.getTerm().getId().getId());
+        }
+        return deduplicated;
+    }
 
     /**
      * Similar to above but this one works for terms from SciGraph server
@@ -171,7 +216,7 @@ public class Present {
         int offset = 0;
         for (Main.PhenotypeTerm term : sortedByBegin) {
             int start = Math.max(term.getBegin(), offset);
-            htmlBuilder.append(query.substring(offset, start)); // unhighlighted text
+            htmlBuilder.append(query, offset, start); // unhighlighted text
             //start = Math.max(offset + 1, result.getStart());
             //Term id is an information such as "HP:0000822"
             htmlBuilder.append(
@@ -193,16 +238,14 @@ public class Present {
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
     }
 
-
     /**
-     * End of analysis. Add approved terms into term table in {@link Main} and display configure
+     * End of analysis. Add approved terms into {@link Main}'s <code>hpoTermsTableView</code> and display configure
      * Dialog to allow next round of text-mining analysis.
      */
     @FXML
     void addTermsButtonAction() {
         signal.accept(Main.Signal.DONE);
     }
-
 
     /**
      * After hitting {@link Present#cancelButton} the analysis is ended and a new {@link Configure} dialog is presented
@@ -212,7 +255,6 @@ public class Present {
     void cancelButtonAction() {
         signal.accept(Main.Signal.CANCELLED);
     }
-
 
     /**
      * {@inheritDoc}
@@ -228,8 +270,155 @@ public class Present {
                 webEngine.executeScript("console.log = function(message) {javafx_bridge.log(message);};");
             }
         });
-    }
 
+        //when yes terms are updated, re-create checkboxes for all terms
+        yesTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                yesTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(yesTermsVBox.getChildren()::add);
+
+            }
+        });
+
+        //same as above
+        notTerms.addListener(new SetChangeListener<Main.PhenotypeTerm>() {
+            @Override
+            public void onChanged(Change<? extends Main.PhenotypeTerm> change) {
+                notTermsVBox.getChildren().clear();
+                change.getSet().stream().sorted(Comparator.comparing(a -> a.getTerm().getName()))
+                        .map(phenotype -> checkBoxFactory(phenotype)).forEach(notTermsVBox.getChildren()::add);
+            }
+        });
+
+        //The listener listens to checkbox list changes. It adds drag support to every checkbox.
+        ListChangeListener<Node> changeListener = new ListChangeListener<Node>() {
+            @Override
+            public void onChanged(Change<? extends Node> c) {
+                while (c.next()) {
+                    if (c.wasAdded()) {
+                        c.getAddedSubList().forEach(node -> {
+                            CheckBox checkBox = (CheckBox) node;
+                            //add drag detected listener
+                            checkBox.setOnDragDetected(event -> {
+                                Dragboard db = checkBox.startDragAndDrop(TransferMode.ANY);
+                                ClipboardContent draggedTerm = new ClipboardContent();
+                                draggedTerm.putString(checkBox.getText());
+                                LOGGER.debug("dragged item: " + checkBox.getText());
+                                db.setContent(draggedTerm);
+                                event.consume();
+                            });
+
+                            //drag is done.
+                            //nothing else is needed to do as the term is already removed when drag is dropped
+                            //(see below)--it is easier to handle over there than doing it here
+                            checkBox.setOnDragDone(event -> {
+                                if (event.getTransferMode() == TransferMode.MOVE) {
+                                    LOGGER.debug("drag and drop completed");
+                                }
+                                event.consume();
+                            });
+
+                            if (checkBoxesState.contains(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm())) {
+                                checkBox.setSelected(true);
+                            } else {
+                                checkBox.setSelected(false);
+                            }
+
+                            checkBox.selectedProperty().addListener((selected, oldvalue, newvalue) -> {
+                                if (newvalue) {
+                                    checkBoxesState.add(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
+                                } else {
+                                    checkBoxesState.remove(((Main.PhenotypeTerm) checkBox.getUserData()).getTerm());
+                                }
+                            });
+                        });
+                    }
+                }
+
+            }
+        };
+
+        //add drag listeners to all checkboxes for yes terms
+        yesTermsVBox.getChildren().addListener(changeListener);
+        //add drag listeners to all checkboxes for not terms
+        notTermsVBox.getChildren().addListener(changeListener);
+
+        //add drop listeners to the negated term list
+        notTermScrollPane.setOnDragEntered(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragExited(event -> {
+            notTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        notTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Optional<Main.PhenotypeTerm> dragged_term = yesTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(yesTerms::remove);
+                //change to no term and add to noTerms
+//                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(false));
+                dragged_term.ifPresent(phenotypeTerm -> notTerms.add(new Main.PhenotypeTerm(phenotypeTerm, false)));
+                //notice source that drop is completed
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
+
+
+        //add drop listeners to the yes term list
+        yesTermScrollPane.setOnDragEntered(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.BLUE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragExited(event -> {
+            yesTermScrollPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragOver(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        yesTermScrollPane.setOnDragDropped(event -> {
+            Dragboard dragboard = event.getDragboard();
+            if (dragboard.hasString()) {
+                String dragged = dragboard.getString();
+                Optional<Main.PhenotypeTerm> dragged_term = notTerms.stream()
+                        .filter(t -> t.getTerm().getName().equals(dragged)).findFirst();
+                //remove from the yesTerms
+                dragged_term.ifPresent(notTerms::remove);
+                //change to no term and add to noTerms
+//                dragged_term.ifPresent(phenotypeTerm -> phenotypeTerm.setIsPresent(true));
+                dragged_term.ifPresent(phenotypeTerm -> yesTerms.add(new Main.PhenotypeTerm(phenotypeTerm, true)));
+                //notice source that drop is completed
+                event.setDropCompleted(true);
+            }
+            event.consume();
+        });
+
+    }
 
     /**
      * The data that are about to be presented are set here. The String with JSON terms are coming from the
@@ -240,34 +429,18 @@ public class Present {
      * @param query String with the query text submitted by the user.
      */
     void setResults(Collection<Main.PhenotypeTerm> terms, String query) {
-        yesTermsVBox.getChildren().clear();
-        notTermsVBox.getChildren().clear();
+        yesTerms.clear();
+        notTerms.clear();
 
-        Set<String> presentAdded = new HashSet<>();
-        Set<String> notPresentAdded = new HashSet<>();
-
-        List<Main.PhenotypeTerm> termList = new ArrayList<>(terms);
+        List<Main.PhenotypeTerm> termList = deduplicate(terms);
         termList.sort(Comparator.comparing(t -> t.getTerm().getName()));
 
-        for (Main.PhenotypeTerm phenotypeTerm : termList) {
-            if (phenotypeTerm.isPresent()) {
-                if (!presentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    presentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    yesTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            } else {
-                if (!notPresentAdded.contains(phenotypeTerm.getTerm().getId().getValue())) {
-                    notPresentAdded.add(phenotypeTerm.getTerm().getId().getValue());
-                    notTermsVBox.getChildren().add(checkBoxFactory(phenotypeTerm));
-                }
-            }
-
-        }
+        termList.stream().filter(t -> t.isPresent()).forEach(yesTerms::add);
+        termList.stream().filter(t -> !t.isPresent()).forEach(notTerms::add);
 
         String html = colorizeHTML4ciGraph(termList, query);
         webEngine.loadContent(html);
     }
-
 
     /**
      * Return the final set of <em>YES</em> & <em>NOT</em> {@link Main.PhenotypeTerm} objects which have been approved by

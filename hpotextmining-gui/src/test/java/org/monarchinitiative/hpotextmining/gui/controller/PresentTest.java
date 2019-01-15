@@ -6,6 +6,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.BeforeClass;
@@ -17,10 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testfx.framework.junit.ApplicationTest;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -62,7 +61,7 @@ public class PresentTest extends ApplicationTest {
     private Main.Signal signalResult;
 
     /**
-     * This variable is being set when testing {@link Present#focusToTermHook}.
+     * This variable is being set when testing {@link Present}'s <code>focusToTermHook</code>.
      */
     private TermId focusedOnResult;
 
@@ -88,12 +87,12 @@ public class PresentTest extends ApplicationTest {
         terms.add(new Main.PhenotypeTerm(myopathyTerm, myopathyMinedTerm));
 
         // 75-88 visceromegaly
-        String collagenopathyTermIdString = "HP:0003271";
-        Term collagenopathyTerm = ontology.getTermMap().get(TermId.of(collagenopathyTermIdString));
-        MinedTerm collagenopathyMinedTerm = new SimpleMinedTerm(75, 88, collagenopathyTermIdString, true);
-        terms.add(new Main.PhenotypeTerm(collagenopathyTerm, collagenopathyMinedTerm));
+        String visceromegalyTermIdString = "HP:0003271";
+        Term visceromegalyTerm = ontology.getTermMap().get(TermId.of(visceromegalyTermIdString));
+        MinedTerm visceromegalyMinedTerm = new SimpleMinedTerm(75, 88, visceromegalyTermIdString, true);
+        terms.add(new Main.PhenotypeTerm(visceromegalyTerm, visceromegalyMinedTerm));
 
-        // 114-123 visceromegaly
+        // 114-123 alcoholism
         String alcoholismTermIdString = "HP:0030955";
         Term alcoholismTerm = ontology.getTermMap().get(TermId.of(alcoholismTermIdString));
         MinedTerm alcoholismMinedTerm = new SimpleMinedTerm(122, 132, alcoholismTermIdString, false);
@@ -126,7 +125,7 @@ public class PresentTest extends ApplicationTest {
 
 
     @Test
-    public void addOnePresentTerm() {
+    public void addOnePresentTerm() throws Exception {
         Platform.runLater(() -> controller.setResults(terms, payload));
         sleep(LOADING_TIMEOUT);
 
@@ -149,7 +148,7 @@ public class PresentTest extends ApplicationTest {
 
 
     @Test
-    public void addOneNonpresentTerm() {
+    public void addOneNonpresentTerm() throws Exception {
         Platform.runLater(() -> controller.setResults(terms, payload));
         sleep(LOADING_TIMEOUT);
         // list of 'present' checkboxes
@@ -171,11 +170,58 @@ public class PresentTest extends ApplicationTest {
 
 
     /**
+     * There are two present terms and one nonpresent terms at the beginning of this test. From the present terms, the
+     * second term is selected. The nonpresent term is also selected.
+     * <p>
+     * After dragging the non-selected term we want to retain the selection state for both term groups. The selection state
+     * should be also retained after dragging the selected term.
+     */
+    @Test
+    public void dragPresentTermToNonpresentTerms() throws Exception  {
+        Platform.runLater(() -> controller.setResults(terms, payload));
+        sleep(LOADING_TIMEOUT);
+        // list of 'present' checkboxes
+        List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
+
+        assertThat(yesCheckBoxes.size(), is(2));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
+        // list of 'not present' checkboxes
+        List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
+        assertThat(notCheckBoxes.size(), is(1));
+        clickOn(yesCheckBoxes.get(1));
+        clickOn(notCheckBoxes.get(0));
+        assertThat(((CheckBox) yesCheckBoxes.get(0)).isSelected(), is(false));
+        assertThat(((CheckBox) yesCheckBoxes.get(1)).isSelected(), is(true));
+        assertThat(((CheckBox) notCheckBoxes.get(0)).isSelected(), is(true));
+
+        // drag the unchecked term representing myopathy to nonpresent terms
+        drag(yesCheckBoxes.get(0), MouseButton.PRIMARY)
+                .moveTo("#notTermScrollPane")
+                .release(MouseButton.PRIMARY);
+
+        Main.PhenotypeTerm visceromegaly = terms.get(1);
+        Main.PhenotypeTerm alcoholism = terms.get(2);
+        Set<Main.PhenotypeTerm> approvedTerms = controller.getApprovedTerms();
+        assertThat(approvedTerms, hasItems(visceromegaly, alcoholism));
+        assertThat(approvedTerms.size(), is(2));
+
+        // drag the checked term representing visceromegaly to nonpresent terms
+        yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
+        drag(yesCheckBoxes.get(0), MouseButton.PRIMARY)
+                .moveTo("#notTermScrollPane")
+                .release(MouseButton.PRIMARY);
+
+        visceromegaly = new Main.PhenotypeTerm(visceromegaly, false); // after dragging the term should be not present
+        approvedTerms = controller.getApprovedTerms();
+        assertThat(approvedTerms, hasItems(visceromegaly, alcoholism));
+        assertThat(approvedTerms.size(), is(2));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void start(Stage stage) throws Exception {
-//        LOGGER.info("Loading Present controller @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         controller = new Present(signal -> signalResult = signal, focusedOn -> focusedOnResult = focusedOn);
         FXMLLoader loader = new FXMLLoader(Configure.class.getResource("Present.fxml"));
         loader.setControllerFactory(clazz -> controller);

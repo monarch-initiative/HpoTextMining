@@ -102,7 +102,7 @@ public class OntologyTree {
      * @param ontology {@link Ontology} to be displayed here as a tree
      * @param addHook  {@link Consumer} of {@link Main.PhenotypeTerm}, an approved term will be submitted here
      */
-    OntologyTree(Ontology ontology, Consumer<Main.PhenotypeTerm> addHook) {
+    public OntologyTree(Ontology ontology, Consumer<Main.PhenotypeTerm> addHook) {
         this.ontology = ontology;
         this.addHook = addHook;
     }
@@ -127,9 +127,9 @@ public class OntologyTree {
      */
     @FXML
     private void addButtonAction() {
-        Term selected = ontologyTreeView.getSelectionModel().getSelectedItem().getValue();
+        TreeItem<Term> selected = ontologyTreeView.getSelectionModel().getSelectedItem();
         if (selected != null && addHook != null) {
-            Main.PhenotypeTerm phenotypeTerm = new Main.PhenotypeTerm(selected, !notPresentCheckBox.isSelected());
+            Main.PhenotypeTerm phenotypeTerm = new Main.PhenotypeTerm(selected.getValue(), !notPresentCheckBox.isSelected());
             addHook.accept(phenotypeTerm);
         }
         notPresentCheckBox.setSelected(false);

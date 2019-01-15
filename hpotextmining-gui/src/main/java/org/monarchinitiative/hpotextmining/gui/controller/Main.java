@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.monarchinitiative.phenol.ontology.data.Term;
 
 import java.util.*;
@@ -151,6 +152,12 @@ public class Main {
         }
     }
 
+    @FXML
+    public void confirmAndClose() {
+        Stage stage = (Stage) leftStackPane.getScene().getWindow();
+        stage.close();
+    }
+
     /**
      * Enum used by {@link Configure} and {@link Present} to signalize progres & status.
      */
@@ -183,6 +190,13 @@ public class Main {
             this.term = term;
             this.begin = begin;
             this.end = end;
+            this.present = present;
+        }
+
+        public PhenotypeTerm(PhenotypeTerm other, boolean present) {
+            this.term = other.term;
+            this.begin = other.begin;
+            this.end = other.end;
             this.present = present;
         }
 
