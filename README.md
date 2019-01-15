@@ -18,7 +18,7 @@ In order to plug *HpoTextMining* into your *JavaFX* app, add the following depen
 <dependency>
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining-gui</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.5</version>
 </dependency>
 ```
 
@@ -42,7 +42,7 @@ If you are only interested in the plain-text analysis, then the `hpotextmining-c
 <dependency>
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining-core</artifactId>
-    <version>0.2.3</version>
+    <version>0.2.5</version>
 </dependency>
 ```
 
