@@ -88,7 +88,35 @@
 
     <profiles>
         <profile>
-            <id>sonatype-oss-release</id>
+            <!-- This profile should be activated only when a release is being built. -->
+            <!-- Then, GPG plugin is used to sign the artifacts. Note that you need to set up your GPG key first. -->
+            <!-- Activate the profile by running e.g. `mvn -DperformRelease=true clean deploy` -->
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- override version of GPG plugin to use new GPG signing features -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -122,20 +150,11 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- override version of GPG plugin to use new GPG signing features -->
+            <!-- To deploy the app to Maven Central-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
             </plugin>
         </plugins>
     </build>
