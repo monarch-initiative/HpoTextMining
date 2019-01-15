@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.29797979797979796" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controller.Main">
+<SplitPane xmlns:fx="http://javafx.com/fxml/1" dividerPositions="0.29797979797979796" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9" fx:controller="org.monarchinitiative.hpotextmining.gui.controller.Main">
     <items>
         <StackPane fx:id="leftStackPane">
         </StackPane>

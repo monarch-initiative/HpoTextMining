@@ -4,7 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
+
+import org.monarchinitiative.phenol.io.OntologyLoader;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,7 @@ public class Play extends Application {
     private final ExecutorService executorService;
 
     public Play() throws Exception {
-        HpOboParser parser = new HpOboParser(Play.class.getResourceAsStream(HPO_OBO_PATH));
-        ontology = parser.parse();
+        ontology = OntologyLoader.loadOntology(Play.class.getResourceAsStream(HPO_OBO_PATH));
         scigraphUrl = new URL(SCIGRAPH_URL_STRING);
         executorService = Executors.newSingleThreadExecutor();
     }

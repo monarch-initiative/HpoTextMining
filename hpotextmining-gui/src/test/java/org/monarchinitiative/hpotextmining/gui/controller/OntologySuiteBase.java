@@ -2,8 +2,7 @@ package org.monarchinitiative.hpotextmining.gui.controller;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.monarchinitiative.phenol.base.PhenolException;
-import org.monarchinitiative.phenol.io.obo.hpo.HpOboParser;
+import org.monarchinitiative.phenol.io.OntologyLoader;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +19,12 @@ import org.slf4j.LoggerFactory;
 public class OntologySuiteBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OntologySuiteBase.class);
+
     private static Ontology ontology;
 
     static {
         String ontologyPath = "/HP.obo";
-        try {
-            HpOboParser parser = new HpOboParser(OntologySuiteBase.class.getResourceAsStream(ontologyPath));
-            ontology = parser.parse();
-        } catch (PhenolException e) {
-            LOGGER.warn("Unable to parse ontology at '{}'", ontologyPath, e);
-        }
+        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream(ontologyPath));
     }
 
     public static Ontology getOntology() {

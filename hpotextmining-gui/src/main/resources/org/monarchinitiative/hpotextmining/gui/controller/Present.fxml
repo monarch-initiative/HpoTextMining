@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="presentVBox" minHeight="400.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.github.monarchinitiative.hpotextmining.gui.controller.Present">
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="presentVBox" minHeight="400.0" minWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="org.monarchinitiative.hpotextmining.gui.controller.Present">
    <children>
       <SplitPane dividerPositions="0.75" VBox.vgrow="ALWAYS">
         <items>
