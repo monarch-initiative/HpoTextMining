@@ -1,3 +1,5 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.monarchinitiative.hpotextmining/HpoTextMining/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.monarchinitiative.hpotextmining/HpoTextMining)
+
 # HpoTextMining
 *HpoTextMining* allows convenient curation of phenotype information from free-text in English by using [Monarch SciGraph](https://scigraph-ontology.monarchinitiative.org/scigraph/annotations/complete) instance.
 
