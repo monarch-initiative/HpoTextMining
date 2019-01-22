@@ -314,7 +314,7 @@ public class OntologyTree {
          */
         @Override
         public boolean isLeaf() {
-            return OntologyAlgorithm.getChildTerms(ontology, getValue().getId()).size() == 0;
+            return OntologyAlgorithm.getChildTerms(ontology, getValue().getId(), false).size() == 0;
         }
 
 
