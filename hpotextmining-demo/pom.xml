@@ -7,11 +7,10 @@
     <parent>
         <artifactId>HpoTextMining</artifactId>
         <groupId>org.monarchinitiative.hpotextmining</groupId>
-        <version>0.2.6-SNAPSHOT</version>
+        <version>0.2.6</version>
     </parent>
 
     <artifactId>hpotextmining-demo</artifactId>
-    <version>0.2.6-SNAPSHOT</version>
     <description>Example usage of `hpotextmining-gui` module in JavaFX App</description>
 
     <build>
@@ -92,7 +91,7 @@
         <dependency>
             <groupId>org.monarchinitiative.hpotextmining</groupId>
             <artifactId>hpotextmining-gui</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl -->

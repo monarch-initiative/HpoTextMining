@@ -1,5 +1,8 @@
 # Changelog for HpoTextMining
 
+## v0.2.6
+- Fix bug in call to Scigraph text mining API
+
 ## v0.2.5
 - Remove the `Cancel` button, since it is not being used anymore
 
