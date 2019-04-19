@@ -89,7 +89,7 @@ public class SciGraphTermMiner implements TermMiner {
         try {
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put("content", query);
-            parameters.put("includeCat", "Phenotype"); //only retrieve phenotypes
+            parameters.put("includeCat", "phenotype"); //only retrieve phenotypes
             parameters.put("includeAcronym", "true");
 
 
