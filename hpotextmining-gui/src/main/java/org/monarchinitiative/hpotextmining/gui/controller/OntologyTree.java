@@ -1,5 +1,7 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -283,6 +285,8 @@ public class OntologyTree {
         String content = String.format(HTML_TEMPLATE, termID, term.getName(), synonyms, definition);
         infoWebEngine.loadContent(content);
     }
+
+    public StringProperty observableSearchText() {return this.searchTextField.textProperty();}
 
 
     /**
