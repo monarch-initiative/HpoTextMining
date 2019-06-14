@@ -7,7 +7,7 @@
     <parent>
         <artifactId>HpoTextMining</artifactId>
         <groupId>org.monarchinitiative.hpotextmining</groupId>
-        <version>0.2.7</version>
+        <version>0.2.8-SNAPSHOT</version>
     </parent>
 
     <artifactId>hpotextmining-demo</artifactId>
