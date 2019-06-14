@@ -6,7 +6,7 @@
     <groupId>org.monarchinitiative.hpotextmining</groupId>
     <artifactId>HpoTextMining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.7-SNAPSHOT</version>
+    <version>0.2.7</version>
     <modules>
         <module>hpotextmining-core</module>
         <module>hpotextmining-demo</module>
@@ -30,7 +30,7 @@
         <jackson.fasterxml.version>2.8.8</jackson.fasterxml.version>
         <junit.version>4.12</junit.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <phenol.version>1.3.2</phenol.version>
+        <phenol.version>1.3.3</phenol.version>
     </properties>
 
     <licenses>
@@ -104,7 +104,7 @@
                         <!-- override version of GPG plugin to use new GPG signing features -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -126,7 +126,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -140,7 +140,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -154,7 +154,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>3.0.0-M1</version>
             </plugin>
         </plugins>
     </build>

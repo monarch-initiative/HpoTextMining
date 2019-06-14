@@ -7,7 +7,7 @@
     <parent>
         <artifactId>HpoTextMining</artifactId>
         <groupId>org.monarchinitiative.hpotextmining</groupId>
-        <version>0.2.7-SNAPSHOT</version>
+        <version>0.2.7</version>
     </parent>
 
     <artifactId>hpotextmining-core</artifactId>
@@ -21,7 +21,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>21.0</version>
+            <version>28.0-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.23.4</version>
+            <version>2.28.2</version>
             <scope>test</scope>
         </dependency>
         <!-- END OF TESTING LIBRARIES -->

@@ -1,5 +1,8 @@
 # Changelog for HpoTextMining
 
+## v0.2.7
+- Expose search text field in ontology tree GUI part
+
 ## v0.2.6
 - Fix bug in call to Scigraph text mining API
 
