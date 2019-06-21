@@ -44,7 +44,7 @@ If you are only interested in the plain-text analysis, then the `hpotextmining-c
 <dependency>
     <groupId>com.github.monarch-initiative</groupId>
     <artifactId>hpotextmining-core</artifactId>
-    <version>0.2.5</version>
+    <version>0.2.7</version>
 </dependency>
 ```
 
