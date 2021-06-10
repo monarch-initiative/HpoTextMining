@@ -2,13 +2,11 @@ package org.monarchinitiative.hpotextmining.gui.controller;
 
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
-import org.monarchinitiative.hpotextmining.core.miners.biolark.BiolarkTermMiner;
-import org.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphTermMiner;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Callback;
-import org.monarchinitiative.phenol.base.PhenolException;
+import org.monarchinitiative.hpotextmining.core.miners.TermMiners;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
@@ -46,7 +44,7 @@ public class HpoTextMining {
     /**
      * Main controller, part of the API.
      */
-    private Main main;
+    private final Main main;
 
     /**
      * The query text is submitted here.
@@ -214,7 +212,7 @@ public class HpoTextMining {
 
         private ExecutorService executorService;
 
-        private Set<Main.PhenotypeTerm> terms = new HashSet<>();
+        private final Set<Main.PhenotypeTerm> terms = new HashSet<>();
 
         private HpoTextMiningBuilder() {
             // no-op
@@ -289,10 +287,10 @@ public class HpoTextMining {
             } else {
                 if (sciGraphServerUrl != null) {
                     LOGGER.info("Using '{}' as url for text mining server", sciGraphServerUrl);
-                    usedMiner = new SciGraphTermMiner(sciGraphServerUrl);
+                    usedMiner = TermMiners.scigraph(sciGraphServerUrl);
                 } else {
                     if (biolarkServerUrl != null) {
-                        usedMiner = new BiolarkTermMiner(biolarkServerUrl);
+                        usedMiner = TermMiners.biolark(biolarkServerUrl);
                     } else {
                         throw new NullPointerException("Neither SciGraph not Biolark URL was specified");
                     }

@@ -5,9 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -28,6 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
+@Disabled
 public class ConfigureTest extends ApplicationTest {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -45,14 +46,14 @@ public class ConfigureTest extends ApplicationTest {
     public static void setUpBefore() throws Exception {
         // for headless GUI testing, set the "not.headless" system property to true or comment out if you want to see the
         // robot in action
-        if (!Boolean.getBoolean("not.headless")) {
-            System.setProperty("testfx.robot", "glass");
-            System.setProperty("testfx.headless", "true");
-            System.setProperty("prism.order", "sw");
-            System.setProperty("prism.text", "t2k");
-            System.setProperty("java.awt.headless", "true");
-            System.setProperty("headless.geometry", "1200x760-32");
-        }
+//        if (!Boolean.getBoolean("not.headless")) {
+//            System.setProperty("testfx.robot", "glass");
+//            System.setProperty("testfx.headless", "true");
+//            System.setProperty("prism.order", "sw");
+//            System.setProperty("prism.text", "t2k");
+//            System.setProperty("java.awt.headless", "true");
+//            System.setProperty("headless.geometry", "1200x760-32");
+//        }
     }
 
     /**
@@ -62,7 +63,7 @@ public class ConfigureTest extends ApplicationTest {
      */
     @Test
     public void testInputToTextArea() throws Exception {
-        MinedTerm t = new SimpleMinedTerm(7, 11, "HP:0001945", true);
+        MinedTerm t = MinedTerm.of(7, 11, "HP:0001945", true);
         Set<MinedTerm> terms = Set.of(t);
         Mockito.when(miner.doMining("Bla bla bla"))
                 .thenReturn(terms);

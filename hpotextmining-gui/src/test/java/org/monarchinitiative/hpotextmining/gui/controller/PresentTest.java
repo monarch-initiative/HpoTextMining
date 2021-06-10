@@ -1,9 +1,9 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -33,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.2.0
  * @since 0.2.0
  */
+@Disabled
 public class PresentTest extends ApplicationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PresentTest.class);
@@ -49,7 +50,7 @@ public class PresentTest extends ApplicationTest {
 
     private static List<Main.PhenotypeTerm> terms;
 
-    private static String payload = "Here we present a 13-year-old girl with inherited myopathy associated with visceromegaly. The girl was not suffering from alcoholism.";
+    private static final String payload = "Here we present a 13-year-old girl with inherited myopathy associated with visceromegaly. The girl was not suffering from alcoholism.";
 
     /**
      * Tested instance
@@ -84,19 +85,19 @@ public class PresentTest extends ApplicationTest {
         // 50-58 myopathy
         String myopathyTermIdString = "HP:0003198";
         Term myopathyTerm = ontology.getTermMap().get(TermId.of(myopathyTermIdString));
-        MinedTerm myopathyMinedTerm = new SimpleMinedTerm(50, 58, myopathyTermIdString, true);
+        MinedTerm myopathyMinedTerm = MinedTerm.of(50, 58, myopathyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(myopathyTerm, myopathyMinedTerm));
 
         // 75-88 visceromegaly
         String visceromegalyTermIdString = "HP:0003271";
         Term visceromegalyTerm = ontology.getTermMap().get(TermId.of(visceromegalyTermIdString));
-        MinedTerm visceromegalyMinedTerm = new SimpleMinedTerm(75, 88, visceromegalyTermIdString, true);
+        MinedTerm visceromegalyMinedTerm = MinedTerm.of(75, 88, visceromegalyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(visceromegalyTerm, visceromegalyMinedTerm));
 
         // 114-123 alcoholism
         String alcoholismTermIdString = "HP:0030955";
         Term alcoholismTerm = ontology.getTermMap().get(TermId.of(alcoholismTermIdString));
-        MinedTerm alcoholismMinedTerm = new SimpleMinedTerm(122, 132, alcoholismTermIdString, false);
+        MinedTerm alcoholismMinedTerm = MinedTerm.of(122, 132, alcoholismTermIdString, false);
         terms.add(new Main.PhenotypeTerm(alcoholismTerm, alcoholismMinedTerm));
     }
 

@@ -1,9 +1,8 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import impl.org.controlsfx.autocompletion.SuggestionProvider;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 
 import java.util.Collection;
 
@@ -20,8 +19,7 @@ class WidthAwareTextFields {
      */
     static <T> AutoCompletionBinding<T> bindWidthAwareAutoCompletion(
             TextField textField, Collection<T> possibleSuggestions) {
-        AutoCompletionTextFieldBinding<T> k = new AutoCompletionTextFieldBinding<>(textField,
-                SuggestionProvider.create(possibleSuggestions));
+        AutoCompletionBinding<T> k = TextFields.bindAutoCompletion(textField, t -> possibleSuggestions);
         k.minWidthProperty().bind(textField.widthProperty());
         return k;
     }

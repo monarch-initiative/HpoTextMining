@@ -7,6 +7,7 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -25,11 +26,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
+@Disabled
 public class OntologyTreeTest extends ApplicationTest {
 
-    private static Ontology ontology = OntologySuiteBase.getOntology();
+    private static final Ontology ontology = OntologySuiteBase.getOntology();
 
-    private List<Main.PhenotypeTerm> results = new ArrayList<>(3);
+    private final List<Main.PhenotypeTerm> results = new ArrayList<>(3);
 
     private OntologyTree controller;
 

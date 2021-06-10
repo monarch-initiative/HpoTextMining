@@ -1,13 +1,11 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
-import org.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphResult;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -15,18 +13,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.mockito.Mockito;
-import org.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphTermMiner;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -40,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
+@Disabled
 public class HpoTextMiningTest extends ApplicationTest {
 
     /**
@@ -58,8 +54,6 @@ public class HpoTextMiningTest extends ApplicationTest {
 
     private static Collection<MinedTerm> terms;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     private HpoTextMining hpoTextMining;
 
     private final TermMiner miner = Mockito.mock(TermMiner.class);
@@ -71,13 +65,11 @@ public class HpoTextMiningTest extends ApplicationTest {
             payload = reader.lines().collect(Collectors.joining("\n"));
         }
 
-        // read expected response from the server
-        File jsonResponse = new File(HpoTextMiningTest.class.getResource("sciGraphResponse.json").getFile());
-        SciGraphResult[] sciGraphResults = objectMapper.readValue(jsonResponse, SciGraphResult[].class);
-        terms = Arrays.stream(sciGraphResults)
-                .map(toMinedTerm())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        terms = Set.of(
+                MinedTerm.of(1602, 1630, "HP:0001771", true),
+                MinedTerm.of(2211, 2233, "HP:0040287", true),
+                MinedTerm.of(-1, -1, "HP:0011747", true),
+                MinedTerm.of(-1, -1, "HP:0012119", false));
 
         // for headless GUI testing, set the "not.headless" system property to true or comment out if you want to see the
         // robot in action
@@ -89,15 +81,6 @@ public class HpoTextMiningTest extends ApplicationTest {
             System.setProperty("java.awt.headless", "true");
             System.setProperty("headless.geometry", "1200x760-32");
         }
-    }
-
-    /**
-     * This function comes from the {@link SciGraphTermMiner} class.
-     *
-     * @return {@link Function} mapper
-     */
-    private static Function<SciGraphResult, MinedTerm> toMinedTerm() {
-        return sgr -> new SimpleMinedTerm(sgr.getStart(), sgr.getEnd(), sgr.getToken().getId(), true);
     }
 
     @Test

@@ -8,28 +8,7 @@ package org.monarchinitiative.hpotextmining.core.miners;
  * @see TermMiner
  * @since 0.2
  */
-public final class SimpleMinedTerm implements MinedTerm {
-
-    private final int begin;
-
-    private final int end;
-
-
-    private final String termId;
-
-    /**
-     * Boolean flag indicating that the termId was either present or absent in the patient/proband who is
-     * being described by the mined text
-     */
-    private final boolean present;
-
-
-    public SimpleMinedTerm(int begin, int end, String termId, boolean present) {
-        this.begin = begin;
-        this.end = end;
-        this.termId = termId;
-        this.present = present;
-    }
+record SimpleMinedTerm(int begin, int end, String termId, boolean present) implements MinedTerm {
 
     @Override
     public int getBegin() {

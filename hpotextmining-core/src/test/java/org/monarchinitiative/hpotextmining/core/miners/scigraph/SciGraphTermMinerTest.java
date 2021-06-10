@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.mockito.Mockito;
 
 import java.io.BufferedReader;
@@ -80,11 +79,11 @@ public class SciGraphTermMinerTest {
 
         // test results - we should have 66 MinedTerms in total. Then, we test presence of five terms picked at random
         assertThat(minedTerms.size(), is(66));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(1635, 1643, "HP:0001762", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(2804, 2822, "MP:0000752", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(2353, 2363, "HP:0200055", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(414, 436, "HP:0001290", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(1436, 1445, "HP:0002650", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(1635, 1643, "HP:0001762", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(2804, 2822, "MP:0000752", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(2353, 2363, "HP:0200055", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(414, 436, "HP:0001290", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(1436, 1445, "HP:0002650", true)));
 
 
         // test that we query the server in a consistent way
