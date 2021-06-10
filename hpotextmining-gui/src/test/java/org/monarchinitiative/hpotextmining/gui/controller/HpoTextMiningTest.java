@@ -4,8 +4,6 @@ package org.monarchinitiative.hpotextmining.gui.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
@@ -16,7 +14,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphTermMiner;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
@@ -43,7 +40,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
-@ExtendWith(MockitoExtension.class)
 public class HpoTextMiningTest extends ApplicationTest {
 
     /**
@@ -66,8 +62,7 @@ public class HpoTextMiningTest extends ApplicationTest {
 
     private HpoTextMining hpoTextMining;
 
-    @Mock
-    private TermMiner miner;
+    private final TermMiner miner = Mockito.mock(TermMiner.class);
 
     @BeforeAll
     public static void setUpBefore() throws Exception {

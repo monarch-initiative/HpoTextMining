@@ -6,12 +6,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -31,13 +28,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
-@ExtendWith(MockitoExtension.class)
 public class ConfigureTest extends ApplicationTest {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    @Mock
-    private TermMiner miner;
+    private final TermMiner miner = Mockito.mock(TermMiner.class);
 
     private Main.Signal result;
 

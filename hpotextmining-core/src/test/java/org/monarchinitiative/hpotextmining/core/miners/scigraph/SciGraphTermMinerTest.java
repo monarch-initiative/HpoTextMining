@@ -1,13 +1,11 @@
 package org.monarchinitiative.hpotextmining.core.miners.scigraph;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.BufferedReader;
@@ -33,7 +31,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.2.2
  * @since 0.2.2
  */
-@ExtendWith(MockitoExtension.class)
 public class SciGraphTermMinerTest {
 
     private static URL realScigraphUrl;
@@ -42,11 +39,9 @@ public class SciGraphTermMinerTest {
 
     private static String scigraphJsonResponse;
 
-    @Mock
-    private URLConnection connection;
+    public URLConnection connection;
 
-    @Mock
-    private SciGraphTermMiner.ConnectionFactory factory;
+    public SciGraphTermMiner.ConnectionFactory factory;
 
     @BeforeAll
     public static void beforeClassSetUp() throws Exception {
@@ -62,6 +57,11 @@ public class SciGraphTermMinerTest {
         }
     }
 
+    @BeforeEach
+    public void setUp() {
+        connection = Mockito.mock(URLConnection.class);
+        factory = Mockito.mock(SciGraphTermMiner.ConnectionFactory.class);
+    }
 
     @Test
     public void mineHpoTermsFromLargePayload() throws Exception {
@@ -105,7 +105,7 @@ public class SciGraphTermMinerTest {
 //        Mockito.when(connection.openStream()).thenReturn(new ByteArrayInputStream(payload.getBytes()));
 
 
-        final Set<MinedTerm> minedTerms = miner.doMining(payload);
+        Set<MinedTerm> minedTerms = miner.doMining(payload);
         minedTerms.forEach(System.err::println);
     }
 

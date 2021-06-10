@@ -1,12 +1,10 @@
 package org.monarchinitiative.hpotextmining.core.miners.biolark;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.BufferedReader;
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
  * @version 0.2.0
  * @since 0.2
  */
-@ExtendWith(MockitoExtension.class)
 public class BiolarkTermMinerTest {
 
     private static String payload;
@@ -37,8 +34,7 @@ public class BiolarkTermMinerTest {
 
     private static URL textMiningUrl;
 
-    @Mock
-    private URLConnection connection;
+    public URLConnection connection;
 
     @BeforeAll
     public static void beforeClassSetUp() throws Exception {
@@ -51,6 +47,11 @@ public class BiolarkTermMinerTest {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(BiolarkTermMinerTest.class.getResource("biolarkJsonResponse.json").toURI()))) {
             biolarkJsonResponse = reader.lines().collect(Collectors.joining("\n"));
         }
+    }
+
+    @BeforeEach
+    public void setUp() {
+        connection = Mockito.mock(URLConnection.class);
     }
 
     @Test
