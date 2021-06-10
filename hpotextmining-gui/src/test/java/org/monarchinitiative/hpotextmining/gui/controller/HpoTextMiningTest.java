@@ -2,6 +2,10 @@ package org.monarchinitiative.hpotextmining.gui.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
@@ -12,17 +16,12 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.monarchinitiative.hpotextmining.core.miners.scigraph.SciGraphTermMiner;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Here we test all the functionality of the text mining widget {@link HpoTextMining}.
@@ -44,6 +43,7 @@ import static org.junit.Assert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
+@ExtendWith(MockitoExtension.class)
 public class HpoTextMiningTest extends ApplicationTest {
 
     /**
@@ -62,17 +62,14 @@ public class HpoTextMiningTest extends ApplicationTest {
 
     private static Collection<MinedTerm> terms;
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private HpoTextMining hpoTextMining;
 
     @Mock
     private TermMiner miner;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBefore() throws Exception {
         // read query text from file
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(HpoTextMiningTest.class.getResourceAsStream("payload.txt")))) {
@@ -80,8 +77,8 @@ public class HpoTextMiningTest extends ApplicationTest {
         }
 
         // read expected response from the server
-        final File jsonResponse = new File(HpoTextMiningTest.class.getResource("sciGraphResponse.json").getFile());
-        final SciGraphResult[] sciGraphResults = objectMapper.readValue(jsonResponse, SciGraphResult[].class);
+        File jsonResponse = new File(HpoTextMiningTest.class.getResource("sciGraphResponse.json").getFile());
+        SciGraphResult[] sciGraphResults = objectMapper.readValue(jsonResponse, SciGraphResult[].class);
         terms = Arrays.stream(sciGraphResults)
                 .map(toMinedTerm())
                 .filter(Objects::nonNull)
@@ -119,10 +116,10 @@ public class HpoTextMiningTest extends ApplicationTest {
                 .clickOn("#analyzeButton")
                 .sleep(LOADING_TIMEOUT);
 
-        final VBox yesTermsVBox = lookup("#yesTermsVBox").query();
+        VBox yesTermsVBox = lookup("#yesTermsVBox").query();
         assertThat(yesTermsVBox.getChildren().size(), is(30));
 
-        final VBox notTermsVBox = lookup("#notTermsVBox").query();
+        VBox notTermsVBox = lookup("#notTermsVBox").query();
         assertThat(notTermsVBox.getChildren().size(), is(0));
 
         // add a few terms from the payload
@@ -147,7 +144,7 @@ public class HpoTextMiningTest extends ApplicationTest {
                 .clickOn("#notPresentCheckBox")
                 .clickOn("#addButton");
 
-        final Set<Main.PhenotypeTerm> approvedTerms = hpoTextMining.getApprovedTerms();
+        Set<Main.PhenotypeTerm> approvedTerms = hpoTextMining.getApprovedTerms();
         assertThat(approvedTerms.size(), is(4));
 
         assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0001771")), 1602, 1630, true)));
@@ -164,7 +161,7 @@ public class HpoTextMiningTest extends ApplicationTest {
                 .withOntology(ontology)
                 .withTermMiner(miner)
                 .withExecutorService(executorService)
-                .withPhenotypeTerms(new HashSet<>())
+                .withPhenotypeTerms(Set.of())
                 .build();
 
         stage.setScene(new Scene(hpoTextMining.getMainParent()));

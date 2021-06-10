@@ -1,11 +1,7 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.monarchinitiative.phenol.io.OntologyLoader;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This test suite exists in order to parse the Ontology OBO file only once.
@@ -14,17 +10,13 @@ import org.slf4j.LoggerFactory;
  * @version 0.2.1
  * @since 0.2
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({OntologyTreeTest.class, PresentTest.class, HpoTextMiningTest.class})
-public class OntologySuiteBase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OntologySuiteBase.class);
+class OntologySuiteBase {
 
-    private static Ontology ontology;
+    private static final Ontology ontology;
 
     static {
-        String ontologyPath = "/HP.obo";
-        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream(ontologyPath));
+        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream("/HP.obo"));
     }
 
     public static Ontology getOntology() {

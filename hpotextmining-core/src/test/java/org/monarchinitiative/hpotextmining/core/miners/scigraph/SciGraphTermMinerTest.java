@@ -1,15 +1,14 @@
 package org.monarchinitiative.hpotextmining.core.miners.scigraph;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -22,9 +21,8 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This class tests connection to Monarch text annotation services connection. Use it to send query text to the connection and
@@ -35,6 +33,7 @@ import static org.junit.Assert.assertThat;
  * @version 0.2.2
  * @since 0.2.2
  */
+@ExtendWith(MockitoExtension.class)
 public class SciGraphTermMinerTest {
 
     private static URL realScigraphUrl;
@@ -43,16 +42,13 @@ public class SciGraphTermMinerTest {
 
     private static String scigraphJsonResponse;
 
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     @Mock
     private URLConnection connection;
 
     @Mock
     private SciGraphTermMiner.ConnectionFactory factory;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClassSetUp() throws Exception {
         String path = "/scigraph/annotations/complete";
         String base = "https://scigraph-ontology.monarchinitiative.org";
@@ -103,7 +99,7 @@ public class SciGraphTermMinerTest {
      * @throws Exception bla
      */
     @Test
-    @Ignore // Ignored because requires connection to the real server. We mock this connection in the other tests
+    @Disabled // Ignored because requires connection to the real server. We mock this connection in the other tests
     public void askMonarchServerTest() throws Exception {
         SciGraphTermMiner miner = new SciGraphTermMiner(realScigraphUrl);
 //        Mockito.when(connection.openStream()).thenReturn(new ByteArrayInputStream(payload.getBytes()));

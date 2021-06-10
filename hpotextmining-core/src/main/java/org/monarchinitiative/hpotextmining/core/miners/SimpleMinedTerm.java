@@ -1,9 +1,5 @@
 package org.monarchinitiative.hpotextmining.core.miners;
 
-import com.google.common.collect.ComparisonChain;
-
-import java.util.Comparator;
-
 /**
  * This class is a POJO for representation of a <code>termId</code> identified by text-mining.
  *
@@ -33,10 +29,6 @@ public final class SimpleMinedTerm implements MinedTerm {
         this.end = end;
         this.termId = termId;
         this.present = present;
-    }
-
-    public static Comparator<MinedTerm> compareByBegin() {
-        return (l, r) -> ComparisonChain.start().compare(l.getBegin(), r.getBegin()).result();
     }
 
     @Override

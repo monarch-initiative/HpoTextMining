@@ -1,9 +1,9 @@
 package org.monarchinitiative.hpotextmining.core.miners.scigraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.biolark.BiolarkResult;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:aaron.zhang@jax.org">Aaron Zhang</a>
@@ -30,7 +30,7 @@ public class MonarchSciGraphResultTest {
 
     private static ObjectMapper mapper = new ObjectMapper();
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         jsonString = "{\"token\":{\"id\":\"MP:0000751\",\"categories\":[\"Phenotype\"],\"terms\":[\"myopathy\"]},\"start\":50,\"end\":58}";
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(MonarchSciGraphResultTest.class.getResource("sciGraphJsonResponse.json").toURI()))) {

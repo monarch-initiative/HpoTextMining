@@ -1,14 +1,13 @@
 package org.monarchinitiative.hpotextmining.core.miners.biolark;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
  * @version 0.2.0
  * @since 0.2
  */
+@ExtendWith(MockitoExtension.class)
 public class BiolarkTermMinerTest {
 
     private static String payload;
@@ -37,13 +37,10 @@ public class BiolarkTermMinerTest {
 
     private static URL textMiningUrl;
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     @Mock
     private URLConnection connection;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClassSetUp() throws Exception {
         textMiningUrl = new URL("http://phenotyper.monarchinitiative.org:5678/cr/annotate");
 //        textMiningUrl = new URL(new URL(base), path);
@@ -57,7 +54,7 @@ public class BiolarkTermMinerTest {
     }
 
     @Test
-    @Ignore // ignored until Biolark functionality will be reimplemented.
+    @Disabled // ignored until Biolark functionality will be reimplemented.
     public void mineHpoTermsFromLargePayload() throws Exception {
         URL mockUrl = new URL("file://some/path/to/file");
         Mockito.when(connection.getURL()).thenReturn(mockUrl);
@@ -83,7 +80,7 @@ public class BiolarkTermMinerTest {
      * @throws Exception bla
      */
     @Test
-    @Ignore
+    @Disabled
     public void getResponseFromBiolark() throws Exception {
         BiolarkTermMiner instance = new BiolarkTermMiner(textMiningUrl);
         final Set<MinedTerm> minedTerms = instance.doMining(payload);

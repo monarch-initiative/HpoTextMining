@@ -1,5 +1,7 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import javafx.application.Platform;
@@ -10,14 +12,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.*;
 
@@ -65,7 +66,7 @@ public class PresentTest extends ApplicationTest {
      */
     private TermId focusedOnResult;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBefore() throws Exception {
         // for headless GUI testing, set the "not.headless" system property to true or comment out if you want to see the
         // robot in action

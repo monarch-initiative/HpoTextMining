@@ -1,23 +1,20 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
 
-import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
+import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
+import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,12 +31,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * @version 0.1.0
  * @since 0.1
  */
+@ExtendWith(MockitoExtension.class)
 public class ConfigureTest extends ApplicationTest {
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
     private TermMiner miner;
@@ -51,7 +46,7 @@ public class ConfigureTest extends ApplicationTest {
      */
     private Configure controller;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBefore() throws Exception {
         // for headless GUI testing, set the "not.headless" system property to true or comment out if you want to see the
         // robot in action
@@ -73,7 +68,7 @@ public class ConfigureTest extends ApplicationTest {
     @Test
     public void testInputToTextArea() throws Exception {
         MinedTerm t = new SimpleMinedTerm(7, 11, "HP:0001945", true);
-        Set<MinedTerm> terms = new HashSet<>(Collections.singletonList(t));
+        Set<MinedTerm> terms = Set.of(t);
         Mockito.when(miner.doMining("Bla bla bla"))
                 .thenReturn(terms);
 

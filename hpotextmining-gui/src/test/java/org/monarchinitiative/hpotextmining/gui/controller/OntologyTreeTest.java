@@ -5,20 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test functionality of {@link OntologyTree} class.
@@ -37,7 +34,7 @@ public class OntologyTreeTest extends ApplicationTest {
     private OntologyTree controller;
 
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpBefore() throws Exception {
         // for headless GUI testing, set the "not.headless" system property to true or comment out if you want to see the
         // robot in action
@@ -51,7 +48,7 @@ public class OntologyTreeTest extends ApplicationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         results.clear();
     }
