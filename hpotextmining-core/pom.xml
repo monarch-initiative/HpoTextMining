@@ -21,18 +21,19 @@
     <dependencies>
         <dependency>
             <groupId>org.monarchinitiative.phenol</groupId>
-            <artifactId>phenol-io</artifactId>
+            <artifactId>phenol-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.fasterxml.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.fasterxml.version}</version>
         </dependency>
 
         <!-- LIBRARIES FOR TESTING -->
