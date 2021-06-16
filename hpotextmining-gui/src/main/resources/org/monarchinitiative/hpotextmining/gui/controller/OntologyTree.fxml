@@ -36,7 +36,7 @@
                               <Insets />
                            </VBox.margin>
                            <children>
-                              <TextField fx:id="searchTextField" minHeight="30.0" minWidth="180.0" promptText="Search for a termId here.." HBox.hgrow="ALWAYS">
+                              <TextField fx:id="searchTextField" minHeight="30.0" minWidth="180.0" onAction="#searchTextFieldAction" promptText="Search for a termId here.." HBox.hgrow="ALWAYS">
                                  <HBox.margin>
                                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                  </HBox.margin>
