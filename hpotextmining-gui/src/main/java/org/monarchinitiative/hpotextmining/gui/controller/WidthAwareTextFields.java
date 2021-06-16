@@ -17,9 +17,9 @@ class WidthAwareTextFields {
      * @param <T>                 type
      * @return the binding object
      */
-    static <T> AutoCompletionBinding<T> bindWidthAwareAutoCompletion(
-            TextField textField, Collection<T> possibleSuggestions) {
-        AutoCompletionBinding<T> k = TextFields.bindAutoCompletion(textField, t -> possibleSuggestions);
+    static <T> AutoCompletionBinding<T> bindWidthAwareAutoCompletion(TextField textField,
+                                                                     Collection<T> possibleSuggestions) {
+        AutoCompletionBinding<T> k = TextFields.bindAutoCompletion(textField, possibleSuggestions);
         k.minWidthProperty().bind(textField.widthProperty());
         return k;
     }
