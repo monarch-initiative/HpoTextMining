@@ -41,7 +41,7 @@ public class BiolarkTermMiner implements TermMiner {
         this.connection = connection;
     }
 
-    public BiolarkTermMiner(final URL server) throws IOException {
+    public BiolarkTermMiner(URL server) throws IOException {
         this(server.openConnection());
     }
 

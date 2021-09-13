@@ -4,8 +4,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
@@ -122,6 +126,14 @@ public class OntologyTree {
         }
     }
 
+    @FXML
+    public void searchTextFieldAction() {
+        TermId id = labels.get(searchTextField.getText());
+        if (id != null) {
+            expandUntilTerm(ontology.getTermMap().get(id));
+            searchTextField.clear();
+        }
+    }
 
     /**
      * Create {@link Main.PhenotypeTerm} from the currently selected {@link #ontologyTreeView} element considering also
@@ -238,6 +250,7 @@ public class OntologyTree {
                     }
                 }
             }
+            ontologyTreeView.requestFocus();
             ontologyTreeView.getSelectionModel().select(target);
             ontologyTreeView.scrollTo(ontologyTreeView.getSelectionModel().getSelectedIndex());
         } else {
