@@ -1,15 +1,11 @@
 package org.monarchinitiative.hpotextmining.core.miners.scigraph;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -22,9 +18,8 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This class tests connection to Monarch text annotation services connection. Use it to send query text to the connection and
@@ -43,16 +38,11 @@ public class SciGraphTermMinerTest {
 
     private static String scigraphJsonResponse;
 
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
+    public URLConnection connection;
 
-    @Mock
-    private URLConnection connection;
+    public SciGraphTermMiner.ConnectionFactory factory;
 
-    @Mock
-    private SciGraphTermMiner.ConnectionFactory factory;
-
-    @BeforeClass
+    @BeforeAll
     public static void beforeClassSetUp() throws Exception {
         String path = "/scigraph/annotations/complete";
         String base = "https://scigraph-ontology.monarchinitiative.org";
@@ -66,6 +56,11 @@ public class SciGraphTermMinerTest {
         }
     }
 
+    @BeforeEach
+    public void setUp() {
+        connection = Mockito.mock(URLConnection.class);
+        factory = Mockito.mock(SciGraphTermMiner.ConnectionFactory.class);
+    }
 
     @Test
     public void mineHpoTermsFromLargePayload() throws Exception {
@@ -84,11 +79,11 @@ public class SciGraphTermMinerTest {
 
         // test results - we should have 66 MinedTerms in total. Then, we test presence of five terms picked at random
         assertThat(minedTerms.size(), is(66));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(1635, 1643, "HP:0001762", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(2804, 2822, "MP:0000752", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(2353, 2363, "HP:0200055", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(414, 436, "HP:0001290", true)));
-        assertThat(minedTerms, hasItem(new SimpleMinedTerm(1436, 1445, "HP:0002650", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(1635, 1643, "HP:0001762", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(2804, 2822, "MP:0000752", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(2353, 2363, "HP:0200055", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(414, 436, "HP:0001290", true)));
+        assertThat(minedTerms, hasItem(MinedTerm.of(1436, 1445, "HP:0002650", true)));
 
 
         // test that we query the server in a consistent way
@@ -103,13 +98,13 @@ public class SciGraphTermMinerTest {
      * @throws Exception bla
      */
     @Test
-    @Ignore // Ignored because requires connection to the real server. We mock this connection in the other tests
+    @Disabled // Ignored because requires connection to the real server. We mock this connection in the other tests
     public void askMonarchServerTest() throws Exception {
         SciGraphTermMiner miner = new SciGraphTermMiner(realScigraphUrl);
 //        Mockito.when(connection.openStream()).thenReturn(new ByteArrayInputStream(payload.getBytes()));
 
 
-        final Set<MinedTerm> minedTerms = miner.doMining(payload);
+        Set<MinedTerm> minedTerms = miner.doMining(payload);
         minedTerms.forEach(System.err::println);
     }
 

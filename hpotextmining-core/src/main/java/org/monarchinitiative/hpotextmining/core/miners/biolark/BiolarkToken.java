@@ -2,7 +2,6 @@ package org.monarchinitiative.hpotextmining.core.miners.biolark;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.monarchinitiative.phenol.ontology.data.TermId;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -52,15 +51,6 @@ public final class BiolarkToken {
      */
     public String getId() {
         return id;
-    }
-
-    /**
-     * A convenient method to return the id formatted as the TermId object
-     *
-     * @return id as a TermId object
-     */
-    public TermId getTermId() {
-        return TermId.of(this.id);
     }
 
     /**

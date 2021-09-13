@@ -2,7 +2,6 @@ package org.monarchinitiative.hpotextmining.core.miners.scigraph;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.monarchinitiative.hpotextmining.core.miners.MinedTerm;
-import org.monarchinitiative.hpotextmining.core.miners.SimpleMinedTerm;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiner;
 import org.monarchinitiative.hpotextmining.core.miners.TermMinerException;
 import org.slf4j.Logger;
@@ -49,9 +48,9 @@ public class SciGraphTermMiner implements TermMiner {
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
             result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            result.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
             result.append("&");
         }
 
@@ -66,7 +65,7 @@ public class SciGraphTermMiner implements TermMiner {
      * @return {@link Function} mapping {@link SciGraphResult} to {@link MinedTerm}
      */
     private static Function<SciGraphResult, MinedTerm> toMinedTerm() {
-        return sgr -> new SimpleMinedTerm(sgr.getStart(), sgr.getEnd(), sgr.getToken().getId(), true);
+        return sgr -> MinedTerm.of(sgr.getStart(), sgr.getEnd(), sgr.getToken().getId(), true);
     }
 
 

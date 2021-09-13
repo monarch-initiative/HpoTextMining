@@ -2,6 +2,10 @@ package org.monarchinitiative.hpotextmining.core.miners;
 
 public interface MinedTerm {
 
+    static MinedTerm of(int begin, int end, String termId, boolean isPresent) {
+        return new SimpleMinedTerm(begin, end, termId, isPresent);
+    }
+
     /**
      * @return zero-based begin coordinate (not included) of text region, based on which this <code>term</code> was identified.
      * The coordinate is with respect to the whole query text that has been mined for <code>term</code>s

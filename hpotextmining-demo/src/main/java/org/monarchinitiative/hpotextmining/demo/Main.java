@@ -21,9 +21,9 @@ import java.util.concurrent.Executors;
  * @version 0.2.1
  * @since 0.1
  */
-public class Play extends Application {
+public class Main extends Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Play.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final String SCIGRAPH_URL_STRING = "https://scigraph-ontology.monarchinitiative.org/scigraph/annotations/complete";
 
@@ -35,14 +35,14 @@ public class Play extends Application {
 
     private final ExecutorService executorService;
 
-    public Play() throws Exception {
-        ontology = OntologyLoader.loadOntology(Play.class.getResourceAsStream(HPO_OBO_PATH));
+    public Main() throws Exception {
+        ontology = OntologyLoader.loadOntology(Main.class.getResourceAsStream(HPO_OBO_PATH));
         scigraphUrl = new URL(SCIGRAPH_URL_STRING);
         executorService = Executors.newSingleThreadExecutor();
     }
 
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         launch(args);
     }
 

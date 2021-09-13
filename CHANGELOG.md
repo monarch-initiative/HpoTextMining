@@ -1,5 +1,8 @@
 # Changelog for HpoTextMining
 
+## v0.2.8
+- Update to Java 16
+
 ## v0.2.7
 - Expose search text field in ontology tree GUI part
 

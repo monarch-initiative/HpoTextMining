@@ -172,18 +172,18 @@ public class Present {
     }
 
     /**
-     * Collection of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
+     * Collection of {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
      * {@link #setResults(Collection, String)} methods may contain the same HPO terms present at multiple sites of query
      * text (if the same term is mentioned in multiple sites of query text).
      * <p>
      * We still want to show only one CheckBox per term.
      * <p>
-     * Here we get the {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
+     * Here we get the {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
      * unique {@link Term}.
      *
-     * @param terms {@link Collection} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}
+     * @param terms {@link Collection} of {@link Main.PhenotypeTerm}
      *              submitted to {@link #setResults(Collection, String)} method
-     * @return {@link List} of {@link com.github.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm} that
+     * @return {@link List} of {@link Main.PhenotypeTerm} that
      * represent unique {@link Term}s.
      */
     private static List<Main.PhenotypeTerm> deduplicate(Collection<Main.PhenotypeTerm> terms) {
@@ -219,6 +219,7 @@ public class Present {
             htmlBuilder.append(query, offset, start); // unhighlighted text
             //start = Math.max(offset + 1, result.getStart());
             //Term id is an information such as "HP:0000822"
+            start = Math.min(start,term.getBegin());
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,

@@ -2,7 +2,6 @@ package org.monarchinitiative.hpotextmining.core.miners.biolark;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ComparisonChain;
 
 import java.util.Comparator;
 
@@ -141,9 +140,7 @@ public final class BiolarkResult {
      * ascending order
      */
     public static Comparator<BiolarkResult> compareByStart() {
-        return (left, right) -> ComparisonChain.start()
-                .compare(left.getStart(), right.getStart())
-                .result();
+        return Comparator.comparingInt(BiolarkResult::getStart);
     }
 
 
@@ -152,8 +149,6 @@ public final class BiolarkResult {
      * ascending order
      */
     public static Comparator<BiolarkResult> compareByName() {
-        return (left, right) -> ComparisonChain.start()
-                .compare(left.getTerm().getLabel(), right.getTerm().getLabel())
-                .result();
+        return Comparator.comparing(result -> result.getTerm().getLabel());
     }
 }
