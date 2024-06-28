@@ -131,7 +131,7 @@ public class Main {
      */
     public void initialize() {
         // initialize behaviour of columns of the TableView
-        hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getTerm().getId().getValue()));
+        hpoIdTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getTerm().id().getValue()));
         hpoNameTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getTerm().getName()));
         observedTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper((cdf.getValue().isPresent()) ? "YES" : "NOT"));
         definitionTableColumn.setCellValueFactory(cdf -> new ReadOnlyStringWrapper(cdf.getValue().getTerm().getDefinition()));
@@ -221,7 +221,7 @@ public class Main {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             PhenotypeTerm that = (PhenotypeTerm) o;
-            return term.getId().getValue().equals(that.term.getId().getValue()) &&
+            return term.id().getValue().equals(that.term.id().getValue()) &&
                     begin == that.begin &&
                     end == that.end &&
                     present == that.present;
@@ -229,7 +229,7 @@ public class Main {
 
         @Override
         public int hashCode() {
-            return Objects.hash(term.getId().getValue(), begin, end, present);
+            return Objects.hash(term.id().getValue(), begin, end, present);
         }
 
         @Override

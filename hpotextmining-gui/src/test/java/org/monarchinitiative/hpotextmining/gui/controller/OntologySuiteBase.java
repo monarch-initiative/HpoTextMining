@@ -16,7 +16,7 @@ class OntologySuiteBase {
     private static final Ontology ontology;
 
     static {
-        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream("/HP.obo"));
+        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream("/hp.json"));
     }
 
     public static Ontology getOntology() {
