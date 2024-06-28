@@ -1,7 +1,7 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
-import org.monarchinitiative.phenol.io.OntologyLoader;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.io.MinimalOntologyLoader;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 
 /**
  * This test suite exists in order to parse the Ontology OBO file only once.
@@ -13,13 +13,13 @@ import org.monarchinitiative.phenol.ontology.data.Ontology;
 
 class OntologySuiteBase {
 
-    private static final Ontology ontology;
+    private static final MinimalOntology ontology;
 
     static {
-        ontology = OntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream("/hp.json"));
+        ontology = MinimalOntologyLoader.loadOntology(OntologySuiteBase.class.getResourceAsStream("/hp.json"));
     }
 
-    public static Ontology getOntology() {
+    public static MinimalOntology getOntology() {
         return ontology;
     }
 }

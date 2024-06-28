@@ -1,6 +1,6 @@
 module org.monarchinitiative.hpotextmining.gui {
-    requires org.monarchinitiative.hpotextmining.core; // TODO - transitive?
-    requires transitive phenol.core;
+    requires transitive org.monarchinitiative.hpotextmining.core;
+    requires transitive org.monarchinitiative.phenol.core;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
