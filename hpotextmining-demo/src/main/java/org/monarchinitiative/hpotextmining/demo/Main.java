@@ -5,8 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import org.monarchinitiative.phenol.io.OntologyLoader;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.io.MinimalOntologyLoader;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,22 +27,22 @@ public class Main extends Application {
 
     private static final String SCIGRAPH_URL_STRING = "https://scigraph-ontology.monarchinitiative.org/scigraph/annotations/complete";
 
-    private static final String HPO_OBO_PATH = "/HP.obo";
+    private static final String HPO_JSON_PATH = "/hp.v2024-06-25.json";
 
     private final URL scigraphUrl;
 
-    private final Ontology ontology;
+    private final MinimalOntology ontology;
 
     private final ExecutorService executorService;
 
     public Main() throws Exception {
-        ontology = OntologyLoader.loadOntology(Main.class.getResourceAsStream(HPO_OBO_PATH));
+        ontology = MinimalOntologyLoader.loadOntology(Main.class.getResourceAsStream(HPO_JSON_PATH));
         scigraphUrl = new URL(SCIGRAPH_URL_STRING);
         executorService = Executors.newSingleThreadExecutor();
     }
 
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         launch(args);
     }
 

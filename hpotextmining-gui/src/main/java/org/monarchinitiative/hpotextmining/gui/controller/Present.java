@@ -172,33 +172,6 @@ public class Present {
     }
 
     /**
-     * Collection of {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
-     * {@link #setResults(Collection, String)} methods may contain the same HPO terms present at multiple sites of query
-     * text (if the same term is mentioned in multiple sites of query text).
-     * <p>
-     * We still want to show only one CheckBox per term.
-     * <p>
-     * Here we get the {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
-     * unique {@link Term}.
-     *
-     * @param terms {@link Collection} of {@link Main.PhenotypeTerm}
-     *              submitted to {@link #setResults(Collection, String)} method
-     * @return {@link List} of {@link Main.PhenotypeTerm} that
-     * represent unique {@link Term}s.
-     */
-    private static List<Main.PhenotypeTerm> deduplicate(Collection<Main.PhenotypeTerm> terms) {
-        Set<String> ids = new HashSet<>();
-        List<Main.PhenotypeTerm> deduplicated = new ArrayList<>();
-        for (Main.PhenotypeTerm term : terms) {
-            if (!ids.contains(term.getTerm().getId().getId())) {
-                deduplicated.add(term);
-            }
-            ids.add(term.getTerm().getId().getId());
-        }
-        return deduplicated;
-    }
-
-    /**
      * Similar to above but this one works for terms from SciGraph server
      *
      * @author Aaron Zhang
@@ -223,11 +196,11 @@ public class Present {
             htmlBuilder.append(
                     // highlighted text
                     String.format(HIGHLIGHTED_TEMPLATE,
-                            term.getTerm().getId().getValue(),
+                            term.getTerm().id().getValue(),
                             query.substring(start, term.getEnd()),
 
                             // tooltip text -> HPO id & label
-                            String.format(TOOLTIP_TEMPLATE, term.getTerm().getId().getValue(), term.getTerm().getName())));
+                            String.format(TOOLTIP_TEMPLATE, term.getTerm().id().getValue(), term.getTerm().getName())));
 
             offset = term.getEnd();
         }
@@ -237,6 +210,33 @@ public class Present {
         htmlBuilder.append(HTML_BODY_END);
         // get rid of double spaces
         return htmlBuilder.toString().replaceAll("\\s{2,}", " ").trim();
+    }
+
+    /**
+     * Collection of {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s submitted in
+     * {@link #setResults(Collection, String)} methods may contain the same HPO terms present at multiple sites of query
+     * text (if the same term is mentioned in multiple sites of query text).
+     * <p>
+     * We still want to show only one CheckBox per term.
+     * <p>
+     * Here we get the {@link org.monarchinitiative.hpotextmining.gui.controller.Main.PhenotypeTerm}s that represent
+     * unique {@link Term}.
+     *
+     * @param terms {@link Collection} of {@link Main.PhenotypeTerm}
+     *              submitted to {@link #setResults(Collection, String)} method
+     * @return {@link List} of {@link Main.PhenotypeTerm} that
+     * represent unique {@link Term}s.
+     */
+    private static List<Main.PhenotypeTerm> deduplicate(Collection<Main.PhenotypeTerm> terms) {
+        Set<String> ids = new HashSet<>();
+        List<Main.PhenotypeTerm> deduplicated = new ArrayList<>();
+        for (Main.PhenotypeTerm term : terms) {
+            if (!ids.contains(term.getTerm().id().getId())) {
+                deduplicated.add(term);
+            }
+            ids.add(term.getTerm().id().getId());
+        }
+        return deduplicated;
     }
 
     /**

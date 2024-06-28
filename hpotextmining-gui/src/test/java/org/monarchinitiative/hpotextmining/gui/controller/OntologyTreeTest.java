@@ -69,7 +69,7 @@ public class OntologyTreeTest extends ApplicationTest {
         Main.PhenotypeTerm term = results.get(0);
         assertThat(term.getBegin(), is(-1));
         assertThat(term.getEnd(), is(-1));
-        assertThat(term.getTerm().getId().getValue(), is("HP:0001433"));
+        assertThat(term.getTerm().id().getValue(), is("HP:0001433"));
         assertThat(term.getTerm().getName(), is("Hepatosplenomegaly"));
         assertThat(term.isPresent(), is(true));
     }
@@ -101,14 +101,14 @@ public class OntologyTreeTest extends ApplicationTest {
         final Main.PhenotypeTerm pituitary = results.get(0);
         assertThat(pituitary.getBegin(), is(-1));
         assertThat(pituitary.getEnd(), is(-1));
-        assertThat(pituitary.getTerm().getId().getValue(), is("HP:0011747"));
+        assertThat(pituitary.getTerm().id().getValue(), is("HP:0011747"));
         assertThat(pituitary.getTerm().getName(), is("Abnormality of the anterior pituitary"));
         assertThat(pituitary.isPresent(), is(true));
 
         final Main.PhenotypeTerm hemoglobine = results.get(1);
         assertThat(hemoglobine.getBegin(), is(-1));
         assertThat(hemoglobine.getEnd(), is(-1));
-        assertThat(hemoglobine.getTerm().getId().getValue(), is("HP:0012119"));
+        assertThat(hemoglobine.getTerm().id().getValue(), is("HP:0012119"));
         assertThat(hemoglobine.getTerm().getName(), is("Methemoglobinemia"));
         assertThat(hemoglobine.isPresent(), is(false));
     }

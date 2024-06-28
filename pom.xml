@@ -6,7 +6,7 @@
     <groupId>org.monarchinitiative.hpotextmining</groupId>
     <artifactId>HpoTextMining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.8</version>
+    <version>0.2.9</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,7 +36,7 @@
 
         <openjfx.version>${java.version}</openjfx.version>
         <controlsfx.version>11.1.0</controlsfx.version>
-        <phenol.version>1.6.2</phenol.version>
+        <phenol.version>[2.0.4,3)</phenol.version>
     </properties>
 
     <licenses>
@@ -86,40 +86,6 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <profiles>
-        <profile>
-            <!-- This profile should be activated only when a release is being built. -->
-            <!-- Then, GPG plugin is used to sign the artifacts. Note that you need to set up your GPG key first. -->
-            <!-- Activate the profile by running e.g. `mvn -DperformRelease=true clean deploy` -->
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <!-- override version of GPG plugin to use new GPG signing features -->
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -154,6 +120,14 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.8.1</version>
+                    <configuration>
+                        <generateBackupPoms>false</generateBackupPoms>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -173,6 +147,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -239,4 +217,47 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <!-- This profile should be activated only during local install or deploying a release. -->
+            <!-- The GPG plugin is used to sign the artifacts. Note that you need to set up your GPG key first. -->
+            <!-- Activate the profile by running e.g. `./mvnw -Prelease clean deploy` -->
+            <id>release</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <!-- override version of GPG plugin to use new GPG signing features -->
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>1.6</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -1,23 +1,15 @@
 package org.monarchinitiative.hpotextmining.gui.controller;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
-import org.monarchinitiative.phenol.ontology.algo.OntologyAlgorithm;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
-import org.monarchinitiative.phenol.ontology.data.Term;
-import org.monarchinitiative.phenol.ontology.data.TermId;
-import org.monarchinitiative.phenol.ontology.data.TermSynonym;
+import org.monarchinitiative.hpotextmining.core.HpoTextMiningRuntimeException;
+import org.monarchinitiative.phenol.ontology.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +41,7 @@ public class OntologyTree {
     /**
      * Ontology object containing {@link Term}s and their relationships.
      */
-    private final Ontology ontology;
+    private final MinimalOntology ontology;
 
 
     /**
@@ -60,7 +52,7 @@ public class OntologyTree {
     /**
      * Map of term names to term IDs.
      */
-    private Map<String, TermId> labels = new HashMap<>();
+    private final Map<String, TermId> labels = new HashMap<>();
 
     /**
      * Text field with autocompletion for jumping to a particular HPO term in the tree view.
@@ -105,10 +97,10 @@ public class OntologyTree {
 
 
     /**
-     * @param ontology {@link Ontology} to be displayed here as a tree
+     * @param ontology {@link MinimalOntology} to be displayed here as a tree
      * @param addHook  {@link Consumer} of {@link Main.PhenotypeTerm}, an approved term will be submitted here
      */
-    public OntologyTree(Ontology ontology, Consumer<Main.PhenotypeTerm> addHook) {
+    public OntologyTree(MinimalOntology ontology, Consumer<Main.PhenotypeTerm> addHook) {
         this.ontology = ontology;
         this.addHook = addHook;
     }
@@ -121,8 +113,11 @@ public class OntologyTree {
     private void goButtonAction() {
         TermId id = labels.get(searchTextField.getText());
         if (id != null) {
-            expandUntilTerm(ontology.getTermMap().get(id));
-            searchTextField.clear();
+            Optional<Term> term = ontology.termForTermId(id);
+            if (term.isPresent()) {
+                expandUntilTerm(term.get());
+                searchTextField.clear();
+            }
         }
     }
 
@@ -130,8 +125,11 @@ public class OntologyTree {
     public void searchTextFieldAction() {
         TermId id = labels.get(searchTextField.getText());
         if (id != null) {
-            expandUntilTerm(ontology.getTermMap().get(id));
-            searchTextField.clear();
+            Optional<Term> term = ontology.termForTermId(id);
+            if (term.isPresent()) {
+                expandUntilTerm(term.get());
+                searchTextField.clear();
+            }
         }
     }
 
@@ -161,7 +159,9 @@ public class OntologyTree {
         String introHtmlMessage;
         if (ontology != null) {
             // populate the TreeView with top-level elements from ontology hierarchy
-            TreeItem<Term> root = new OntologyTree.TermTreeItem(ontology.getTermMap().get(ontology.getRootTermId()));
+            Term rootTerm = ontology.termForTermId(ontology.getRootTermId())
+                    .orElseThrow(() -> new HpoTextMiningRuntimeException("Ontology should have term for the root term ID!"));
+            TreeItem<Term> root = new OntologyTree.TermTreeItem(rootTerm);
             root.setExpanded(true);
             ontologyTreeView.setShowRoot(false);
             ontologyTreeView.setRoot(root);
@@ -186,7 +186,7 @@ public class OntologyTree {
             });
 
             // create Map for lookup of the terms in the ontology based on their Name
-            ontology.getTermMap().values().forEach(term -> labels.putIfAbsent(term.getName(), term.getId()));
+            ontology.getTerms().forEach(term -> labels.putIfAbsent(term.getName(), term.id()));
             WidthAwareTextFields.bindWidthAwareAutoCompletion(searchTextField, labels.keySet());
 
             // show intro message in the infoWebView
@@ -216,60 +216,6 @@ public class OntologyTree {
         expandUntilTerm(term);
     }
 
-
-    /**
-     * Find the path from the root term to given {@link Term}, expand the tree and set the selection model of the
-     * TreeView to the term position.
-     *
-     * @param term {@link Term} to be displayed
-     */
-    private void expandUntilTerm(Term term) {
-        if (OntologyAlgorithm.existsPath(ontology, term.getId(), ontology.getRootTermId())) {
-            // find root -> term path through the tree
-            Stack<Term> termStack = new Stack<>();
-            termStack.add(term);
-            Set<TermId> parents = ontology.getParentTermIds(term.getId()); //getTermParents(term);
-            while (parents.size() != 0) {
-                TermId parent = parents.iterator().next();
-                termStack.add(ontology.getTermMap().get(parent));
-                parents = ontology.getParentTermIds(parent);
-            }
-
-            // expand tree nodes in top -> down direction
-            List<TreeItem<Term>> children = ontologyTreeView.getRoot().getChildren();
-            termStack.pop(); // get rid of 'All' node which is hidden
-            TreeItem<Term> target = ontologyTreeView.getRoot();
-            while (!termStack.empty()) {
-                Term current = termStack.pop();
-                for (TreeItem<Term> child : children) {
-                    if (child.getValue().equals(current)) {
-                        child.setExpanded(true);
-                        target = child;
-                        children = child.getChildren();
-                        break;
-                    }
-                }
-            }
-            ontologyTreeView.requestFocus();
-            ontologyTreeView.getSelectionModel().select(target);
-            ontologyTreeView.scrollTo(ontologyTreeView.getSelectionModel().getSelectedIndex());
-        } else {
-            LOGGER.warn("Unable to find the path from {} to {}", ontology.getRootTermId(), term.getId());
-        }
-    }
-
-
-    /**
-     * Get currently selected Term. Used in tests.
-     *
-     * @return {@link TermTreeItem} that is currently selected
-     */
-    TermTreeItem getSelectedTerm() {
-        return (ontologyTreeView.getSelectionModel().getSelectedItem() == null) ? null
-                : (TermTreeItem) ontologyTreeView.getSelectionModel().getSelectedItem();
-    }
-
-
     /**
      * Update content of the {@link #infoWebView} with currently selected {@link Term}.
      *
@@ -288,7 +234,7 @@ public class OntologyTree {
                 "<p><b>Definition:</b> %s</p>" +
                 "</body></html>";
 
-        String termID = term.getId().getValue();
+        String termID = term.id().getValue();
         String synonyms = (term.getSynonyms() == null) ? "" : term.getSynonyms().stream()
                 .map(TermSynonym::getValue)
                 .collect(Collectors.joining(", ")); // Synonyms
@@ -299,8 +245,63 @@ public class OntologyTree {
         infoWebEngine.loadContent(content);
     }
 
-    public StringProperty observableSearchText() {return this.searchTextField.textProperty();}
 
+    /**
+     * Get currently selected Term. Used in tests.
+     *
+     * @return {@link TermTreeItem} that is currently selected
+     */
+    TermTreeItem getSelectedTerm() {
+        return (ontologyTreeView.getSelectionModel().getSelectedItem() == null) ? null
+                : (TermTreeItem) ontologyTreeView.getSelectionModel().getSelectedItem();
+    }
+
+    /**
+     * Find the path from the root term to given {@link Term}, expand the tree and set the selection model of the
+     * TreeView to the term position.
+     *
+     * @param term {@link Term} to be displayed
+     */
+    private void expandUntilTerm(Term term) {
+        if (ontology.graph().existsPath(term.id(), ontology.getRootTermId())) {
+            // find root -> term path through the tree
+            Stack<TermId> termStack = new Stack<>();
+
+            termStack.add(term.id());
+            Optional<TermId> parent = ontology.graph()
+                    .getParentsStream(term.id())
+                    .findFirst();
+            while (parent.isPresent()) {
+                parent = ontology.graph()
+                        .getParentsStream(parent.get())
+                        .findFirst();
+                parent.ifPresent(termStack::add);
+            }
+
+            // expand tree nodes in top -> down direction
+            List<TreeItem<Term>> children = ontologyTreeView.getRoot().getChildren();
+            termStack.pop(); // get rid of 'All' node which is hidden
+            TreeItem<Term> target = ontologyTreeView.getRoot();
+            while (!termStack.empty()) {
+                TermId current = termStack.pop();
+                for (TreeItem<Term> child : children) {
+                    if (child.getValue().id().equals(current)) {
+                        child.setExpanded(true);
+                        target = child;
+                        children = child.getChildren();
+                        break;
+                    }
+                }
+            }
+            ontologyTreeView.requestFocus();
+            ontologyTreeView.getSelectionModel().select(target);
+            ontologyTreeView.scrollTo(ontologyTreeView.getSelectionModel().getSelectedIndex());
+        } else {
+            LOGGER.warn("Unable to find the path from {} to {}", ontology.getRootTermId(), term.id());
+        }
+    }
+
+    public StringProperty observableSearchText() {return this.searchTextField.textProperty();}
 
     /**
      * Inner class that defines a bridge between hierarchy of {@link Term}s and {@link TreeItem}s of the
@@ -331,7 +332,7 @@ public class OntologyTree {
          */
         @Override
         public boolean isLeaf() {
-            return OntologyAlgorithm.getChildTerms(ontology, getValue().getId(), false).size() == 0;
+            return ontology.graph().isLeaf(getValue().id());
         }
 
 
@@ -345,14 +346,15 @@ public class OntologyTree {
             if (childrenList == null) {
                 LOGGER.debug(String.format("Getting children for term %s", getValue().getName()));
                 childrenList = FXCollections.observableArrayList();
-                Set<Term> children = OntologyAlgorithm.getChildTerms(ontology, getValue().getId(), false).stream()
-                        .map(ontology.getTermMap()::get)
-                        .collect(Collectors.toSet());
 
-                children.stream()
+                ontology.graph().getChildrenStream(getValue().id())
+                        .map(ontology::termForTermId)
+                        .flatMap(Optional::stream)
+                        .distinct()
                         .sorted(Comparator.comparing(Term::getName))
                         .map(OntologyTree.TermTreeItem::new)
                         .forEach(childrenList::add);
+
                 super.getChildren().setAll(childrenList);
             }
             return super.getChildren();

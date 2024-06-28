@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.util.Callback;
 import org.monarchinitiative.hpotextmining.core.miners.TermMiners;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.monarchinitiative.phenol.ontology.data.Ontology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,7 +75,12 @@ public class HpoTextMining {
      *                        to display in the widget from the beginning
      * @throws IOException if the building process fails
      */
-    private HpoTextMining(Ontology ontology, TermMiner miner, ExecutorService executorService, Set<Main.PhenotypeTerm> presentTerms) throws IOException {
+    private HpoTextMining(
+            MinimalOntology ontology,
+            TermMiner miner,
+            ExecutorService executorService,
+            Set<Main.PhenotypeTerm> presentTerms
+    ) throws IOException {
         main = new Main();
         // Set up "Configure" part of the screen
         Consumer<Main.Signal> configureSignal = signal -> {
@@ -114,7 +121,14 @@ public class HpoTextMining {
                     break;
             }
         };
-        this.present = new Present(presentSignal, termId -> ontologyTree.focusOnTerm(ontology.getTermMap().get(termId)));
+        this.present = new Present(presentSignal, termId -> {
+            Optional<Term> term = ontology.termForTermId(termId);
+            if (term.isPresent()) {
+                ontologyTree.focusOnTerm(term.get());
+            } else {
+                LOGGER.warn("Cannot focus on term {}", termId);
+            }
+        });
 
         // Set up "OntologyTree" part of the screen
         Consumer<Main.PhenotypeTerm> addHook = (main::addPhenotypeTerm);
@@ -161,18 +175,18 @@ public class HpoTextMining {
      * @return {@link Function} for mapping {@link MinedTerm} to {@link Main.PhenotypeTerm}. The function returns <code>null</code>
      * if the String representation of term ID is invalid or if there is not matching {@link Term} in the <code>ontology</code>
      */
-    private static Function<MinedTerm, Main.PhenotypeTerm> minedTermToPhenotypeTerm(Ontology ontology) {
+    private static Function<MinedTerm, Main.PhenotypeTerm> minedTermToPhenotypeTerm(MinimalOntology ontology) {
         return mt -> {
             TermId termId = TermId.of(mt.getTermId());
             if (!termId.getValue().startsWith("HP")) { // we are only working with HPO
                 return null;
             }
-            Term term = ontology.getTermMap().get(termId);
-            if (term == null) {
+            Optional<Term> term = ontology.termForTermId(termId);
+            if (term.isPresent()) {
+                return new Main.PhenotypeTerm(term.get(), mt);
+            } else {
                 LOGGER.warn("There is not a term with id '{}' in the currently used ontology", termId.getValue());
                 return null;
-            } else {
-                return new Main.PhenotypeTerm(term, mt);
             }
         };
     }
@@ -204,7 +218,7 @@ public class HpoTextMining {
 
     public static final class HpoTextMiningBuilder {
 
-        private Ontology ontology;
+        private MinimalOntology ontology;
 
         private URL biolarkServerUrl, sciGraphServerUrl;
 
@@ -220,10 +234,10 @@ public class HpoTextMining {
 
 
         /**
-         * @param ontology {@link Ontology} to work with (mandatory)
+         * @param ontology {@link MinimalOntology} to work with (mandatory)
          * @return this {@link HpoTextMiningBuilder} instance
          */
-        public HpoTextMiningBuilder withOntology(Ontology ontology) {
+        public HpoTextMiningBuilder withOntology(MinimalOntology ontology) {
             this.ontology = ontology;
             return this;
         }
