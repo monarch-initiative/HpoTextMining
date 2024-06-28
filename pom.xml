@@ -36,7 +36,7 @@
 
         <openjfx.version>${java.version}</openjfx.version>
         <controlsfx.version>11.1.0</controlsfx.version>
-        <phenol.version>1.6.2</phenol.version>
+        <phenol.version>[2.0.4,3)</phenol.version>
     </properties>
 
     <licenses>

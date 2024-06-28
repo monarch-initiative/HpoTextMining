@@ -110,7 +110,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().id().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
@@ -134,7 +134,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().id().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
@@ -156,7 +156,7 @@ public class PresentTest extends ApplicationTest {
         // list of 'present' checkboxes
         final List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().id().getValue()));
 
         // list of 'not present' checkboxes
         final List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
@@ -186,7 +186,7 @@ public class PresentTest extends ApplicationTest {
         List<Node> yesCheckBoxes = new ArrayList<>(((VBox) lookup("#yesTermsVBox").query()).getChildren());
 
         assertThat(yesCheckBoxes.size(), is(2));
-        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().getId().getValue()));
+        yesCheckBoxes.sort(Comparator.comparing(l -> ((Main.PhenotypeTerm) l.getUserData()).getTerm().id().getValue()));
         // list of 'not present' checkboxes
         List<Node> notCheckBoxes = new ArrayList<>(((VBox) lookup("#notTermsVBox").query()).getChildren());
         assertThat(notCheckBoxes.size(), is(1));
