@@ -6,7 +6,7 @@
     <groupId>org.monarchinitiative.hpotextmining</groupId>
     <artifactId>HpoTextMining</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.9-SNAPSHOT</version>
+    <version>0.2.9</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
