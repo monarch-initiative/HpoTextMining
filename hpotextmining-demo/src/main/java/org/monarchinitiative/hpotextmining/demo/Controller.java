@@ -4,7 +4,7 @@ import org.monarchinitiative.hpotextmining.gui.controller.HpoTextMining;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +27,9 @@ public class Controller {
 
     private final ExecutorService executorService;
 
-    private final Ontology ontology;
+    private final MinimalOntology ontology;
 
-    Controller(Stage owner, URL scigraphUrl, ExecutorService executorService, Ontology ontology) {
+    Controller(Stage owner, URL scigraphUrl, ExecutorService executorService, MinimalOntology ontology) {
         this.owner = owner;
         this.scigraphUrl = scigraphUrl;
         this.executorService = executorService;
