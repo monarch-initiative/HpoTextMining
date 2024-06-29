@@ -13,36 +13,6 @@
     <artifactId>hpotextmining-demo</artifactId>
     <description>Example usage of `hpotextmining-gui` module in JavaFX App</description>
 
-    <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifestEntries>
-                            <Automatic-Module-Name>org.monarchinitiative.hpotextmining.demo</Automatic-Module-Name>
-                        </manifestEntries>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <useUniqueVersions>false</useUniqueVersions>
-                            <mainClass>org.monarchinitiative.hpotextmining.demo.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.monarchinitiative.hpotextmining</groupId>
@@ -58,5 +28,14 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

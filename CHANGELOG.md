@@ -1,5 +1,8 @@
 # Changelog for HpoTextMining
 
+## 0.2.9
+- modularize
+
 ## v0.2.8
 - Update to Java 16
 

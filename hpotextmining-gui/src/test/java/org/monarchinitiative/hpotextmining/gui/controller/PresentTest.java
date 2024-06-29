@@ -13,7 +13,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.monarchinitiative.phenol.ontology.data.Term;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class PresentTest extends ApplicationTest {
      */
     private static final int LOADING_TIMEOUT = 20;
 
-    private static final Ontology ontology = OntologySuiteBase.getOntology();
+    private static final MinimalOntology ontology = OntologySuiteBase.getOntology();
 
     private static List<Main.PhenotypeTerm> terms;
 
@@ -84,19 +84,19 @@ public class PresentTest extends ApplicationTest {
 
         // 50-58 myopathy
         String myopathyTermIdString = "HP:0003198";
-        Term myopathyTerm = ontology.getTermMap().get(TermId.of(myopathyTermIdString));
+        Term myopathyTerm = ontology.termForTermId(TermId.of(myopathyTermIdString)).orElseThrow();
         MinedTerm myopathyMinedTerm = MinedTerm.of(50, 58, myopathyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(myopathyTerm, myopathyMinedTerm));
 
         // 75-88 visceromegaly
         String visceromegalyTermIdString = "HP:0003271";
-        Term visceromegalyTerm = ontology.getTermMap().get(TermId.of(visceromegalyTermIdString));
+        Term visceromegalyTerm = ontology.termForTermId(TermId.of(visceromegalyTermIdString)).orElseThrow();
         MinedTerm visceromegalyMinedTerm = MinedTerm.of(75, 88, visceromegalyTermIdString, true);
         terms.add(new Main.PhenotypeTerm(visceromegalyTerm, visceromegalyMinedTerm));
 
         // 114-123 alcoholism
         String alcoholismTermIdString = "HP:0030955";
-        Term alcoholismTerm = ontology.getTermMap().get(TermId.of(alcoholismTermIdString));
+        Term alcoholismTerm = ontology.termForTermId(TermId.of(alcoholismTermIdString)).orElseThrow();
         MinedTerm alcoholismMinedTerm = MinedTerm.of(122, 132, alcoholismTermIdString, false);
         terms.add(new Main.PhenotypeTerm(alcoholismTerm, alcoholismMinedTerm));
     }

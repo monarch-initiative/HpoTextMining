@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Disabled
 public class OntologyTreeTest extends ApplicationTest {
 
-    private static final Ontology ontology = OntologySuiteBase.getOntology();
+    private static final MinimalOntology ontology = OntologySuiteBase.getOntology();
 
     private final List<Main.PhenotypeTerm> results = new ArrayList<>(3);
 

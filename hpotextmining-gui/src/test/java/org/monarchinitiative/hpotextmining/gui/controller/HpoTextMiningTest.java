@@ -13,7 +13,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.mockito.Mockito;
-import org.monarchinitiative.phenol.ontology.data.Ontology;
+import org.monarchinitiative.phenol.ontology.data.MinimalOntology;
 import org.monarchinitiative.phenol.ontology.data.TermId;
 import org.testfx.framework.junit5.ApplicationTest;
 
@@ -46,7 +46,7 @@ public class HpoTextMiningTest extends ApplicationTest {
      */
     private static final int LOADING_TIMEOUT = 20;
 
-    private static final Ontology ontology = OntologySuiteBase.getOntology();
+    private static final MinimalOntology ontology = OntologySuiteBase.getOntology();
 
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -125,10 +125,10 @@ public class HpoTextMiningTest extends ApplicationTest {
         Set<Main.PhenotypeTerm> approvedTerms = hpoTextMining.getApprovedTerms();
         assertThat(approvedTerms.size(), is(4));
 
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0001771")), 1602, 1630, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0040287")), 2211, 2233, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0011747")), -1, -1, true)));
-        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.getTermMap().get(TermId.of("HP:0012119")), -1, -1, false)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.termForTermId(TermId.of("HP:0001771")).orElseThrow(), 1602, 1630, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.termForTermId(TermId.of("HP:0040287")).orElseThrow(), 2211, 2233, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.termForTermId(TermId.of("HP:0011747")).orElseThrow(), -1, -1, true)));
+        assertThat(approvedTerms, hasItem(new Main.PhenotypeTerm(ontology.termForTermId(TermId.of("HP:0012119")).orElseThrow(), -1, -1, false)));
     }
 
     @Override
